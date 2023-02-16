@@ -1,0 +1,11 @@
+{
+  "name": "Client",
+  "uuid": "0a20b124-d84c-431d-9db9-4c32c91ff8ba",
+  "version": "3.6.2",
+  "creator": {
+    "version": "3.6.2"
+  },
+  "dependencies": {
+    "fairygui-cc": "^1.1.1"
+  }
+}

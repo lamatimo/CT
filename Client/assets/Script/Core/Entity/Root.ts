@@ -1,7 +1,9 @@
 import { ISingletonAwake, ISingletonAwakeDecorator } from "../Singleton/ISingletonAwake";
 import { ISingletonDestroy, ISingletonDestroyDecorator } from "../Singleton/ISingletonDestroy";
 import { Singleton } from "../Singleton/Singleton";
+import { EntitySceneFactory } from "./EntitySceneFactory";
 import { Scene } from "./Scene";
+import { SceneType } from "./SceneType";
 
 export class Root extends Singleton implements ISingletonAwake, ISingletonDestroy{
     private static _inst: Root;
@@ -17,6 +19,7 @@ export class Root extends Singleton implements ISingletonAwake, ISingletonDestro
     @ISingletonAwakeDecorator
     awake() {
         Root._inst = this
+        this._scene = EntitySceneFactory.createScene(SceneType.Process, "Process")
     }
 
     @ISingletonDestroyDecorator

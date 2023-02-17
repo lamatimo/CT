@@ -1,5 +1,7 @@
 import { _decorator, Component} from 'cc';
+import { Entry } from '../Codes/Logic/Entry';
 import { Root } from '../Core/Entity/Root';
+import { EventSystem } from '../Core/EventSystem/EventSystem';
 import { Logger } from '../Core/Log/Logger';
 import { ObjectPool } from '../Core/ObjectPool/ObjectPool';
 import { Game } from '../Core/Singleton/Game';
@@ -13,8 +15,9 @@ export class Init extends Component {
         Game.addSingleton(Logger).iLog = new CocosLogger
         Game.addSingleton(ObjectPool)
         Game.addSingleton(Root)
+        Game.addSingleton(EventSystem)
 
-        Game.dispose()
+        Entry.start()
     }
 
     protected update(dt: number): void {

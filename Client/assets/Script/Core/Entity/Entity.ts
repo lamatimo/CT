@@ -1,7 +1,14 @@
-import { log } from "cc";
 import { ObjectPool } from "../ObjectPool/ObjectPool";
 
 export abstract class Entity {
+    private _parent: Entity
+    public get parent() {
+        return this._parent
+    }
+    public set parent(value: Entity) {
+        this._parent = value
+    }
+
     private componentMap: Map<new () => void, Entity>
 
     public addComponent<T extends Entity, P1, P2, P3>(type: new () => T, p1: P1, p2: P2, p3: P3): T;

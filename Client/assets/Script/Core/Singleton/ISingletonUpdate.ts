@@ -1,6 +1,5 @@
 import { log } from "cc";
 import { DecoratorCollector } from "../Decorator/DecoratorCollector";
-import { JsHalper } from "../Helper/JsHalper";
 import { Singleton } from "./Singleton";
 
 export interface ISingletonUpdate {

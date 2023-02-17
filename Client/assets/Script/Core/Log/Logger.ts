@@ -18,15 +18,15 @@ export class Logger extends Singleton implements ISingletonAwake{
         Logger._inst = this
     }
 
-    public debug(s: string){
-        this._iLog.debug(s)
+    public log(...data: any[]){
+        this._iLog.log(...data)
     }
 
-    public warning(s: string){
-        this._iLog.warning(s)
+    public warning(...data: any[]){
+        this._iLog.warning(...data)
     }
 
-    public error(s: string){
-        this._iLog.error(s)
+    public error(...data: any[]){
+        this._iLog.error(...data)
     }
 }

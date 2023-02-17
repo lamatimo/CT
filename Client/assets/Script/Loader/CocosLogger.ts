@@ -1,16 +1,16 @@
-import { debug, error, warn } from "cc";
+import { error, log, warn } from "cc";
 import { ILog } from "../Core/Log/ILog";
 
 export class CocosLogger implements ILog {
-    debug(s: string): void {
-        debug(s)
+    log(...data: any[]): void {
+        log(...data)
     }
 
-    warning(s: string): void {
-        warn(s)
+    warning(...data: any[]): void {
+        warn(...data)
     }
 
-    error(s: string): void {
-        error(s)
+    error(...data: any[]): void {
+        error(...data)
     }
 }

@@ -6,7 +6,7 @@ export class CocosLogger implements ILog {
         log(...data)
     }
 
-    warning(...data: any[]): void {
+    warn(...data: any[]): void {
         warn(...data)
     }
 

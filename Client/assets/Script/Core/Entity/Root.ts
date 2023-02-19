@@ -19,7 +19,7 @@ export class Root extends Singleton implements ISingletonAwake, ISingletonDestro
     @ISingletonAwakeDecorator
     awake() {
         Root._inst = this
-        this._scene = EntitySceneFactory.createScene(SceneType.Process, "Process")
+        this._scene = EntitySceneFactory.createScene(0, SceneType.Process, "Process")
     }
 
     @ISingletonDestroyDecorator

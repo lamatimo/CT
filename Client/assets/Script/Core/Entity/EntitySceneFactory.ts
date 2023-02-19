@@ -1,11 +1,18 @@
+import { IdGenerater } from "../IdGenerater/IdGenerater";
 import { Entity } from "./Entity";
 import { Scene } from "./Scene";
 import { SceneType } from "./SceneType";
 
-export class EntitySceneFactory{
-    public static createScene(sceneType: SceneType, name: string, parent: Entity = null){
-        let scene = new Scene(sceneType, name, parent)
+export class EntitySceneFactory {
+    public static createSceneWithId(id: number, instanceId: number, zone: number, sceneType: SceneType, name: string, parent: Entity = null): Scene {
+        let scene = new Scene(id, instanceId, zone, sceneType, name, parent);
 
-        return scene
+        return scene;
+    }
+
+    public static createScene(zone: number, sceneType: SceneType, name: string, parent: Entity = null): Scene {
+        let instanceId = IdGenerater.inst.generateInstanceId();
+        let scene = new Scene(zone, instanceId, zone, sceneType, name, parent);
+        return scene;
     }
 }

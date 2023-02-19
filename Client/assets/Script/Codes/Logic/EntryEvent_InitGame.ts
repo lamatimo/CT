@@ -9,5 +9,4 @@ export class EntryEvent_InitGame extends AEvent<EntryEvent>{
     protected run(scene: Scene, args: EntryEvent) {
         Logger.inst.log("静态事件回调")
     }
-  
 }

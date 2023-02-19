@@ -24,16 +24,16 @@ export class Scene extends Entity {
         this._parent.children.set(this.id, this);
     }
 
-    constructor(id: number, instanceId: number, zone: number, sceneType: SceneType, name: string, parent: Entity) {
-        super()
+    public init(id: number, instanceId: number, zone: number, sceneType: SceneType, name: string, parent: Entity) {
         this.id = id;
         this.instanceId = instanceId;
         this.zone = zone;
         this.sceneType = sceneType;
         this.name = name;
+        this.parent = parent;
+
         this.isCreated = true;
         this.isNew = true;
-        this.parent = parent;
         this.domain = this;
         this.isRegister = true;
 

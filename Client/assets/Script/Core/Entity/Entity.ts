@@ -3,6 +3,7 @@ import { IdGenerater } from "../IdGenerater/IdGenerater";
 import { ctLog } from "../Log/Logger";
 import { ObjectPool } from "../ObjectPool/ObjectPool";
 import { Root } from "./Root";
+import { Scene } from "./Scene";
 
 enum EntityStatus {
     None = 0,
@@ -363,6 +364,36 @@ export abstract class Entity {
         this.removeFromComponents(c);
 
         c.dispose();
+    }
+
+    public getChild<T extends Entity>(ctor: new () => T, id: number): T {
+        if (this._children == null) {
+            return null;
+        }
+        let child = this._children.get(id);
+        return child as T;
+    }
+
+    public removeChild(id: number): void {
+        if (this._children == null) {
+            return;
+        }
+
+        let child = this._children.get(id)
+        if (!child) {
+            return;
+        }
+
+        this._children.delete(id);
+        child.dispose();
+    }
+
+    public domainZone(): number {
+        return (this.domain as Scene)?.zone ?? 0;
+    }
+
+    public domainScene(): Scene {
+        return this.domain as Scene;
     }
 
     public dispose(): void {

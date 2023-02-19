@@ -45,7 +45,6 @@ export class IdGenerater extends Singleton{
         this.instanceIdLastTimestamp = timestamp;
         return (timestamp << IdGenerater.TIMESTAMP_SHIFT) | (Options.inst.process << IdGenerater.NODE_ID_SHIFT) | this.instanceIdSequence;
     }
-
     
     public generateUnitId(): number {
         let timestamp = Date.now() - IdGenerater.EPOCH;

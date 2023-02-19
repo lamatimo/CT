@@ -1,46 +1,41 @@
-import { DecoratorCollector } from "../Decorator/DecoratorCollector";
 import { Task } from "../Task/Task";
-import { ISingletonAwake } from "./ISingletonAwake";
-import { ISingletonDestroy } from "./ISingletonDestroy";
-import { ISingletonLateUpdate } from "./ISingletonLateUpdate";
-import { ISingletonUpdate } from "./ISingletonUpdate";
 import { Singleton } from "./Singleton";
 
 export class Game {
     private static readonly singletonMap: Map<new () => Singleton, Singleton> = new Map
     private static readonly singletons: Array<Singleton> = new Array
-    private static readonly destroys: Array<ISingletonDestroy> = new Array
-    private static readonly updates: Array<ISingletonUpdate> = new Array
-    private static readonly lateUpdates: Array<ISingletonLateUpdate> = new Array
+    private static readonly destroys: Array<Singleton> = new Array
+    private static readonly updates: Array<Singleton> = new Array
+    private static readonly lateUpdates: Array<Singleton> = new Array
     private static frameFinishTaskQueue: Task<void>[] = new Array
 
-    public static addSingleton<K extends Singleton>(singletonType: new () => K): K {
-        if (Game.singletonMap.has(singletonType)) {
-            throw new Error(`already exist singleton: ${singletonType.name}`);
+    public static addSingleton<K extends Singleton>(singletonCtor: new () => K): K {
+        if (Game.singletonMap.has(singletonCtor)) {
+            throw new Error(`already exist singleton: ${singletonCtor.name}`);
         }
 
-        let singleton = new singletonType()
+        let singleton = (singletonCtor as unknown as typeof Singleton).create();
 
-        Game.singletonMap.set(singletonType, singleton)
+        Game.singletonMap.set(singletonCtor, singleton)
         Game.singletons.push(singleton)
 
-        if (DecoratorCollector.singletonHas(singletonType, "ISingletonAwake")) {
-            (singleton as unknown as ISingletonAwake).awake()
+        if (singleton.awake) {
+            singleton.awake()
         }
 
-        if (DecoratorCollector.singletonHas(singletonType, "ISingletonDestroy")) {
-            Game.destroys.push(singleton as unknown as ISingletonDestroy)
+        if (singleton.destroy) {
+            Game.destroys.push(singleton)
         }
 
-        if (DecoratorCollector.singletonHas(singletonType, "ISingletonUpdate")) {
-            Game.updates.push(singleton as unknown as ISingletonUpdate)
+        if (singleton.update) {
+            Game.updates.push(singleton)
         }
 
-        if (DecoratorCollector.singletonHas(singletonType, "ISingletonLateUpdate")) {
-            Game.lateUpdates.push(singleton as unknown as ISingletonLateUpdate)
+        if (singleton.lateUpdate) {
+            Game.lateUpdates.push(singleton)
         }
 
-        return singleton
+        return singleton as K
     }
 
     public static async waitFrameFinish(): Promise<void> {

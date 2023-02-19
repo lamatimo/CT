@@ -1,25 +1,30 @@
-import { log } from "cc"
-import { DecoratorCollector } from "../Decorator/DecoratorCollector"
-import { ISingletonDestroy } from "./ISingletonDestroy"
-
-export abstract class Singleton {
+export class Singleton {
+    protected static _inst: Singleton
     private _isDisposed: boolean = false
 
-    public get isDisposed(){
-        return this._isDisposed
-    }
-
-    public dispose(): void{
-        if(this._isDisposed){
+    public static create() {
+        if (this._inst) {
             return
         }
 
-        if (DecoratorCollector.singletonHas(this.constructor as new () => Singleton, "ISingletonDestroy")) {
-            let destroy = this as unknown as ISingletonDestroy
+        this._inst = new this
 
-            destroy.destroy()
+        return this._inst
+    }
+
+    public get isDisposed() {
+        return this._isDisposed
+    }
+
+    public dispose(): void {
+        if (this._isDisposed) {
+            return
         }
-        
+
+        if (this.destroy) {
+            this.destroy()
+        }
+
         this._isDisposed = true
     }
 }

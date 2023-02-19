@@ -1,5 +1,8 @@
+import { EventSystem } from "../EventSystem/EventSystem";
 import { IdGenerater } from "../IdGenerater/IdGenerater";
+import { ctLog } from "../Log/Logger";
 import { ObjectPool } from "../ObjectPool/ObjectPool";
+import { Root } from "./Root";
 
 enum EntityStatus {
     None = 0,
@@ -45,64 +48,60 @@ export abstract class Entity {
         this.domain = this.parent.domain;
     }
 
-    public get domain(){
+    public get domain() {
         return this._domain
     }
 
-    public set domain(value){
-        if (value == null)
-        {
+    public set domain(value) {
+        if (value == null) {
             throw new Error(`domain cant set null: ${this.constructor.name}`);
         }
-        
-        if (this._domain == value)
-        {
+
+        if (this._domain == value) {
             return;
         }
-        
+
         let preDomain = this._domain;
         this._domain = value;
-        
-        if (preDomain == null)
-        {
+
+        if (preDomain == null) {
             this.instanceId = IdGenerater.inst.generateInstanceId();
             this.isRegister = true;
         }
 
         // 递归设置孩子的Domain
-        if (this._children != null)
-        {
-            for (let [id, entity] of this._children.entries())
-            {
+        if (this._children != null) {
+            for (let [id, entity] of this._children.entries()) {
                 entity._domain = this._domain;
             }
         }
 
-        if (this._components != null)
-        {
-            for (let [ctor, component] of this._components.entries())
-            {
+        if (this._components != null) {
+            for (let [ctor, component] of this._components.entries()) {
                 component.domain = this._domain;
             }
         }
 
-        if (!this.isCreated)
-        {
+        if (!this.isCreated) {
             this.isCreated = true;
         }
     }
 
     public instanceId: number
     public id: number
-    
+
     public get isDisposed() {
         return this.instanceId == 0;
     }
-    
+
     public get children(): Map<number, Entity> {
         return this._children ??= ObjectPool.inst.fetch(Map) as Map<number, Entity>;
     }
-    
+
+    public get components(): Map<EntityCtor, Entity> {
+        return this._components ??= ObjectPool.inst.fetch(Map) as Map<EntityCtor, Entity>;
+    }
+
     protected _domain: Entity
     private _children: Map<number, Entity>
     private _components: Map<EntityCtor, Entity>
@@ -161,11 +160,23 @@ export abstract class Entity {
         return (this.status & EntityStatus.IsRegister) == EntityStatus.IsRegister
     }
     protected set isRegister(value: boolean) {
+        if (this.isRegister == value) {
+            return;
+        }
+
         if (value) {
             this.status |= EntityStatus.IsRegister;
         }
         else {
             this.status &= ~EntityStatus.IsRegister;
+        }
+
+        if (!value) {
+            Root.inst.remove(this.instanceId);
+        }
+        else {
+            Root.inst.add(this);
+            EventSystem.inst.registerSystem(this);
         }
     }
 
@@ -199,6 +210,7 @@ export abstract class Entity {
     }
 
     public addComponent(component: Entity): Entity;
+    public addComponent<T extends Entity>(ctor: new () => T): T;
     public addComponent<T extends Entity>(ctor: new () => T, isFromPool: boolean): T;
     public addComponent<T extends Entity>(componentOrCtor: (new () => T) | Entity, isFromPool?: boolean): Entity | T {
         if (componentOrCtor instanceof Entity) {
@@ -230,7 +242,7 @@ export abstract class Entity {
         component.componentParent = this;
 
         if (component.awake) {
-            component.awake()
+            EventSystem.inst.comAwakeEvent(component)
         }
 
         return component as T;
@@ -261,7 +273,7 @@ export abstract class Entity {
         component.componentParent = this;
 
         if (component.awake) {
-            component.awake()
+            EventSystem.inst.comAwakeEvent(component);
         }
 
         return component as T;
@@ -312,12 +324,100 @@ export abstract class Entity {
     }
 
     private addToComponents(component: Entity): void {
-        this._components.set(component.constructor as EntityCtor, component);
+        this.components.set(component.constructor as EntityCtor, component);
     }
 
-    private addToChildren(entity: Entity): void
-    {
-        this._children.set(entity.id, entity);
+    private addToChildren(entity: Entity): void {
+        this.children.set(entity.id, entity);
+    }
+
+    public getComponent<K extends Entity>(ctor: new () => K): K {
+        if (this._components == null) {
+            return null;
+        }
+
+        let component = this._components.get(ctor);
+
+        if (!component) {
+            return null;
+        }
+
+        return component as K;
+    }
+
+    public removeComponent<T extends Entity>(ctor: new () => T): T {
+        if (this.isDisposed) {
+            return;
+        }
+
+        if (this._components == null) {
+            return;
+        }
+
+        let c = this.getComponent(ctor);
+
+        if (c == null) {
+            return;
+        }
+
+        this.removeFromComponents(c);
+
+        c.dispose();
+    }
+
+    public dispose(): void {
+        if (this.isDisposed) {
+            return;
+        }
+
+        this.isRegister = false;
+        this.instanceId = 0;
+
+        // 清理Component
+        if (this._components != null) {
+            for (let [entityCtor, entity] of this._components.entries()) {
+                entity.dispose()
+            }
+
+            this._components.clear();
+            ObjectPool.inst.recycle(this._components);
+            this._components = null;
+        }
+
+        // 清理Children
+        if (this._children != null) {
+            for (let [id, entity] of this._children.entries()) {
+                entity.dispose()
+            }
+
+            this._children.clear();
+            ObjectPool.inst.recycle(this._children);
+            this._children = null;
+        }
+
+        // 触发Destroy事件
+        if (this.destroy) {
+            EventSystem.inst.comDestroyEvent(this);
+        }
+
+        this._domain = null;
+
+        if (this._parent != null && !this._parent.isDisposed) {
+            if (this.isComponent) {
+                this.parent.removeComponent(this.constructor as EntityCtor);
+            }
+            else {
+                this.parent.removeFromChildren(this);
+            }
+        }
+
+        this.parent = null;
+
+        if (this.isFromPool) {
+            ObjectPool.inst.recycle(this);
+        }
+
+        this.status = EntityStatus.None;
     }
 
 }

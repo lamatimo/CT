@@ -1,28 +1,42 @@
-import { ISingletonAwake, ISingletonAwakeDecorator } from "../Singleton/ISingletonAwake";
-import { ISingletonDestroy, ISingletonDestroyDecorator } from "../Singleton/ISingletonDestroy";
 import { Singleton } from "../Singleton/Singleton";
+import { Entity } from "./Entity";
 import { EntitySceneFactory } from "./EntitySceneFactory";
 import { Scene } from "./Scene";
 import { SceneType } from "./SceneType";
 
-export class Root extends Singleton implements ISingletonAwake, ISingletonDestroy{
-    private static _inst: Root;
+export class Root extends Singleton {
     public static get inst(): Root {
-        return Root._inst
+        return Root._inst as Root
     }
 
-    private _scene: Scene
     public get scene(): Scene {
         return this._scene
     }
 
-    @ISingletonAwakeDecorator
+    private _scene: Scene
+    private readonly allEntities: Map<number, Entity> = new Map;
+
     awake() {
-        Root._inst = this
         this._scene = EntitySceneFactory.createScene(0, SceneType.Process, "Process")
     }
 
-    @ISingletonDestroyDecorator
     destroy(): void {
+    }
+
+    public add(entity: Entity): void
+    {
+        this.allEntities.set(entity.instanceId, entity);
+    }
+    
+    public remove(instanceId: number): void
+    {
+        this.allEntities.delete(instanceId);
+    }
+
+    public get(instanceId: number): Entity
+    {
+        let component = this.allEntities.get(instanceId);
+
+        return component;
     }
 }

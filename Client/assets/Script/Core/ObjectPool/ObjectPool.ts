@@ -1,19 +1,12 @@
 import { Logger } from "../Log/Logger";
-import { ISingletonAwake, ISingletonAwakeDecorator } from "../Singleton/ISingletonAwake";
 import { Singleton } from "../Singleton/Singleton";
 
-export class ObjectPool extends Singleton implements ISingletonAwake{
-    private static _inst: ObjectPool;
+export class ObjectPool extends Singleton{
     public static get inst(): ObjectPool {
-        return ObjectPool._inst
+        return this._inst as ObjectPool
     }
 
     private pool = new Map<new () => void, Array<any>>();
-
-    @ISingletonAwakeDecorator
-    awake() {
-        ObjectPool._inst = this
-    }
 
     public fetch<T>(type: new () => T): T {
         let queue = this.pool.get(type)

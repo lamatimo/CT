@@ -1,12 +1,10 @@
 import { ctError } from "../Log/Logger";
 import { Options } from "../Options/Options";
-import { ISingletonAwake, ISingletonAwakeDecorator } from "../Singleton/ISingletonAwake";
 import { Singleton } from "../Singleton/Singleton";
 
-export class IdGenerater extends Singleton implements ISingletonAwake {
-    private static _inst: IdGenerater;
+export class IdGenerater extends Singleton{
     public static get inst(): IdGenerater {
-        return IdGenerater._inst
+        return this._inst as IdGenerater
     }
 
     /**
@@ -29,11 +27,6 @@ export class IdGenerater extends Singleton implements ISingletonAwake {
     private instanceIdLastTimestamp: number = 0
     private unitIdSequence: number = 0
     private unitIdLastTimestamp: number = 0
-
-    @ISingletonAwakeDecorator
-    awake() {
-        IdGenerater._inst = this
-    }
 
     public generateInstanceId(): number {
         let timestamp = Date.now() - IdGenerater.EPOCH;

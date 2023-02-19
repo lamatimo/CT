@@ -11,6 +11,10 @@ export class Scene extends Entity {
         this._domain = value
     }
 
+    public get domain() {
+        return this._domain
+    }
+
     public set parent(value: Entity) {
         if (value == null) {
             return;

@@ -1,23 +1,25 @@
 import { DecoratorCollector } from "../Decorator/DecoratorCollector";
+import { Entity } from "../Entity/Entity";
+import { Root } from "../Entity/Root";
 import { Scene } from "../Entity/Scene";
-import { Logger } from "../Log/Logger";
-import { ISingletonAwake, ISingletonAwakeDecorator } from "../Singleton/ISingletonAwake";
 import { Singleton } from "../Singleton/Singleton";
 import { AEvent } from "./AEvent";
 import { EventType } from "./EventType";
+import { InstanceQueueIndex } from "./InstanceQueueIndex";
 
 
-export class EventSystem extends Singleton implements ISingletonAwake {
-    private static _inst: EventSystem;
+export class EventSystem extends Singleton {
     public static get inst(): EventSystem {
-        return EventSystem._inst
+        return this._inst as EventSystem
     }
 
     private allEvent: Map<new () => EventType, Array<any>> = new Map
+    private readonly queues: Array<Array<number>> = new Array(InstanceQueueIndex.Max);
 
-    @ISingletonAwakeDecorator
     awake(): void {
-        EventSystem._inst = this
+        for (let i = 0; i < this.queues.length; i++) {
+            this.queues[i] = new Array;
+        }
 
         this.initEvent()
     }
@@ -34,10 +36,21 @@ export class EventSystem extends Singleton implements ISingletonAwake {
         }
     }
 
+    public registerSystem(component: Entity): void {
+        if (component.update) {
+            this.queues[InstanceQueueIndex.Update].push(component.instanceId)
+        }
+
+        if (component.lateUpdate) {
+            this.queues[InstanceQueueIndex.LateUpdate].push(component.instanceId)
+        }
+    }
+
+
     public async publishAsync<T extends EventType>(scene: Scene, eventType: T) {
         let list = this.allEvent.get(eventType.constructor as new () => EventType)
 
-        if(!list){
+        if (!list) {
             return
         }
 
@@ -50,5 +63,65 @@ export class EventSystem extends Singleton implements ISingletonAwake {
         await Promise.all(tasks)
 
         eventType.dispose()
+    }
+
+    public comAwakeEvent(component: Entity) {
+        component.awake()
+    }
+
+    public comDestroyEvent(component: Entity) {
+        component.destroy()
+    }
+
+    update(): void {
+        let queue = this.queues[InstanceQueueIndex.Update];
+        let count = queue.length;
+
+        while (count-- > 0)
+        {
+            let instanceId = queue.pop();
+
+            let component = Root.inst.get(instanceId);
+
+            if (component == null)
+            {
+                continue;
+            }
+
+            if (component.isDisposed)
+            {
+                continue;
+            }
+
+            queue.push(instanceId);
+
+            component.update()
+        }
+    }
+
+    lateUpdate(): void {
+        let queue = this.queues[InstanceQueueIndex.LateUpdate];
+        let count = queue.length;
+
+        while (count-- > 0)
+        {
+            let instanceId = queue.pop();
+
+            let component = Root.inst.get(instanceId);
+
+            if (component == null)
+            {
+                continue;
+            }
+
+            if (component.isDisposed)
+            {
+                continue;
+            }
+
+            queue.push(instanceId);
+
+            component.lateUpdate()
+        }
     }
 }

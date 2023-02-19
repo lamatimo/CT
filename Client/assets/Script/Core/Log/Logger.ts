@@ -1,12 +1,10 @@
 import { Options } from "../Options/Options";
-import { ISingletonAwake, ISingletonAwakeDecorator } from "../Singleton/ISingletonAwake";
 import { Singleton } from "../Singleton/Singleton";
 import { ILog } from "./ILog";
 
-export class Logger extends Singleton implements ISingletonAwake {
-    private static _inst: Logger;
+export class Logger extends Singleton{
     public static get inst(): Logger {
-        return Logger._inst
+        return this._inst as Logger
     }
 
     private _iLog: ILog
@@ -16,11 +14,6 @@ export class Logger extends Singleton implements ISingletonAwake {
 
     private static readonly LOG_LEVEL = 1;
     private static readonly WARN_LEVEL = 2;
-
-    @ISingletonAwakeDecorator
-    awake() {
-        Logger._inst = this
-    }
 
     public log(...data: any[]) {
         if (this.checkLogLevel(Logger.LOG_LEVEL)) {
@@ -43,7 +36,7 @@ export class Logger extends Singleton implements ISingletonAwake {
             return true;
         }
 
-        return Options.inst.logLevel <= level;
+        return Options.inst.logLevel >= level;
     }
 }
 

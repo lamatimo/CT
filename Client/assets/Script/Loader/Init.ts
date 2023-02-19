@@ -1,6 +1,5 @@
-import { _decorator, Component} from 'cc';
-import { Entry } from '../Codes/Logic/Entry';
-import { Root } from '../Core/Entity/Root';
+import { _decorator, Component } from 'cc';
+import { Entry } from '../Codes/Entry';
 import { EventSystem } from '../Core/EventSystem/EventSystem';
 import { IdGenerater } from '../Core/IdGenerater/IdGenerater';
 import { Logger } from '../Core/Log/Logger';
@@ -18,7 +17,6 @@ export class Init extends Component {
         Game.addSingleton(Logger).iLog = new CocosLogger
         Game.addSingleton(IdGenerater)
         Game.addSingleton(ObjectPool)
-        Game.addSingleton(Root)
         Game.addSingleton(EventSystem)
 
         Entry.start()

@@ -1,7 +1,7 @@
-import { Entity } from "./assets/Script/Core/Entity/Entity";
-import { Singleton } from "./assets/Script/Core/Singleton/Singleton";
+import { Entity } from "./assets/Scripts/Core/Entity/Entity";
+import { Singleton } from "./assets/Scripts/Core/Singleton/Singleton";
 
-declare module "./assets/Script/Core/Entity/Entity"{
+declare module "./assets/Scripts/Core/Entity/Entity"{
     interface Entity{
         /**
          * 组件添加后立即调用
@@ -19,7 +19,7 @@ declare module "./assets/Script/Core/Entity/Entity"{
     }
 }
 
-declare module "./assets/Script/Core/Singleton/Singleton"{
+declare module "./assets/Scripts/Core/Singleton/Singleton"{
     interface Singleton{
         /**
          * 组件添加后立即调用

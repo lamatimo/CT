@@ -1,4 +1,4 @@
-import { _decorator, Component, assetManager, Prefab, SpriteFrame, ImageAsset, instantiate } from 'cc';
+import { _decorator, Component, assetManager, Prefab, SpriteFrame, ImageAsset, instantiate, director } from 'cc';
 import { GRoot } from 'fairygui-cc';
 import { Entry } from '../../Bundles/Code/Entry';
 import { CoroutineLock } from '../Core/CoroutineLock/CoroutineLock';
@@ -16,6 +16,8 @@ const { ccclass, property } = _decorator;
 @ccclass('Init')
 export class Init extends Component {
     start() {
+        director.addPersistRootNode(this.node);
+        
         Game.addSingleton(Options)
         Game.addSingleton(Logger).iLog = new CocosLogger
         Game.addSingleton(IdGenerater)

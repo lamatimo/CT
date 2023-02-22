@@ -1,0 +1,11 @@
+{
+  "name": "ct",
+  "version": "1.0.0",
+  "description": "cocos creator client and nodejs server framework",
+  "main": "dist/Init.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

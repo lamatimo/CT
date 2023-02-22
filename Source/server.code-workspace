@@ -1,0 +1,30 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "client/assets/Scripts/Core"
+		},
+		{
+			"path": "client/assets/Bundles/Code/Logic"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			// "client/FGUIProject": true,
+			// "client/library": true,
+			// "client/local": true,
+			// "client/node_modules": true,
+			// "client/profiles": true,
+			// "client/settings": true,
+			// "client/temp": true,
+			// "client/package-lock.json": true,
+			// "client/package.json": true,
+			// "client/tsconfig.json": true,
+			"client": true,
+			"dist": true,
+	
+		}
+	}
+}

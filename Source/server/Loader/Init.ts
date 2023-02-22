@@ -9,6 +9,9 @@ class B{
         this._qq = value
     }
 }
-console.log(B)
 
-console.log(Singleton)
+let a = 5
+
+let b = a + 5
+
+let c = a+b

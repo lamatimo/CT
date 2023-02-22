@@ -1,0 +1,8 @@
+import { Entity } from "../../../../../../Scripts/Core/Entity/Entity";
+// importflag
+export class FairyGUIComponent extends Entity {
+    awake(): void {
+// bindFlag
+        this.dispose()
+    }
+}

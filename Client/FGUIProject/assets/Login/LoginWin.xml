@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1280,720">
+  <displayList>
+    <image id="n0_t5v1" name="n0" src="t5v11" fileName="Image/square_1.png" pkg="t7f44vnh" xy="640,360" pivot="0.5,0.5" anchor="true" size="1280,720" color="#999999">
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <text id="n1_t5v1" name="Title" xy="640,360" pivot="0.5,0.5" anchor="true" size="154,52" fontSize="38" color="#cccccc" text="登录界面">
+      <relation target="" sidePair="center-center,middle-middle"/>
+    </text>
+  </displayList>
+</component>

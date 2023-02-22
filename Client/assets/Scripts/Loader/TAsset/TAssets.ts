@@ -42,7 +42,7 @@ export class TAssets extends Singleton {
     }
 
     public static async loadBundleAsync(bundleName: string): Promise<BundleAsset> {
-        let lock = await CoroutineLock.inst.wait(`${LockType.BUNDLE_LOAD}${bundleName}`)
+        let lock = await CoroutineLock.inst.wait(LockType.BUNDLE_LOAD, bundleName)
         let bundleAsset = TAssets.bundleMap.get(bundleName)
 
         if (bundleAsset) {

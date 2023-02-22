@@ -1,0 +1,14 @@
+import { GComponent, GTextField, UIPackage } from "fairygui-cc";
+
+export default class $className extends $superClassName {
+	public static URL:string = $urlValue;
+$classFieldAnnotation
+
+	public static create():$className {
+		return <$className>(UIPackage.createObject("$uiPackageName", "$uiResName"));
+	}
+
+	protected onConstruct():void {
+$classFieldInstantiation
+	}
+}

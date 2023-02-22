@@ -13,7 +13,7 @@ export class SceneFactory {
         let clientScene = EntitySceneFactory.createScene(zone, SceneType.Client, name, ClientSceneManagerComponent.inst);
         clientScene.addComponent(CurrentScenesComponent);
 
-        EventSystem.inst.publishAsync(clientScene, new AfterCreateClientScene());
+        EventSystem.inst.publishAsync(clientScene, AfterCreateClientScene.create());
         return clientScene;
     }
 
@@ -21,7 +21,7 @@ export class SceneFactory {
         let currentScene = EntitySceneFactory.createSceneWithId(id, IdGenerater.inst.generateInstanceId(), zone, SceneType.Current, name, currentScenesComponent);
         currentScenesComponent.scene = currentScene;
 
-        EventSystem.inst.publishAsync(currentScene, new AfterCreateCurrentScene());
+        EventSystem.inst.publishAsync(currentScene, AfterCreateCurrentScene.create());
         return currentScene;
     }
 }

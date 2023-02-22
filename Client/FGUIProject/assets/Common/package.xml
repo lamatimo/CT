@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packageDescription id="t7f44vnh">
+  <resources>
+    <image id="t5v11" name="square_1.png" path="/Image/" exported="true"/>
+  </resources>
+  <publish name="" path="E:\Project\creator\CT\Client\assets\Bundles\UI\Common" packageCount="2" genCode="true"/>
+</packageDescription>

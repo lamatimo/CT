@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packageDescription id="t9puaifr">
+  <resources>
+    <component id="t5v13" name="LoginWin.xml" path="/" exported="true"/>
+  </resources>
+  <publish name="" path="E:\Project\creator\CT\Client\assets\Bundles\UI\Login" packageCount="2" genCode="true"/>
+</packageDescription>

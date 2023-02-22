@@ -1,0 +1,6 @@
+import { UIObjectFactory } from "fairygui-cc"
+$requireStatement
+
+export function $binderClassName(){
+$bindStatement
+}

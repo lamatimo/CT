@@ -435,7 +435,7 @@ export abstract class Entity {
             }
         }
 
-        this.parent = null;
+        this._parent = null;
 
         if (this.isFromPool) {
             ObjectPool.inst.recycle(this);

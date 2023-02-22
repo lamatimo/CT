@@ -1,4 +1,5 @@
 import { _decorator, Component, assetManager, Prefab, SpriteFrame, ImageAsset, instantiate } from 'cc';
+import { GRoot } from 'fairygui-cc';
 import { Entry } from '../../Bundles/Code/Entry';
 import { CoroutineLock } from '../Core/CoroutineLock/CoroutineLock';
 import { IdGenerater } from '../Core/IdGenerater/IdGenerater';
@@ -8,6 +9,7 @@ import { Options } from '../Core/Options/Options';
 import { Game } from '../Core/Singleton/Game';
 import { CocosLogger } from './CocosLogger';
 import { TAssets } from './TAsset/TAssets';
+import { WindowComponent } from './UI/WindowComponent';
 
 const { ccclass, property } = _decorator;
 
@@ -20,6 +22,10 @@ export class Init extends Component {
         Game.addSingleton(ObjectPool)
         Game.addSingleton(CoroutineLock)
         Game.addSingleton(TAssets)
+        Game.addSingleton(WindowComponent)
+
+        // 初始化fgui
+        GRoot.create(this.node.getChildByName("UI"))
 
         this.loadAsync()
     }

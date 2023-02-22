@@ -24,18 +24,19 @@ export class CoroutineLock extends Singleton {
 
     private lockMap: Map<string, Set<Lock>> = new Map
 
-    public async wait(key: string) {
-        let lockSet = this.lockMap.get(key)
+    public async wait(lockType: string, key: string) {
+        let newKey = `${lockType}_${key}`
+        let lockSet = this.lockMap.get(newKey)
 
         if (!lockSet) {
             lockSet = new Set
 
-            this.lockMap.set(key, lockSet)
+            this.lockMap.set(newKey, lockSet)
         }
 
         let lock = ObjectPool.inst.fetch(Lock)
 
-        lock.init(key)
+        lock.init(newKey)
 
         lockSet.add(lock)
 

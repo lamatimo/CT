@@ -27,7 +27,7 @@ export class BundleAsset {
     }
 
     private async createProvider(assetInfo: AssetInfo): Promise<BundleAssetProvider> {
-        let lock = await CoroutineLock.inst.wait(`${LockType.BUNDLE_ASSET_LOAD}${assetInfo.uuid}`)
+        let lock = await CoroutineLock.inst.wait(LockType.BUNDLE_ASSET_LOAD, assetInfo.uuid)
         let provider = this.providerMap.get(assetInfo.uuid)
 
         if (provider) {

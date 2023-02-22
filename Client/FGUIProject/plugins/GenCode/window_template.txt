@@ -1,0 +1,33 @@
+import { GComponent } from "fairygui-cc"
+import { WindowBase } from "../../../../../../Scripts/Loader/UI/WindowBase"
+import { WindowComponent } from "../../../../../../Scripts/Loader/UI/WindowComponent"
+import UI_$packageName_$windowName from "../Generate/$packageName/UI_$packageName_$windowName"
+
+export class $windowName extends WindowBase {
+    private uiNode: UI_$packageName_$windowName
+
+    public async loadResAsync() {
+        await WindowComponent.inst.loadPackageAsync("$packageName")
+    }
+
+    protected loadUI(): GComponent {
+        this.uiNode = UI_$packageName_$windowName.create()
+
+        return this.uiNode
+    }
+
+    protected async onLoadAsync() {
+    }
+
+    protected async onShownAsync() {
+
+    }
+
+    protected async onHideAsync() {
+
+    }
+
+    protected async onDisposeAsync() {
+
+    }
+}

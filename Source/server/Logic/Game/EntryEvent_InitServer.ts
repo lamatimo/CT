@@ -5,6 +5,7 @@ import { EventDecorator } from "../../../client/assets/Scripts/Core/EventSystem/
 import { ctLog } from "../../../client/assets/Scripts/Core/Log/Logger";
 
 import { Field, Message, OneOf, Type } from "protobufjs"
+import { Person } from "./Generate/Message/person";
 
 export class AwesomeSubMessage extends Message<AwesomeSubMessage> {
 
@@ -45,5 +46,12 @@ class EntryEvent_InitServer extends AEvent<EntryEvent>{
 
         ctLog(buffer)
         ctLog(decoded)
+
+        let p = Person.encode({name: "liming", age: 15}).finish()
+        let q = Person.decode(p)
+
+        ctLog(p)
+        ctLog(q)
+
     }
 }

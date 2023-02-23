@@ -1,3 +1,0 @@
-tsc
-echo  按任何键将退出...
-pause > nul

@@ -1,6 +1,6 @@
 import { _decorator, Component, assetManager, Prefab, SpriteFrame, ImageAsset, instantiate, director } from 'cc';
 import { GRoot } from 'fairygui-cc';
-import { Entry } from '../../Bundles/Code/Entry';
+import { Entry } from '../../Bundles/Code/Logic/Entry';
 import { CoroutineLock } from '../Core/CoroutineLock/CoroutineLock';
 import { IdGenerater } from '../Core/IdGenerater/IdGenerater';
 import { ctLog, Logger } from '../Core/Log/Logger';

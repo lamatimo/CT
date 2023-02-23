@@ -11,6 +11,10 @@ export class JsHalper {
     public static getRootDirName(path: string): string {
         return path.split("/")[0];
     }
+
+    public static sleep(ms: number): Promise<void> {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 }
 
 

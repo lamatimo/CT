@@ -1,5 +1,5 @@
 
-export class JsHalper {
+export class JsHelper {
     public static getMethodName(): string {
         let e = new Error()
         let str = e.stack.split("at ")[2]

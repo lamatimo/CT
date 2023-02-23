@@ -1,7 +1,6 @@
 
 import { Root } from "../../../Scripts/Core/Entity/Root"
 import { EventSystem } from "../../../Scripts/Core/EventSystem/EventSystem"
-import { ctLog } from "../../../Scripts/Core/Log/Logger"
 import { Game } from "../../../Scripts/Core/Singleton/Game"
 import { EntryEvent } from "./Game/EventType/EventTypes"
 

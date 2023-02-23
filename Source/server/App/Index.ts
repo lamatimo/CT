@@ -1,4 +1,3 @@
-import { JsHalper } from "../../client/assets/Scripts/Core/Helper/JsHalper";
 import { ctError } from "../../client/assets/Scripts/Core/Log/Logger";
 import { Init } from "../Loader/Init";
 

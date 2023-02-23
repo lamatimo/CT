@@ -1,11 +1,13 @@
 import { Entry } from "../../client/assets/Bundles/Code/Logic/Entry"
 import { CoroutineLock } from "../../client/assets/Scripts/Core/CoroutineLock/CoroutineLock"
 import { IdGenerater } from "../../client/assets/Scripts/Core/IdGenerater/IdGenerater"
-import { ctError, ctLog, ctWarn, Logger } from "../../client/assets/Scripts/Core/Log/Logger"
+import { Logger } from "../../client/assets/Scripts/Core/Log/Logger"
 import { ObjectPool } from "../../client/assets/Scripts/Core/ObjectPool/ObjectPool"
 import { Options } from "../../client/assets/Scripts/Core/Options/Options"
 import { Game } from "../../client/assets/Scripts/Core/Singleton/Game"
 import { WinstonLogger } from "./WinstonLogger"
+
+import "./ImportAllEvent"
 
 export class Init {
     public static start() {

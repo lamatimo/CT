@@ -16,10 +16,6 @@ export class Init {
         Game.addSingleton(CoroutineLock)
 
         Entry.start()
-
-        ctLog("启动成功了1")
-        ctWarn("启动成功了2")
-        ctError("启动成功了3")
     }
 
     public static update(): void {

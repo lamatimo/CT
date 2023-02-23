@@ -7,4 +7,5 @@ export class Options extends Singleton {
 
     process: number = 0
     logLevel: number = 2
+    develop: boolean = true
 }

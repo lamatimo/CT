@@ -12,7 +12,7 @@
                 "<node_internals>/**"
             ],
             "runtimeArgs": ["-r", "ts-node/register"],
-            "args": ["${workspaceFolder}/server/App/Index.ts"]
+            "args": ["${workspaceFolder}/server/App/Program.ts", "--AppType=0"]
         }
     ]
 }

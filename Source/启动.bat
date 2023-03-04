@@ -1,2 +1,2 @@
-node dist/server/App/Index.js
+node dist/server/App/Program.js
 pause

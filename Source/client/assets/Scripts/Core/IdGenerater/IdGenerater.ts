@@ -1,82 +1,176 @@
-import { ctError } from "../Log/Logger";
+import { ctError, ctLog, ctWarn } from "../Log/Logger";
+import { Long } from "../Network/Protobuf";
 import { Options } from "../Options/Options";
 import { Singleton } from "../Singleton/Singleton";
+import { TimeInfo } from "../Time/TimeInfo";
 
-export class IdGenerater extends Singleton{
+export class IdStruct {
+    public Time: number;   // 当年开始的tick 33bit
+    public Process: number; // 10bit 最大进程数量
+    public Value: number;  // 21bit 每秒可以生成id数量
+    private result: Long;
+
+    public ToLong(): number {
+        let result = this.result.toNumber()
+
+        return result;
+    }
+
+    public initArgs1(id: number) {
+        this.result = Long.fromNumber(id, true)
+
+        this.Time = this.result.and(8589934591).toNumber()
+        this.Process = this.result.shiftRight(33).and(1023).toNumber()
+        this.Value = this.result.shiftRight(43).and(2097151).toNumber()
+    }
+
+    public initArgs3(time: number, process: number, value: number) {
+        this.Time = time;
+        this.Process = process;
+        this.Value = value;
+
+        this.updateResult()
+    }
+
+    private updateResult() {
+        this.result = Long.fromInt(0, true).or(this.Value).shiftLeft(10).or(this.Process).shiftLeft(33).or(this.Time)
+    }
+}
+
+export class InstanceIdStruct {
+    public Time: number;   // 当年开始的tick 32bit
+    public Process: number; // 11bit 最大进程数量
+    public Value: number;  // 21bit 每秒可以生成id数量
+    private result: Long;
+
+    public ToLong(): number {
+        let result = this.result.toNumber()
+
+        return result;
+    }
+
+    public initArgs1(id: number) {
+        this.result = Long.fromNumber(id, true)
+
+        this.Time = this.result.and(4294967295).toNumber()
+        this.Process = this.result.shiftRight(32).and(2047).toNumber()
+        this.Value = this.result.shiftRight(43).and(2097151).toNumber()
+    }
+
+    // 给SceneId使用
+    public initArgs2(process: number, value: number) {
+        this.Time = 0;
+        this.Process = process;
+        this.Value = value;
+
+        this.updateResult()
+    }
+
+    public initArgs3(time: number, process: number, value: number) {
+        this.Time = time;
+        this.Process = process;
+        this.Value = value;
+
+        this.updateResult()
+    }
+
+    private updateResult() {
+        this.result = Long.fromInt(0, true).or(this.Value).shiftLeft(11).or(this.Process).shiftLeft(32).or(this.Time)
+    }
+}
+
+export class IdGenerater extends Singleton {
     public static get inst(): IdGenerater {
         return this._inst as IdGenerater
     }
 
-    /**
-     * （基准时间）：指定一个时间点作为时间戳计算的起点。一般选择一个过去的时间点，以便时间戳能够尽可能地小。
-     */
-    private static readonly EPOCH = 1609459200000; // 2021-01-01 00:00:00 UTC
-    /**
-     * 用于存储节点 ID 的二进制位数。默认为 5 位，可以表示最多 32 个节点
-     */
-    private static readonly NODE_ID_BITS = 5;
-    /**
-    * 用于存储序列号的二进制位数。默认为 12 位，可以表示每个节点每毫秒最多生成 4096 个 ID
-    */
-    private static readonly SEQUENCE_BITS = 12;
-    private static readonly NODE_ID_SHIFT = IdGenerater.SEQUENCE_BITS;
-    private static readonly TIMESTAMP_SHIFT = IdGenerater.NODE_ID_BITS + IdGenerater.SEQUENCE_BITS;
-    private static readonly SEQUENCE_MASK = (1 << IdGenerater.SEQUENCE_BITS) - 1;
-
-    private instanceIdSequence: number = 0
-    private instanceIdLastTimestamp: number = 0
-    private unitIdSequence: number = 0
-    private unitIdLastTimestamp: number = 0
-
-    public generateInstanceId(): number {
-        let timestamp = Date.now() - IdGenerater.EPOCH;
-        if (timestamp < this.instanceIdLastTimestamp) {
-            throw new Error(`Clock moved backwards. Refusing to generate id for ${this.instanceIdLastTimestamp - timestamp} milliseconds.`);
-        }
-        if (timestamp === this.instanceIdLastTimestamp) {
-            this.instanceIdSequence = (this.instanceIdSequence + 1) & IdGenerater.SEQUENCE_MASK;
-            if (this.instanceIdSequence === 0) {
-                ctError(`instanceid count per sec overflow: ${timestamp}`);
-                timestamp = this.waitInstanceIdUntilNextMillis();
-            }
-        } else {
-            this.instanceIdSequence = 0;
-        }
-        this.instanceIdLastTimestamp = timestamp;
-        return (timestamp << IdGenerater.TIMESTAMP_SHIFT) | (Options.inst.process << IdGenerater.NODE_ID_SHIFT) | this.instanceIdSequence;
-    }
+    epoch2020: number;
+    private value: number = 0;
+    private lastIdTime: number;
     
-    public generateUnitId(): number {
-        let timestamp = Date.now() - IdGenerater.EPOCH;
-        if (timestamp < this.unitIdLastTimestamp) {
-            throw new Error(`Clock moved backwards. Refusing to generate id for ${this.unitIdLastTimestamp - timestamp} milliseconds.`);
+    epochThisYear: number;
+    private instanceIdValue: number = 0;
+    private lastInstanceIdTime: number;
+
+    awake(): void {
+        this.epoch2020 = new Date(2020, 0, 1).getTime()
+        this.epochThisYear = new Date(new Date().getFullYear(), 0, 1).getTime()
+
+        this.lastInstanceIdTime = this.TimeSinceThisYear();
+        if (this.lastInstanceIdTime <= 0) {
+            ctWarn(`lastInstanceIdTime less than 0: ${this.lastInstanceIdTime}`);
+            this.lastInstanceIdTime = 1;
         }
-        if (timestamp === this.unitIdLastTimestamp) {
-            this.unitIdSequence = (this.unitIdSequence + 1) & IdGenerater.SEQUENCE_MASK;
-            if (this.unitIdSequence === 0) {
-                ctError(`unitid count per sec overflow: ${timestamp}`);
-                timestamp = this.waitUnitIdUntilNextMillis();
+
+        this.lastIdTime = this.TimeSince2020();
+        if (this.lastIdTime <= 0) {
+            ctWarn(`lastIdTime less than 0: ${this.lastIdTime}`);
+            this.lastIdTime = 1;
+        }
+    }
+
+
+    private TimeSince2020(): number {
+        let a = (TimeInfo.inst.frameTime - this.epoch2020) / 1000;
+        return Math.floor(a);
+    }
+
+    private TimeSinceThisYear(): number {
+        let a = (TimeInfo.inst.frameTime - this.epochThisYear) / 1000;
+        return Math.floor(a);
+    }
+
+    public generateInstanceId(): number
+    {
+        let time = this.TimeSinceThisYear();
+
+        if (time > this.lastInstanceIdTime)
+        {
+            this.lastInstanceIdTime = time;
+            this.instanceIdValue = 0;
+        }
+        else
+        {
+            ++this.instanceIdValue;
+            
+            if (this.instanceIdValue > 2097151) // 18bit
+            {
+                ++this.lastInstanceIdTime; // 借用下一秒
+                this.instanceIdValue = 0;
+
+                ctError(`instanceid count per sec overflow: ${time} ${this.lastInstanceIdTime}`);
             }
-        } else {
-            this.unitIdSequence = 0;
         }
-        this.unitIdLastTimestamp = timestamp;
-        return (timestamp << IdGenerater.TIMESTAMP_SHIFT) | (Options.inst.process << IdGenerater.NODE_ID_SHIFT) | this.unitIdSequence;
+
+        let instanceIdStruct = new InstanceIdStruct();
+        instanceIdStruct.initArgs3(this.lastInstanceIdTime, Options.inst.process, this.instanceIdValue)
+        
+        return instanceIdStruct.ToLong();
     }
 
-    private waitInstanceIdUntilNextMillis(): number {
-        let timestamp = Date.now() - IdGenerater.EPOCH;
-        while (timestamp <= this.instanceIdLastTimestamp) {
-            timestamp = Date.now() - IdGenerater.EPOCH;
-        }
-        return timestamp;
-    }
+    public generateId(): number
+    {
+        let time = this.TimeSince2020();
 
-    private waitUnitIdUntilNextMillis(): number {
-        let timestamp = Date.now() - IdGenerater.EPOCH;
-        while (timestamp <= this.unitIdLastTimestamp) {
-            timestamp = Date.now() - IdGenerater.EPOCH;
+        if (time > this.lastIdTime)
+        {
+            this.lastIdTime = time;
+            this.value = 0;
         }
-        return timestamp;
+        else
+        {
+            ++this.value;
+            
+            if (this.value > 2097151)
+            {
+                this.value = 0;
+                ++this.lastIdTime; // 借用下一秒
+                ctError(`id count per sec overflow: ${time} ${this.lastIdTime}`);
+            }
+        }
+        
+        let idStruct = new IdStruct();
+        idStruct.initArgs3(this.lastIdTime, Options.inst.process, this.value)
+        return idStruct.ToLong();
     }
 }

@@ -7,6 +7,7 @@ import { ctLog, Logger } from '../Core/Log/Logger';
 import { ObjectPool } from '../Core/ObjectPool/ObjectPool';
 import { Options } from '../Core/Options/Options';
 import { Game } from '../Core/Singleton/Game';
+import { TimeInfo } from '../Core/Time/TimeInfo';
 import { CocosLogger } from './CocosLogger';
 import { TAssets } from './TAsset/TAssets';
 import { WindowComponent } from './UI/WindowComponent';
@@ -20,6 +21,7 @@ export class Init extends Component {
         
         Game.addSingleton(Options)
         Game.addSingleton(Logger).iLog = new CocosLogger
+        Game.addSingleton(TimeInfo)
         Game.addSingleton(IdGenerater)
         Game.addSingleton(ObjectPool)
         Game.addSingleton(CoroutineLock)

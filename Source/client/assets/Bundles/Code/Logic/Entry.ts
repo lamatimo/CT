@@ -2,6 +2,7 @@
 import { Root } from "../../../Scripts/Core/Entity/Root"
 import { EventSystem } from "../../../Scripts/Core/EventSystem/EventSystem"
 import { Game } from "../../../Scripts/Core/Singleton/Game"
+import { TimeInfo } from "../../../Scripts/Core/Time/TimeInfo"
 import { EntryEvent } from "./Game/EventType/EventTypes"
 
 

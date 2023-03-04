@@ -1,4 +1,4 @@
-import { DecoratorCollector } from "../Decorator/DecoratorCollector";
+import { DecoratorCollector, DecoratorType } from "../Decorator/DecoratorCollector";
 import { Entity } from "../Entity/Entity";
 import { Root } from "../Entity/Root";
 import { Scene } from "../Entity/Scene";
@@ -32,15 +32,31 @@ export class EventSystem extends Singleton {
     }
 
     private initEvent() {
-        for (let [k, handlers] of DecoratorCollector.allEvent) {
-            let list = []
+        let argsList = DecoratorCollector.inst.get(DecoratorType.Event)
 
-            this.allEvent.set(k, list)
+        for (const args of argsList) {
+            let eventTypeCtor = args[0]
+            let handlerCtor = args[1]
 
-            for (let i = 0; i < handlers.length; i++) {
-                list.push(new handlers[i]())
+            let list = this.allEvent.get(eventTypeCtor)
+
+            if(!list){
+                list = new Array
+                this.allEvent.set(eventTypeCtor, list)
             }
+
+            list.push(new handlerCtor())
         }
+        
+        // for (let [k, handlers] of DecoratorCollector.allEvent) {
+        //     let list = []
+
+        //     this.allEvent.set(k, list)
+
+        //     for (let i = 0; i < handlers.length; i++) {
+        //         list.push(new handlers[i]())
+        //     }
+        // }
     }
 
     public registerSystem(component: Entity): void {

@@ -4,6 +4,9 @@
 
   /* Add your custom configuration here. */
   "compilerOptions": {
-    "strict": false
+    "target": "ES2020",
+    // "module": "ES2015",
+    "strict": false,
+    "allowSyntheticDefaultImports": true
   }
 }

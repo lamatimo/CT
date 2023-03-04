@@ -1,0 +1,60 @@
+syntax = "proto3";
+package CT;
+
+// MessageType: IMessage IRequest IResponse IActorMessage IActorRequest IActorResponse IActorLocationMessage IActorLocationRequest IActorLocationResponse
+
+message Message_TestInner666
+{
+}
+
+//Message_TestInner1的注释
+//MessageType IMessage
+message Message_TestInner1
+{
+}
+
+//Message_TestInner2的注释
+//MessageType IResponse
+message Message_TestInner2
+{
+}
+
+//Message_TestInner3的注释
+//MessageType IRequest
+//ResponseType Message_TestInner2
+message Message_TestInner3
+{
+}
+
+//MessageType IActorMessage
+message Message_TestInner4
+{
+}
+
+//这个消息的注释
+//MessageType IActorResponse
+message Message_TestInner5
+{
+}
+
+//MessageType IActorRequest
+//ResponseType Message_TestInner5
+message Message_TestInner6
+{
+}
+
+//MessageType IActorLocationMessage
+message Message_TestInner7
+{
+}
+
+//MessageType IActorLocationResponse
+message Message_TestInner8
+{
+}
+
+//MessageType IActorLocationRequest
+//ResponseType Message_TestInner8
+message Message_TestInner9
+{
+}

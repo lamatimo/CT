@@ -1,7 +1,7 @@
 import { IEventSystem } from "../EventSystem/EventSystem";
 import { IdGenerater } from "../IdGenerater/IdGenerater";
 import { ObjectPool } from "../ObjectPool/ObjectPool";
-import { IRoot} from "./Root";
+import { IRoot } from "./Root";
 
 enum EntityStatus {
     None = 0,
@@ -260,6 +260,14 @@ export abstract class Entity {
         }
     }
 
+    public addChildWithId<T extends Entity>(ctor: (new () => T), id: number, isFromPool: boolean = false): T {
+        let entity = this.addChildByCtor(ctor, isFromPool)
+
+        entity.id = id
+
+        return entity
+    }
+
     private addChildByEntity(entity: Entity): Entity {
         entity.parent = this;
         return entity;
@@ -365,6 +373,11 @@ export abstract class Entity {
         this.removeFromComponents(c);
 
         c.dispose();
+    }
+
+    public getParent<T extends Entity>(ctor: new () => T): T
+    {
+        return this.parent as T;
     }
 
     public getChild<T extends Entity>(ctor: new () => T, id: number): T {

@@ -1,20 +1,37 @@
-import { EventType } from "../EventSystem/EventType";
-
-type EventCtor = new () => EventType
+export enum DecoratorType {
+    Event,
+    Message,
+    MessageResponse,
+    MessageHandler,
+}
 
 export class DecoratorCollector {
-    public static allEvent: Map<EventCtor, Array<new () => any>> = new Map
-
-    public static addEvent(eventType: EventCtor, handler: new () => any) {
-        let handlers = this.allEvent.get(eventType)
-
-        if(!handlers){
-            handlers = new Array
-
-            this.allEvent.set(eventType, handlers)
+    private static _inst: DecoratorCollector
+    public static get inst(): DecoratorCollector {
+        if (DecoratorCollector._inst == null) {
+            DecoratorCollector._inst = new DecoratorCollector
         }
 
-        handlers.push(handler)
+        return DecoratorCollector._inst
+    }
+
+    private decorators: Map<DecoratorType, any> = new Map
+
+    public add(decoratorType: DecoratorType, ...args) {
+        let array = this.decorators.get(decoratorType)
+
+        if (!array) {
+            array = new Array
+            this.decorators.set(decoratorType, array)
+        }
+
+        array.push(args)
+    }
+
+    public get(decoratorType: DecoratorType): Array<any> {
+        let array = this.decorators.get(decoratorType)
+
+        return array
     }
 }
 

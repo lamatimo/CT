@@ -101,7 +101,6 @@
     "server",
     "client/assets/Scripts/Core",
     "client/assets/Bundles/Code/Logic",
-    "client/ct.d.ts",
   ],
 
   "ts-node": {

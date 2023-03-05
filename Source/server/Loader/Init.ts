@@ -4,12 +4,14 @@ import { IdGenerater } from "../../client/assets/Scripts/Core/IdGenerater/IdGene
 import { Logger } from "../../client/assets/Scripts/Core/Log/Logger"
 import { ObjectPool } from "../../client/assets/Scripts/Core/ObjectPool/ObjectPool"
 import { Game } from "../../client/assets/Scripts/Core/Singleton/Game"
+import { TimeInfo } from "../../client/assets/Scripts/Core/Time/TimeInfo"
 import { WinstonLogger } from "./WinstonLogger"
 
 
 export class Init {
     public static start() {
         Game.addSingleton(Logger).iLog = new WinstonLogger
+        Game.addSingleton(TimeInfo)
         Game.addSingleton(IdGenerater)
         Game.addSingleton(ObjectPool)
         Game.addSingleton(CoroutineLock)

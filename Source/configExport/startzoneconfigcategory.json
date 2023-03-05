@@ -1,0 +1,7 @@
+[
+  {
+    "Id": 1,
+    "MachineId": "mongodb://127.0.0.1",
+    "InnerPort": "CT1"
+  }
+]

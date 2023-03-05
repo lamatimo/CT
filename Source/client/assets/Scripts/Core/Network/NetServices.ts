@@ -1,11 +1,10 @@
-import { Long } from "protobufjs";
 import { DecoratorCollector, DecoratorType } from "../Decorator/DecoratorCollector";
 import { DoubleMap } from "../DoubleMap";
 import { Singleton } from "../Singleton/Singleton";
 import { AService } from "./AService";
 
 type AcceptCallback = (args0: number, args1: URL) => void
-type ReadCallback = (args0: number, args1: Long, args2: any) => void
+type ReadCallback = (args0: number, args1: number, args2: any) => void
 type ErrorCallback = (args0: number, args1: number) => void
 type Ctor = any
 
@@ -94,7 +93,7 @@ export class NetServices extends Singleton {
         cb(channelId, ipEndPoint)
     }
 
-    public OnRead(serviceId: number, channelId: number, actorId: Long, message: any) {
+    public OnRead(serviceId: number, channelId: number, actorId: number, message: any) {
         let cb = this.readCallback.get(serviceId)
 
         if (!cb) {

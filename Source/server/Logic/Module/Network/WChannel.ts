@@ -1,4 +1,5 @@
-import { Long, Reader } from "protobufjs";
+import pb from 'protobufjs';
+import Long from 'long';
 import { RawData, WebSocket, WebSocketServer } from "ws";
 import { ctLog } from "../../../../client/assets/Scripts/Core/Log/Logger";
 import { AChannel } from "../../../../client/assets/Scripts/Core/Network/AChannel";
@@ -6,11 +7,8 @@ import { NetServices } from "../../../../client/assets/Scripts/Core/Network/NetS
 import { ServiceType } from "../../../../client/assets/Scripts/Core/Network/ServiceType";
 import { WService } from "./WService";
 
-// type IWebSocket = CTWebSocket
-// type IWService = WService
-
 export class WChannel extends AChannel {
-    private static reader: Reader
+    private static reader: pb.Reader
     public sender: WebSocket
     private Service: WService;
 
@@ -18,7 +16,7 @@ export class WChannel extends AChannel {
         super()
 
         if (!WChannel.reader) {
-            WChannel.reader = new Reader(null)
+            WChannel.reader = new pb.Reader(null)
         }
     }
 
@@ -33,7 +31,7 @@ export class WChannel extends AChannel {
     private onMessage(data: Uint8Array, isBinary: boolean) {
         let channelId = this.Id;
         let message: any = null;
-        let actorId: Long;
+        let actorId: number;
 
         WChannel.reader.buf = data
 
@@ -50,7 +48,7 @@ export class WChannel extends AChannel {
                 }
             case ServiceType.Inner:
                 {
-                    actorId = WChannel.reader.int64()
+                    actorId = (WChannel.reader.int64() as Long).toNumber()
                     let opcode = WChannel.reader.uint32()
                     let ctor = NetServices.inst.GetType(opcode)
                     message = ctor.decode(WChannel.reader);
@@ -65,14 +63,13 @@ export class WChannel extends AChannel {
 
     }
 
-    private OnError(error: number)
-    {
+    private OnError(error: number) {
         ctLog(`WChannel OnError: ${error} ${this.RemoteAddress}`);
-        
+
         // long channelId = this.Id;
-        
+
         // this.Service.Remove(channelId);
-        
+
         // NetServices.Instance.OnError(this.Service.Id, channelId, error);
     }
     //     private Service: IWService;

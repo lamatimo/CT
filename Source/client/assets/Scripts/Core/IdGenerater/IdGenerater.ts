@@ -1,5 +1,5 @@
+import Long from 'long'
 import { ctError, ctLog, ctWarn } from "../Log/Logger";
-import { Long } from "../Network/Protobuf";
 import { Options } from "../Options/Options";
 import { Singleton } from "../Singleton/Singleton";
 import { TimeInfo } from "../Time/TimeInfo";

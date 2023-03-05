@@ -22,17 +22,15 @@ export class Init {
         let importContent = ''
 
         if (fileName == "OuterMessage") {
-            importContent += `import protobufjs from 'protobufjs';
+            importContent += `import pb from 'protobufjs';
 import { MessageDecorator } from '../../../../../../Scripts/Core/Network/MessageDecorator';
 import { ResponseTypeDecorator } from '../../../Module/Message/ResponseTypeDecorator';
-import { MessageType } from '../../../../../../Scripts/Core/Network/MessageType';
-const { Message, Field } = protobufjs;`
+import { MessageType } from '../../../../../../Scripts/Core/Network/MessageType';`
         } else {
-            importContent += `import protobufjs from 'protobufjs';
+            importContent += `import pb from 'protobufjs';
 import { ResponseTypeDecorator } from '../../../../../client/assets/Bundles/Code/Logic/Module/Message/ResponseTypeDecorator';
 import { MessageDecorator } from '../../../../../client/assets/Scripts/Core/Network/MessageDecorator';
-import { MessageType } from '../../../../../client/assets/Scripts/Core/Network/MessageType';
-const { Message, Field } = protobufjs;`
+import { MessageType } from '../../../../../client/assets/Scripts/Core/Network/MessageType';`
         }
 
         let content = importContent;
@@ -86,15 +84,15 @@ const { Message, Field } = protobufjs;`
         let offset = 0
 
         if (messageType == "IRequest" || messageType == "IActorRequest" || messageType == "IActorLocationRequest") {
-            messageTypeFields += `\n\t@Field.d(2, "int32", "required")`
+            messageTypeFields += `\n\t@pb.Field.d(2, "int32", "required")`
             messageTypeFields += `\n\tpublic RpcId: number`
             offset = 1
         } else if (messageType == "IResponse" || messageType == "IActorResponse" || messageType == "IActorLocationResponse") {
-            messageTypeFields += `\n\t@Field.d(2, "int32", "required")`
+            messageTypeFields += `\n\t@pb.Field.d(2, "int32", "required")`
             messageTypeFields += `\n\tpublic RpcId: number`
-            messageTypeFields += `\n\t@Field.d(3, "int32", "optional")`
+            messageTypeFields += `\n\t@pb.Field.d(3, "int32", "optional")`
             messageTypeFields += `\n\tpublic Error: number`
-            messageTypeFields += `\n\t@Field.d(4, "string", "optional")`
+            messageTypeFields += `\n\t@pb.Field.d(4, "string", "optional")`
             messageTypeFields += `\n\tpublic Message: string`
             offset = 3
         }
@@ -105,11 +103,11 @@ const { Message, Field } = protobufjs;`
             content += `@ResponseTypeDecorator(${responseType})\n`
         }
 
-        content += `export class ${obj.name} extends Message<${obj.name}> {\n`
+        content += `export class ${obj.name} extends pb.Message<${obj.name}> {\n`
 
         // 生成操作码
         content += `\tpublic messageType: MessageType`
-        content += `\n\t@Field.d(1, "uint32", "required")`
+        content += `\n\t@pb.Field.d(1, "uint32", "required")`
         content += `\n\tpublic readonly opcode = ${fileName}.${obj.name}`
         content += `${messageTypeFields}`
 
@@ -128,7 +126,7 @@ const { Message, Field } = protobufjs;`
     }
 
     private static getFieldStr(obj: any, offset: number): string {
-        let content = `@Field.d(${obj.id + 1 + offset}`
+        let content = `@pb.Field.d(${obj.id + 1 + offset}`
         let typeStr: string
 
         switch (obj.type.value) {

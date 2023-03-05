@@ -2,65 +2,53 @@ import { EntryEvent } from "../../../client/assets/Bundles/Code/Logic/Game/Event
 import { Scene } from "../../../client/assets/Scripts/Core/Entity/Scene";
 import { AEvent } from "../../../client/assets/Scripts/Core/EventSystem/AEvent";
 import { EventDecorator } from "../../../client/assets/Scripts/Core/EventSystem/EventDecorator";
+import { StartMachineConfig, Tables } from "./Generate/Config/Types";
+import { AppType, Options } from "../../../client/assets/Scripts/Core/Options/Options";
+import { SceneFactory } from "./Helper/SceneFactory";
+import { Root } from "../../../client/assets/Scripts/Core/Entity/Root";
+import { ServerSceneManagerComponent } from "../Module/Scene/ServerSceneManagerComponent";
+import { WatcherComponent } from "./Watcher/WatcherComponent";
 import { ctLog } from "../../../client/assets/Scripts/Core/Log/Logger";
-import { Message_TestInner8 } from "./Generate/Message/InnerMessage";
-import { networkInterfaces } from "os"
-import pb from 'protobufjs';
-import Long from 'long';
+import { DoubleMap } from "../../../client/assets/Scripts/Core/DoubleMap";
+import { MultiMap } from "../../../client/assets/Scripts/Core/MultiMap";
 
 
 @EventDecorator(EntryEvent)
 class EntryEvent_InitServer extends AEvent<EntryEvent>{
     protected async run(scene: Scene, args: EntryEvent) {
-        let ifaces = networkInterfaces()
-        for (var dev in ifaces) {
-            let iface = ifaces[dev]
+        Root.inst.scene.addComponent(ServerSceneManagerComponent);
 
-            for (let i = 0; i < iface.length; i++) {
-                let { family, address, internal } = iface[i]
+        ctLog(`启动进程=${Options.inst.process}`)
+        
+        let processConfig = Tables.StartProcessConfigCategory.get(Options.inst.process);
 
-                if (family === 'IPv4' && address !== '127.0.0.1' && !internal) {
-                    ctLog(address)
-                    break
+        switch (Options.inst.appType)
+        {
+            case AppType.Server:
+            {
+                // let netInnerComponent = Root.inst.scene.addComponent(NetInnerComponent)
+                // Root.inst.scene.addComponent<NetInnerComponent, IPEndPoint>(processConfig.InnerIPPort);
+
+                var processScenes = Tables.StartSceneConfigCategory.GetByProcess(Options.inst.process);
+
+                for (let startConfig of processScenes)
+                {
+                    await SceneFactory.CreateServerScene(ServerSceneManagerComponent.inst, startConfig.Id, startConfig.InstanceId, startConfig.Zone, startConfig.Name,
+                        startConfig.Type, startConfig);
                 }
+
+                break;
+            }
+            case AppType.Watcher:
+            {
+                // let startMachineConfig: StartMachineConfig = WatcherHelper.GetThisMachineConfig();
+                let watcherComponent = Root.inst.scene.addComponent(WatcherComponent);
+                watcherComponent.Start();
+                // Root.Instance.Scene.AddComponent<NetInnerComponent, IPEndPoint>(NetworkHelper.ToIPEndPoint($"{startMachineConfig.InnerIP}:{startMachineConfig.WatcherPort}"));
+                break;
             }
         }
 
 
-        let qa: Long = Long.fromInt(123465789)
-
-        let message = new Message_TestInner8()
-
-        message.RpcId = 1234
-        // let message = new MoveInfo({RpcId: 99, TurnSpeed: 123});
-        // message.Points = [];
-
-        // // message.Points.push(new Vector3({x: 11, y: 22, z: 33}))
-        // // message.Points.push(new Vector3({x: 66, y: 77, z: 88}))
-
-        let writer = pb.Writer.create()
-        let encodedMessage = Message_TestInner8.encode(message).finish()
-
-        writer.uint32(13456)
-        writer.bytes(encodedMessage)
-
-        let sendBuffer = writer.finish()
-        let reader: pb.Reader = new pb.Reader(sendBuffer)
-
-        reader.buf = sendBuffer
-        ctLog(reader.uint32())
-        reader.pos = 0
-        // writer.reset()
-        writer.uint32(999)
-        reader.buf = writer.finish()
-        ctLog(reader.uint32())
-        reader.pos = 0
-        reader.buf = sendBuffer
-
-        let decoded = Message_TestInner8.decode(reader);
-
-        ctLog(sendBuffer)
-        ctLog(decoded)
-        // ctLog(decoded.RpcId)
     }
 }

@@ -59,6 +59,12 @@ export {{if x.is_abstract_type}}abstract {{end}}class {{name}}{{if parent_def_ty
         {{ts_recursive_resolve field '_tables'}}
         {{~end~}}
         {{~end~}}
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
     }
 }
 

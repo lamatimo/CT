@@ -128,6 +128,12 @@ export class LevelInfoConfigCategory{
         for(var v of this._dataList) {
             v.resolve(_tables)
         }
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
     }
 
 }
@@ -167,6 +173,12 @@ export class LevelInfoConfig {
     readonly Desc: string
 
     resolve(_tables: Map<string, any>) {
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
     }
 }
 
@@ -195,6 +207,12 @@ export class ItemConfigCategory{
     resolve(_tables: Map<string, any>) {
         for(var v of this._dataList) {
             v.resolve(_tables)
+        }
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
         }
     }
 
@@ -261,6 +279,12 @@ export class ItemConfig {
     readonly exchangeList: string
 
     resolve(_tables: Map<string, any>) {
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
     }
 }
 
@@ -289,6 +313,12 @@ export class StartMachineConfigCategory{
     resolve(_tables: Map<string, any>) {
         for(var v of this._dataList) {
             v.resolve(_tables)
+        }
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
         }
     }
 
@@ -329,6 +359,12 @@ export class StartMachineConfig {
     readonly WatcherPort: string
 
     resolve(_tables: Map<string, any>) {
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
     }
 }
 
@@ -357,6 +393,12 @@ export class StartProcessConfigCategory{
     resolve(_tables: Map<string, any>) {
         for(var v of this._dataList) {
             v.resolve(_tables)
+        }
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
         }
     }
 
@@ -391,6 +433,12 @@ export class StartProcessConfig {
     readonly InnerPort: number
 
     resolve(_tables: Map<string, any>) {
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
     }
 }
 
@@ -419,6 +467,12 @@ export class StartSceneConfigCategory{
     resolve(_tables: Map<string, any>) {
         for(var v of this._dataList) {
             v.resolve(_tables)
+        }
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
         }
     }
 
@@ -471,6 +525,12 @@ export class StartSceneConfig {
     readonly OuterPort: number
 
     resolve(_tables: Map<string, any>) {
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
     }
 }
 
@@ -499,6 +559,12 @@ export class StartZoneConfigCategory{
     resolve(_tables: Map<string, any>) {
         for(var v of this._dataList) {
             v.resolve(_tables)
+        }
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
         }
     }
 
@@ -533,6 +599,12 @@ export class StartZoneConfig {
     readonly InnerPort: string
 
     resolve(_tables: Map<string, any>) {
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
     }
 }
 

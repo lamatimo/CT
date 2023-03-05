@@ -1,7 +1,13 @@
 [
   {
     "Id": 1,
-    "InnerIP": "127.0.0.1",
+    "InnerIP": "192.168.210.183",
+    "OuterIP": "127.0.0.1",
+    "WatcherPort": "10123"
+  },
+  {
+    "Id": 2,
+    "InnerIP": "10.0.16.10",
     "OuterIP": "127.0.0.1",
     "WatcherPort": "10123"
   }

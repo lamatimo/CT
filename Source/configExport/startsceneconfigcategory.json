@@ -46,5 +46,53 @@
     "SceneType": "Map",
     "Name": "Map2",
     "OuterPort": 0
+  },
+  {
+    "Id": 7,
+    "Process": 2,
+    "Zone": 1,
+    "SceneType": "Realm",
+    "Name": "Realm",
+    "OuterPort": 30002
+  },
+  {
+    "Id": 8,
+    "Process": 2,
+    "Zone": 1,
+    "SceneType": "Gate",
+    "Name": "Gate1",
+    "OuterPort": 30003
+  },
+  {
+    "Id": 9,
+    "Process": 2,
+    "Zone": 1,
+    "SceneType": "Gate",
+    "Name": "Gate2",
+    "OuterPort": 30004
+  },
+  {
+    "Id": 10,
+    "Process": 2,
+    "Zone": 1,
+    "SceneType": "Location",
+    "Name": "Location",
+    "OuterPort": 0
+  },
+  {
+    "Id": 11,
+    "Process": 2,
+    "Zone": 1,
+    "SceneType": "Map",
+    "Name": "Map1",
+    "OuterPort": 0
+  },
+  {
+    "Id": 12,
+    "Process": 2,
+    "Zone": 1,
+    "SceneType": "Map",
+    "Name": "Map2",
+    "OuterPort": 0
   }
 ]

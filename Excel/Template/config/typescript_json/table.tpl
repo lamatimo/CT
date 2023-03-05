@@ -35,6 +35,12 @@ export class {{name}}{
         for(var v of this._dataList) {
             v.resolve(_tables)
         }
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
     }
     {{~else if x.is_list_table ~}}
     private _dataList: {{ts_define_type value_type}}[]
@@ -55,6 +61,12 @@ export class {{name}}{
     resolve(_tables: Map<string, any>) {
         for(var v of this._dataList) {
             v.resolve(_tables)
+        }
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
         }
     }
 
@@ -79,6 +91,12 @@ export class {{name}}{
 
     resolve(_tables: Map<string, any>) {
         this._data.resolve(_tables)
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
     }
 
     {{end}}

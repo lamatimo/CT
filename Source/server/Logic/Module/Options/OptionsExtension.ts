@@ -1,40 +1,32 @@
-import { Options } from "../../../../client/assets/Scripts/Core/Options/Options";
+import mri from "mri";
+import { AppType, Options } from "../../../../client/assets/Scripts/Core/Options/Options";
 
 Options.prototype.awake = function () {
     let self: Options = this
 
-    process.argv.forEach((val, index) => {
-        let vals = val.toLowerCase().split("=")
-        let key = vals[0]
+    let args = mri(process.argv.slice(2))
 
-        if(key == '--apptype'){
-            let apptype = parseInt(vals[1])
+    for (const key in args) {
+        let value = args[key]
+        let keyL = key.toLowerCase()
 
-            self.appType = apptype
-
-            return
+        switch (keyL) {
+            case "apptype":
+                self.appType = AppType[value as string]
+                break;
+            case "loglevel":
+                self.logLevel = value
+                break;
+            case "develop":
+                self.develop = (value == "true")
+                break;
+            case "process":
+                self.process = value
+                break;
+            default:
+                break;
         }
+    }
 
-        if(key == '--loglevel'){
-            let loglevel = parseInt(vals[1])
-
-            self.logLevel = loglevel
-
-            return
-        }
-
-        if(key == '--develop'){
-            self.develop = vals[1] == "true"
-
-            return
-        }
-
-        if(key == '--process'){
-            let process = parseInt(vals[1])
-
-            self.process = process
-
-            return
-        }
-    });
+    console.log(self)
 }

@@ -12,7 +12,7 @@ export class Options extends Singleton {
         return this._inst as Options
     }
 
-    process: number = 0
+    process: number = 1
     logLevel: number = 2
     develop: boolean = true
     appType: AppType

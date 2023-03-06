@@ -261,11 +261,15 @@ export abstract class Entity {
     }
 
     public addChildWithId<T extends Entity>(ctor: (new () => T), id: number, isFromPool: boolean = false): T {
-        let entity = this.addChildByCtor(ctor, isFromPool)
+        let component = this.create(ctor, isFromPool);
+        component.id = id;
+        component.parent = this;
 
-        entity.id = id
+        if (component.awake) {
+            Entity.eventSystem.awakeComEvent(component);
+        }
 
-        return entity
+        return component as T;
     }
 
     private addChildByEntity(entity: Entity): Entity {
@@ -274,13 +278,9 @@ export abstract class Entity {
     }
 
     private addChildByCtor<T extends Entity>(ctor: new () => T, isFromPool: boolean = false): T {
-        if (this._components != null && this._components.has(ctor as EntityCtor)) {
-            throw new Error(`entity already has component: ${ctor.name}`);
-        }
-
         let component = this.create(ctor, isFromPool);
-        component.id = this.id;
-        component.componentParent = this;
+        component.id = IdGenerater.inst.generateId();
+        component.parent = this;
 
         if (component.awake) {
             Entity.eventSystem.awakeComEvent(component);

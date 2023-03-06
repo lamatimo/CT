@@ -1,6 +1,8 @@
 export class ErrorCore {
     public static readonly ERR_MyErrorCode = 110000;
 
+    public static readonly ERR_WChannelReadError = 100201;
+
     public static readonly ERR_KcpConnectTimeout = 100205;
     public static readonly ERR_KcpAcceptTimeout = 100206;
     public static readonly ERR_PeerDisconnect = 100208;

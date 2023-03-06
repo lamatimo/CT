@@ -5,6 +5,7 @@ import { Logger } from "../../client/assets/Scripts/Core/Log/Logger"
 import { ObjectPool } from "../../client/assets/Scripts/Core/ObjectPool/ObjectPool"
 import { Game } from "../../client/assets/Scripts/Core/Singleton/Game"
 import { TimeInfo } from "../../client/assets/Scripts/Core/Time/TimeInfo"
+import { TimerComponent } from "../../client/assets/Scripts/Core/Timer/TimerComponent"
 import { WinstonLogger } from "./WinstonLogger"
 
 
@@ -15,6 +16,7 @@ export class Init {
         Game.addSingleton(IdGenerater)
         Game.addSingleton(ObjectPool)
         Game.addSingleton(CoroutineLock)
+        Game.addSingleton(TimerComponent)
 
         Entry.start()
     }

@@ -2,6 +2,7 @@ import { Entity } from "../../../../client/assets/Scripts/Core/Entity/Entity";
 import { EntitySceneFactory } from "../../../../client/assets/Scripts/Core/Entity/EntitySceneFactory";
 import { Scene } from "../../../../client/assets/Scripts/Core/Entity/Scene";
 import { SceneType } from "../../../../client/assets/Scripts/Core/Entity/SceneType";
+import { NetServerComponent } from "../../Module/Message/NetServerComponent";
 import { StartSceneConfig } from "../Generate/Config/Types";
 
 export class SceneFactory {
@@ -12,10 +13,10 @@ export class SceneFactory {
 
         switch (scene.sceneType) {
             case SceneType.Realm:
-                // scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.InnerIPOutPort);
+                scene.addComponent(NetServerComponent).init(startSceneConfig.getOuterIPPort());
                 break;
             case SceneType.Gate:
-                // scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.InnerIPOutPort);
+                scene.addComponent(NetServerComponent).init(startSceneConfig.getOuterIPPort());
                 // scene.AddComponent<PlayerComponent>();
                 // scene.AddComponent<GateSessionKeyComponent>();
                 break;

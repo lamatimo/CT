@@ -1,6 +1,7 @@
 import { Entity } from "../../../../../Scripts/Core/Entity/Entity";
 import { ctError, ctLog } from "../../../../../Scripts/Core/Log/Logger";
 import { ErrorCore } from "../../../../../Scripts/Core/Network/ErrorCore";
+import { IPEndPoint } from "../../../../../Scripts/Core/Network/IPEndPoint";
 import { NetServices } from "../../../../../Scripts/Core/Network/NetServices";
 import { CancellationToken } from "../../../../../Scripts/Core/Task/CancellationToken";
 import { Task } from "../../../../../Scripts/Core/Task/Task";
@@ -26,7 +27,7 @@ export class Session extends Entity {
     LastRecvTime: number
     LastSendTime: number
     Error: number
-    RemoteAddress: URL
+    RemoteAddress: IPEndPoint
 
     init(serviceId: number) {
         this.ServiceId = serviceId;
@@ -103,8 +104,7 @@ export class Session extends Entity {
     //     return ret;
     // }
 
-    public async Call (request: IRequest): Promise<IResponse>
-    {
+    public async Call(request: IRequest): Promise<IResponse> {
         let rpcId = ++Session.RpcId;
         let rpcInfo = new RpcInfo(request);
 
@@ -125,7 +125,7 @@ export class Session extends Entity {
             ctError(this.Error, `"session dispose: ${this.id} ${this.RemoteAddress}`);
         }
 
-        ctLog(`session dispose: ${this.RemoteAddress} id: ${this.id} ErrorCode: ${this.Error}, please see ErrorCode.ts! ${TimeHelper.clientNow()}`);
+        ctLog(`session dispose: ${this.RemoteAddress.toString()} id: ${this.id} ErrorCode: ${this.Error}, please see ErrorCode.ts! ${TimeHelper.clientNow()}`);
 
         this.requestCallbacks.clear();
     }

@@ -1,3 +1,5 @@
+import { IPEndPoint } from "./IPEndPoint";
+
 export enum ChannelType {
     Connect,
     Accept,
@@ -10,7 +12,10 @@ export abstract class AChannel {
 
     public Error: number
 
-    public RemoteAddress: URL
+    /**
+     * 发送端的ip
+     */
+    public RemoteAddress: IPEndPoint
 
 
     public get IsDisposed(): boolean {

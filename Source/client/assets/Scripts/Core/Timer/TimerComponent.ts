@@ -34,12 +34,12 @@ export class TimerComponent extends Singleton {
         return timerId
     }
 
-    public NewOnceTimer(tillTime: number, callback: Function): number {
+    public NewOnceTimer(timeout: number, callback: Function): number {
 
         let timer = new Timer()
         let timerId = this.GetId()
 
-        timer.id = setInterval(callback, tillTime)
+        timer.id = setTimeout(callback, timeout)
         timer.type = TimerType.Once
 
         this.timerMap.set(timerId, timer)

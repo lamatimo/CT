@@ -11,6 +11,7 @@ import { WatcherComponent } from "./Watcher/WatcherComponent";
 import { ctLog } from "../../../client/assets/Scripts/Core/Log/Logger";
 import { DoubleMap } from "../../../client/assets/Scripts/Core/DoubleMap";
 import { MultiMap } from "../../../client/assets/Scripts/Core/MultiMap";
+import { NetInnerComponent } from "../Module/Message/NetInnerComponent";
 
 
 @EventDecorator(EntryEvent)
@@ -33,8 +34,7 @@ class EntryEvent_InitServer extends AEvent<EntryEvent>{
         {
             case AppType.Server:
             {
-                // let netInnerComponent = Root.inst.scene.addComponent(NetInnerComponent)
-                // Root.inst.scene.addComponent<NetInnerComponent, IPEndPoint>(processConfig.InnerIPPort);
+                Root.inst.scene.addComponent(NetInnerComponent).init(processConfig.getInnerIPPort());
 
                 var processScenes = Tables.StartSceneConfigCategory.GetByProcess(Options.inst.process);
 

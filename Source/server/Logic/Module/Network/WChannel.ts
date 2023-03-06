@@ -1,11 +1,14 @@
 import pb from 'protobufjs';
 import Long from 'long';
 import { RawData, WebSocket, WebSocketServer } from "ws";
-import { ctLog } from "../../../../client/assets/Scripts/Core/Log/Logger";
+import { ctError, ctLog } from "../../../../client/assets/Scripts/Core/Log/Logger";
 import { AChannel } from "../../../../client/assets/Scripts/Core/Network/AChannel";
 import { NetServices } from "../../../../client/assets/Scripts/Core/Network/NetServices";
 import { ServiceType } from "../../../../client/assets/Scripts/Core/Network/ServiceType";
 import { WService } from "./WService";
+import { IPEndPoint } from '../../../../client/assets/Scripts/Core/Network/IPEndPoint';
+import { IncomingMessage } from 'http';
+import { ErrorCore } from '../../../../client/assets/Scripts/Core/Network/ErrorCore';
 
 export class WChannel extends AChannel {
     private static reader: pb.Reader
@@ -16,61 +19,78 @@ export class WChannel extends AChannel {
         super()
 
         if (!WChannel.reader) {
-            WChannel.reader = new pb.Reader(null)
+            WChannel.reader = new pb.Reader(new Uint8Array)
         }
     }
 
-    initSender(socket: WebSocket, id: number, service: WService) {
+    initSender(socket: WebSocket, request: IncomingMessage, id: number, service: WService) {
+        ctLog(`发送端地址：${request.socket.remoteAddress},${request.socket.remotePort}`)
         this.sender = socket
         this.Id = id
         this.Service = service
-        this.RemoteAddress = new URL(socket.url)
+        this.RemoteAddress = new IPEndPoint(request.socket.remoteAddress, request.socket.remotePort)
         this.sender.on("message", this.onMessage.bind(this))
     }
 
     private onMessage(data: Uint8Array, isBinary: boolean) {
-        let channelId = this.Id;
-        let message: any = null;
-        let actorId: number;
+        try {
+            let channelId = this.Id;
+            let message: any = null;
+            let actorId: number;
 
-        WChannel.reader.buf = data
+            WChannel.reader.buf = data
 
-        switch (this.Service.ServiceType) {
-            case ServiceType.Outer:
-                {
-                    let opcode = WChannel.reader.uint32()
-                    WChannel.reader.pos = 0
+            switch (this.Service.ServiceType) {
+                case ServiceType.Outer:
+                    {
+                        let opcode = WChannel.reader.uint32()
+                        WChannel.reader.pos = 0
 
-                    let ctor = NetServices.inst.GetType(opcode)
+                        let ctor = NetServices.inst.GetType(opcode)
 
-                    message = ctor.decode(WChannel.reader);
-                    break;
-                }
-            case ServiceType.Inner:
-                {
-                    actorId = (WChannel.reader.int64() as Long).toNumber()
-                    let opcode = WChannel.reader.uint32()
-                    let ctor = NetServices.inst.GetType(opcode)
-                    message = ctor.decode(WChannel.reader);
-                    break;
-                }
+                        message = ctor.decode(WChannel.reader);
+                        break;
+                    }
+                case ServiceType.Inner:
+                    {
+                        actorId = (WChannel.reader.int64() as Long).toNumber()
+                        let opcode = WChannel.reader.uint32()
+                        let ctor = NetServices.inst.GetType(opcode)
+                        message = ctor.decode(WChannel.reader);
+                        break;
+                    }
+            }
+
+            NetServices.inst.OnRead(this.Service.Id, channelId, actorId, message);
+        } catch (error) {
+            ctError(`${this.RemoteAddress} ${data} ${error}`);
+            // 出现任何消息解析异常都要断开Session，防止客户端伪造消息
+            this.OnError(ErrorCore.ERR_WChannelReadError);
         }
 
-        NetServices.inst.OnRead(this.Service.Id, channelId, actorId, message);
     }
 
     public Dispose() {
+        if (this.IsDisposed) {
+            return;
+        }
 
+        ctLog(`channel dispose: ${this.Id} ${this.RemoteAddress.toString()} ${this.Error}`);
+
+        let id = this.Id;
+        this.Id = 0;
+        this.Service.Remove(id);
+        this.sender.close();
+        this.sender = null;
     }
 
     private OnError(error: number) {
         ctLog(`WChannel OnError: ${error} ${this.RemoteAddress}`);
 
-        // long channelId = this.Id;
+        let channelId = this.Id;
 
-        // this.Service.Remove(channelId);
-
-        // NetServices.Instance.OnError(this.Service.Id, channelId, error);
+        this.Service.Remove(channelId, error);
+        NetServices.inst.OnError(this.Service.Id, channelId, error);
     }
     //     private Service: IWService;
 

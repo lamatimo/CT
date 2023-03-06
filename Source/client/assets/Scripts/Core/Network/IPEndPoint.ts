@@ -1,9 +1,13 @@
-export class IPEndPoint{
-    public address: string
+export class IPEndPoint {
+    public host: string
     public port: number
 
-    constructor(address: string, port: number){
-        this.address = address
+    constructor(host: string, port: number) {
+        this.host = host
         this.port = port
+    }
+
+    public toString() {
+        return `${this.host}:${this.port}`
     }
 }

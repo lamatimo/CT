@@ -2,11 +2,17 @@ import { DecoratorCollector, DecoratorType } from "../Decorator/DecoratorCollect
 import { DoubleMap } from "../DoubleMap";
 import { Singleton } from "../Singleton/Singleton";
 import { AService } from "./AService";
+import { IPEndPoint } from "./IPEndPoint";
 
-type AcceptCallback = (args0: number, args1: URL) => void
+type AcceptCallback = (args0: number, args1: IPEndPoint) => void
 type ReadCallback = (args0: number, args1: number, args2: any) => void
 type ErrorCallback = (args0: number, args1: number) => void
 type Ctor = any
+
+export enum NetworkProtocol {
+    TCP,
+    Websocket,
+}
 
 export class NetServices extends Singleton {
     public static get inst(): NetServices {
@@ -22,7 +28,7 @@ export class NetServices extends Singleton {
     private readonly readCallback: Map<number, ReadCallback> = new Map;
     private readonly errorCallback: Map<number, ErrorCallback> = new Map;
 
-    awake(){
+    awake() {
         let list = DecoratorCollector.inst.get(DecoratorType.Message)
 
         for (const args of list) {
@@ -54,7 +60,7 @@ export class NetServices extends Singleton {
         this.Remove(serviceId);
     }
 
-    public CreateChannel(serviceId: number, channelId: number, address: URL): void {
+    public CreateChannel(serviceId: number, channelId: number, address: IPEndPoint): void {
         let service = this.Get(serviceId);
 
         if (service != null) {
@@ -83,7 +89,7 @@ export class NetServices extends Singleton {
         this.errorCallback.set(serviceId, action);
     }
 
-    public OnAccept(serviceId: number, channelId: number, ipEndPoint: URL) {
+    public OnAccept(serviceId: number, channelId: number, ipEndPoint: IPEndPoint) {
         let cb = this.acceptCallback.get(serviceId)
 
         if (!cb) {
@@ -137,8 +143,7 @@ export class NetServices extends Singleton {
         return this.typeOpcode.GetKeyByValue(opcode);
     }
 
-    public CreateAcceptChannelId(): number
-    {
+    public CreateAcceptChannelId(): number {
         return --this.acceptIdGenerator;
     }
 }

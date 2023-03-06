@@ -19,6 +19,13 @@ class EntryEvent_InitServer extends AEvent<EntryEvent>{
         Root.inst.scene.addComponent(ServerSceneManagerComponent);
 
         ctLog(`启动进程=${Options.inst.process}`)
+
+        // 测试服务端是否会挂进程
+        if(Options.inst.process == 2){
+            setInterval(()=>{
+                ctLog(`存活心跳=${AppType[Options.inst.appType]}`)
+            }, 1000 * 60)
+        }
         
         let processConfig = Tables.StartProcessConfigCategory.get(Options.inst.process);
 

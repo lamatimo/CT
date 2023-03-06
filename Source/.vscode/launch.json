@@ -11,8 +11,19 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "runtimeArgs": ["-r", "ts-node/register"],
-            "args": ["${workspaceFolder}/server/App/Program.ts", "--AppType=Server", "--process=1", "--develop=true", "--loglevel=2"]
+            "runtimeArgs": [
+                "--loader",
+                "ts-node/esm",
+                "--experimental-specifier-resolution=node",
+                "--no-warnings"
+            ],
+            "args": [
+                "${workspaceFolder}/server/App/Program.ts",
+                "--AppType=Server",
+                "--process=1",
+                "--develop=true",
+                "--loglevel=2"
+            ]
         }
     ]
 }

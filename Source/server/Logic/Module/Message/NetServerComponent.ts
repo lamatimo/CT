@@ -1,3 +1,4 @@
+import pb from "protobufjs";
 import { OpcodeHelper } from "../../../../client/assets/Bundles/Code/Logic/Module/Message/OpcodeHelper";
 import { Session } from "../../../../client/assets/Bundles/Code/Logic/Module/Message/Session";
 import { SessionAcceptTimeoutComponent } from "../../../../client/assets/Bundles/Code/Logic/Module/Message/SessionAcceptTimeoutComponent";
@@ -10,12 +11,12 @@ import { EventType } from "../../../../client/assets/Scripts/Core/EventSystem/Ev
 import { IPEndPoint } from "../../../../client/assets/Scripts/Core/Network/IPEndPoint";
 import { NetServices } from "../../../../client/assets/Scripts/Core/Network/NetServices";
 import { ServiceType } from "../../../../client/assets/Scripts/Core/Network/ServiceType";
+import { WService } from "../../../../client/assets/Scripts/Core/Network/WService";
 import { TimeHelper } from "../../../../client/assets/Scripts/Core/Time/TimeHelper";
-import { WService } from "../Network/WService";
 
 export class NetServerComponentOnRead extends EventType {
     public Session: Session;
-    public Message: any;
+    public Message: pb.Message;
 }
 
 export class NetServerComponent extends Entity {

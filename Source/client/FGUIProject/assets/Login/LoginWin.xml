@@ -4,8 +4,29 @@
     <image id="n0_t5v1" name="n0" src="t5v11" fileName="Image/square_1.png" pkg="t7f44vnh" xy="640,360" pivot="0.5,0.5" anchor="true" size="1280,720" color="#999999">
       <relation target="" sidePair="width-width,height-height"/>
     </image>
-    <text id="n1_t5v1" name="Title" xy="640,360" pivot="0.5,0.5" anchor="true" size="154,52" fontSize="38" color="#cccccc" text="登录界面">
-      <relation target="" sidePair="center-center,middle-middle"/>
+    <text id="n1_t5v1" name="Title" xy="640,50" pivot="0.5,0.5" anchor="true" size="154,51" fontSize="38" color="#cccccc" text="登录界面">
+      <relation target="" sidePair="center-center"/>
     </text>
+    <image id="n6_bv2j" name="n6" src="t5v11" fileName="Image/square_1.png" pkg="t7f44vnh" xy="502,242" size="308,54" color="#cccccc">
+      <relation target="" sidePair="center-center"/>
+    </image>
+    <image id="n7_bv2j" name="n7" src="t5v11" fileName="Image/square_1.png" pkg="t7f44vnh" xy="501,347" size="308,54" color="#cccccc">
+      <relation target="" sidePair="center-center"/>
+    </image>
+    <text id="n2_bv2j" name="Account" xy="510,246" size="292,47" fontSize="28" vAlign="middle" autoSize="none" text="" input="true" prompt="账号">
+      <relation target="" sidePair="center-center"/>
+    </text>
+    <text id="n3_bv2j" name="Title1" xy="405,269" pivot="0.5,0.5" anchor="true" size="79,51" fontSize="38" color="#cccccc" text="账号">
+      <relation target="" sidePair="center-center"/>
+    </text>
+    <text id="n4_bv2j" name="Title2" xy="407,381" pivot="0.5,0.5" anchor="true" size="79,51" fontSize="38" color="#cccccc" text="密码">
+      <relation target="" sidePair="center-center"/>
+    </text>
+    <text id="n5_bv2j" name="password" xy="510,352" size="292,47" fontSize="28" vAlign="middle" autoSize="none" text="" input="true" prompt="密码">
+      <relation target="" sidePair="center-center"/>
+    </text>
+    <component id="n8_bv2j" name="LoginBtn" src="bv2j5" fileName="LoginBtn.xml" xy="590,490">
+      <relation target="" sidePair="center-center"/>
+    </component>
   </displayList>
 </component>

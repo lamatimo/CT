@@ -1,4 +1,4 @@
-import { GComponent, GTextField, UIPackage } from "fairygui-cc";
+import { GComponent, GTextField, UIPackage, GButton, GTextInput } from "fairygui-cc";
 
 export default class $className extends $superClassName {
 	public static URL:string = $urlValue;

@@ -51,3 +51,19 @@ message Message_TestOuter8
 message Message_TestOuter9
 {
 }
+
+//MessageType IResponse
+message R2C_Login
+{
+	string Address = 1;
+	int64 Key = 2;
+	int64 GateId = 3;
+}
+
+//MessageType IRequest
+//ResponseType R2C_Login
+message C2R_Login
+{
+	string  Account = 2;  // 帐号
+	string  Password = 3;  // 密码
+}

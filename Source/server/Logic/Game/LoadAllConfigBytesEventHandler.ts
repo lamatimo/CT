@@ -4,8 +4,9 @@ import { AEvent } from "../../../client/assets/Scripts/Core/EventSystem/AEvent";
 import { EventDecorator } from "../../../client/assets/Scripts/Core/EventSystem/EventDecorator";
 import { Tables } from "./Generate/Config/Types";
 import * as fs from 'fs'
+import { SceneType } from "../../../client/assets/Scripts/Core/Entity/SceneType";
 
-@EventDecorator(LoadAllConfigBytes)
+@EventDecorator(LoadAllConfigBytes, SceneType.Process)
 class LoadAllConfigBytesEventHandler extends AEvent<LoadAllConfigBytes>{
     protected async run(scene: Scene, args: LoadAllConfigBytes) {
         await Tables.init((resNameList: string[])=>{

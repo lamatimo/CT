@@ -9,7 +9,7 @@
   "compressPNG": false,
   "codeGeneration": {
     "allowGenCode": true,
-    "codePath": "E:\\Project\\creator\\CT\\Client\\assets\\Bundles\\Code\\View\\Game\\UI\\Generate",
+    "codePath": "E:\\Project\\creator\\CT\\Source\\Client\\assets\\Bundles\\Code\\View\\Game\\UI\\Generate",
     "classNamePrefix": "",
     "memberNamePrefix": "",
     "packageName": null,

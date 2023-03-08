@@ -2,12 +2,14 @@ import { _decorator, Component, assetManager, Prefab, SpriteFrame, ImageAsset, i
 import { GRoot } from 'fairygui-cc';
 import { Entry } from '../../Bundles/Code/Logic/Entry';
 import { CoroutineLock } from '../Core/CoroutineLock/CoroutineLock';
+import { CtorCollector } from '../Core/Ctor/CtorCollector';
 import { IdGenerater } from '../Core/IdGenerater/IdGenerater';
 import { ctLog, Logger } from '../Core/Log/Logger';
 import { ObjectPool } from '../Core/ObjectPool/ObjectPool';
 import { Options } from '../Core/Options/Options';
 import { Game } from '../Core/Singleton/Game';
 import { TimeInfo } from '../Core/Time/TimeInfo';
+import { TimerComponent } from '../Core/Timer/TimerComponent';
 import { CocosLogger } from './CocosLogger';
 import { TAssets } from './TAsset/TAssets';
 import { WindowComponent } from './UI/WindowComponent';
@@ -27,11 +29,17 @@ export class Init extends Component {
         Game.addSingleton(CoroutineLock)
         Game.addSingleton(TAssets)
         Game.addSingleton(WindowComponent)
+        Game.addSingleton(TimerComponent)
 
         // 初始化fgui
         GRoot.create(this.node.getChildByName("UI"))
 
+        this.injection()
         this.loadAsync()
+    }
+
+    private injection(){
+        CtorCollector.IWebSocketCtor = WebSocket
     }
 
     private async loadAsync() {

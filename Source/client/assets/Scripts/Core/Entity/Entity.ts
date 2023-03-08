@@ -251,6 +251,7 @@ export abstract class Entity {
     }
 
     public addChild(entity: Entity): Entity;
+    public addChild<T extends Entity>(ctor: new () => T): T;
     public addChild<T extends Entity>(ctor: new () => T, isFromPool: boolean): T;
     public addChild<T extends Entity>(entityOrCtor: (new () => T) | Entity, isFromPool?: boolean): Entity | T {
         if (entityOrCtor instanceof Entity) {

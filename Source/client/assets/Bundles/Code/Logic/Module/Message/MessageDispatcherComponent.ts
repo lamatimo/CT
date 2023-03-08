@@ -5,14 +5,18 @@ import { ctError } from "../../../../../Scripts/Core/Log/Logger";
 import { NetServices } from "../../../../../Scripts/Core/Network/NetServices";
 import { IMHandler } from "./IMHandler";
 import { Session } from "./Session";
+import pb from 'protobufjs'
+import { IResponse } from "./IMessage";
 
 export class MessageDispatcherInfo {
     public SceneType: SceneType
     public IMHandler: IMHandler
+    public responseCtor: IResponse
 
-    public constructor(sceneType: SceneType, imHandler: IMHandler) {
+    public constructor(sceneType: SceneType, imHandler: IMHandler, responseCtor: IResponse) {
         this.SceneType = sceneType;
         this.IMHandler = imHandler;
+        this.responseCtor = responseCtor
     }
 }
 
@@ -46,14 +50,15 @@ export class MessageDispatcherComponent extends Entity {
             let msgHandlerCtor = args[0]
             let msgCtor = args[1]
             let sceneType: SceneType = args[2]
+            let responseCtor = args[3]
             let handler = new msgHandlerCtor()
-            let messageDispatcherInfo: MessageDispatcherInfo = new MessageDispatcherInfo(sceneType, handler)
+            let messageDispatcherInfo: MessageDispatcherInfo = new MessageDispatcherInfo(sceneType, handler, responseCtor)
 
             this.RegisterHandler(msgCtor, messageDispatcherInfo)
         }
     }
 
-    public Handle(session: Session, message: any): void {
+    public Handle(session: Session, message: pb.Message): void {
         let actions = this.Handlers.get(message.constructor)
 
         if (!actions) {
@@ -69,7 +74,7 @@ export class MessageDispatcherComponent extends Entity {
                 continue
             }
 
-            messageDispatcherInfo.IMHandler.Handle(session, message)
+            messageDispatcherInfo.IMHandler.Handle(session, message, messageDispatcherInfo.responseCtor)
         }
     }
 }

@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/*.meta": true,
+			"client/library": true,
+			"client/temp": true,
+			"dist": true,
+			"logs": true
+		}
+	}
+}

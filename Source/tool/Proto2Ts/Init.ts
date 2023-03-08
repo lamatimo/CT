@@ -109,7 +109,7 @@ import { MessageType } from '../../../../../client/assets/Scripts/Core/Network/M
         content += `\tpublic messageType: MessageType`
         content += `\n\t@pb.Field.d(1, "uint32", "required")`
         content += `\n\tpublic readonly opcode = ${fileName}.${obj.name}`
-        content += `${messageTypeFields}`
+        content += `${messageTypeFields}\n`
 
         let fields = obj.fields
 

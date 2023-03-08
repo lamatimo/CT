@@ -6,9 +6,9 @@ import { EventType } from "../../../../client/assets/Scripts/Core/EventSystem/Ev
 import { IPEndPoint } from "../../../../client/assets/Scripts/Core/Network/IPEndPoint";
 import { NetServices, NetworkProtocol } from "../../../../client/assets/Scripts/Core/Network/NetServices";
 import { ServiceType } from "../../../../client/assets/Scripts/Core/Network/ServiceType";
+import { WService } from "../../../../client/assets/Scripts/Core/Network/WService";
 import { TimeHelper } from "../../../../client/assets/Scripts/Core/Time/TimeHelper";
 import { Tables } from "../../Game/Generate/Config/Types";
-import { WService } from "../Network/WService";
 
 export class NetInnerComponentOnRead extends EventType {
     public ActorId: number;

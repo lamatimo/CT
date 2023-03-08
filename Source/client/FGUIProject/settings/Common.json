@@ -19,6 +19,6 @@
   },
   "tipsRes": "",
   "buttonClickSound": "",
-  "pivot": "center_anchor",
+  "pivot": "default",
   "fileName": "Common"
 }

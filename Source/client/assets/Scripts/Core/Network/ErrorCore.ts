@@ -2,6 +2,9 @@ export class ErrorCore {
     public static readonly ERR_MyErrorCode = 110000;
 
     public static readonly ERR_WChannelReadError = 100201;
+    public static readonly ERR_SendMessageNotFoundWChannel = 100202;
+    public static readonly ERR_RpcFail = 110307;
+    
 
     public static readonly ERR_KcpConnectTimeout = 100205;
     public static readonly ERR_KcpAcceptTimeout = 100206;
@@ -10,7 +13,6 @@ export class ErrorCore {
     public static readonly ERR_SocketError = 100210;
     public static readonly ERR_KcpWaitSendSizeTooLarge = 100211;
     public static readonly ERR_KcpCreateError = 100212;
-    public static readonly ERR_SendMessageNotFoundTChannel = 100213;
     public static readonly ERR_TChannelRecvError = 100214;
     public static readonly ERR_MessageSocketParserError = 100215;
     public static readonly ERR_KcpNotFoundChannel = 100216;
@@ -30,7 +32,6 @@ export class ErrorCore {
     public static readonly ERR_KcpRemoteDisconnect = 110207;
     public static readonly ERR_WebsocketError = 110303;
     public static readonly ERR_WebsocketConnectError = 110304;
-    public static readonly ERR_RpcFail = 110307;
     public static readonly ERR_ReloadFail = 110308;
     public static readonly ERR_ConnectGateKeyError = 110309;
     public static readonly ERR_SessionSendOrRecvTimeout = 110311;

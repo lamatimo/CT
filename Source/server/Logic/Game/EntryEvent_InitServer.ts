@@ -12,9 +12,12 @@ import { ctLog } from "../../../client/assets/Scripts/Core/Log/Logger";
 import { DoubleMap } from "../../../client/assets/Scripts/Core/DoubleMap";
 import { MultiMap } from "../../../client/assets/Scripts/Core/MultiMap";
 import { NetInnerComponent } from "../Module/Message/NetInnerComponent";
+import { SceneType } from "../../../client/assets/Scripts/Core/Entity/SceneType";
+import { LoginHelper } from "../../../client/assets/Bundles/Code/Logic/Game/Login/LoginHelper";
+import { createInterface } from 'readline'
 
 
-@EventDecorator(EntryEvent)
+@EventDecorator(EntryEvent, SceneType.Process)
 class EntryEvent_InitServer extends AEvent<EntryEvent>{
     protected async run(scene: Scene, args: EntryEvent) {
         Root.inst.scene.addComponent(ServerSceneManagerComponent);
@@ -22,38 +25,59 @@ class EntryEvent_InitServer extends AEvent<EntryEvent>{
         ctLog(`启动进程=${Options.inst.process}`)
 
         // 测试服务端是否会挂进程
-        if(Options.inst.process == 2){
-            setInterval(()=>{
+        if (Options.inst.process == 2) {
+            setInterval(() => {
                 ctLog(`存活心跳=${AppType[Options.inst.appType]}`)
             }, 1000 * 60)
         }
-        
+
+        setTimeout(() => {
+            ctLog("显示命令行")
+            const rl = createInterface({
+                input: process.stdin,
+                output: process.stdout
+            });
+
+            // ask user for the anme input
+            rl.question(`What's your name? `, (name) => {
+
+                // ask for nationality
+                rl.question(`What are you from? `, (country) => {
+
+                    // log user details
+                    console.log(`${name} is from ${country}`);
+
+                    // close the stream
+                    rl.close();
+                });
+
+            });
+        }, 3000);
+
         let processConfig = Tables.StartProcessConfigCategory.get(Options.inst.process);
 
-        switch (Options.inst.appType)
-        {
+        switch (Options.inst.appType) {
             case AppType.Server:
-            {
-                Root.inst.scene.addComponent(NetInnerComponent).init(processConfig.getInnerIPPort());
-
-                var processScenes = Tables.StartSceneConfigCategory.GetByProcess(Options.inst.process);
-
-                for (let startConfig of processScenes)
                 {
-                    await SceneFactory.CreateServerScene(ServerSceneManagerComponent.inst, startConfig.Id, startConfig.InstanceId, startConfig.Zone, startConfig.Name,
-                        startConfig.Type, startConfig);
-                }
+                    Root.inst.scene.addComponent(NetInnerComponent).init(processConfig.getInnerIPPort());
 
-                break;
-            }
+                    var processScenes = Tables.StartSceneConfigCategory.GetByProcess(Options.inst.process);
+
+                    for (let startConfig of processScenes) {
+                        await SceneFactory.CreateServerScene(ServerSceneManagerComponent.inst, startConfig.Id, startConfig.InstanceId, startConfig.Zone, startConfig.Name,
+                            startConfig.Type, startConfig);
+                    }
+
+                    break;
+                }
             case AppType.Watcher:
-            {
-                // let startMachineConfig: StartMachineConfig = WatcherHelper.GetThisMachineConfig();
-                let watcherComponent = Root.inst.scene.addComponent(WatcherComponent);
-                watcherComponent.Start();
-                // Root.Instance.Scene.AddComponent<NetInnerComponent, IPEndPoint>(NetworkHelper.ToIPEndPoint($"{startMachineConfig.InnerIP}:{startMachineConfig.WatcherPort}"));
-                break;
-            }
+                {
+                    // let startMachineConfig: StartMachineConfig = WatcherHelper.GetThisMachineConfig();
+                    let watcherComponent = Root.inst.scene.addComponent(WatcherComponent);
+                    watcherComponent.Start();
+                    // Root.Instance.Scene.AddComponent<NetInnerComponent, IPEndPoint>(NetworkHelper.ToIPEndPoint($"{startMachineConfig.InnerIP}:{startMachineConfig.WatcherPort}"));
+                    break;
+                }
         }
 
 

@@ -2,15 +2,27 @@ import { DecoratorCollector, DecoratorType } from "../Decorator/DecoratorCollect
 import { Entity } from "../Entity/Entity";
 import { Root } from "../Entity/Root";
 import { Scene } from "../Entity/Scene";
+import { SceneType } from "../Entity/SceneType";
 import { Singleton } from "../Singleton/Singleton";
 import { AEvent } from "./AEvent";
 import { EventType } from "./EventType";
 import { InstanceQueueIndex } from "./InstanceQueueIndex";
 
-export interface IEventSystem{
+export interface IEventSystem {
     registerSystem(component: Entity): void
     awakeComEvent(component: Entity): void
     destroyComEvent(component: Entity): void
+}
+
+class EventInfo {
+    public eventHandler: any
+
+    public sceneType: SceneType
+
+    constructor(handler: any, sceneType: SceneType) {
+        this.eventHandler = handler;
+        this.sceneType = sceneType;
+    }
 }
 
 export class EventSystem extends Singleton {
@@ -18,7 +30,7 @@ export class EventSystem extends Singleton {
         return this._inst as EventSystem
     }
 
-    private allEvent: Map<new () => EventType, Array<any>> = new Map
+    private allEvent: Map<new () => EventType, Array<EventInfo>> = new Map
     private readonly queues: Array<Array<number>> = new Array(InstanceQueueIndex.Max);
 
     awake(): void {
@@ -37,17 +49,18 @@ export class EventSystem extends Singleton {
         for (const args of argsList) {
             let eventTypeCtor = args[0]
             let handlerCtor = args[1]
+            let sceneType = args[2]
 
             let list = this.allEvent.get(eventTypeCtor)
 
-            if(!list){
+            if (!list) {
                 list = new Array
                 this.allEvent.set(eventTypeCtor, list)
             }
 
-            list.push(new handlerCtor())
+            list.push(new EventInfo(new handlerCtor(), sceneType))
         }
-        
+
         // for (let [k, handlers] of DecoratorCollector.allEvent) {
         //     let list = []
 
@@ -80,7 +93,13 @@ export class EventSystem extends Singleton {
         let tasks = []
 
         for (let i = 0; i < list.length; i++) {
-            tasks.push((list[i] as AEvent<T>).handle(scene, eventType))
+            let eventInfo = list[i]
+
+            if (eventInfo.sceneType != scene.sceneType) {
+                continue
+            }
+
+            tasks.push((eventInfo.eventHandler as AEvent<T>).handle(scene, eventType))
         }
 
         await Promise.all(tasks)
@@ -100,19 +119,16 @@ export class EventSystem extends Singleton {
         let queue = this.queues[InstanceQueueIndex.Update];
         let count = queue.length;
 
-        while (count-- > 0)
-        {
+        while (count-- > 0) {
             let instanceId = queue.pop();
 
             let component = Root.inst.get(instanceId);
 
-            if (component == null)
-            {
+            if (component == null) {
                 continue;
             }
 
-            if (component.isDisposed)
-            {
+            if (component.isDisposed) {
                 continue;
             }
 
@@ -126,19 +142,16 @@ export class EventSystem extends Singleton {
         let queue = this.queues[InstanceQueueIndex.LateUpdate];
         let count = queue.length;
 
-        while (count-- > 0)
-        {
+        while (count-- > 0) {
             let instanceId = queue.pop();
 
             let component = Root.inst.get(instanceId);
 
-            if (component == null)
-            {
+            if (component == null) {
                 continue;
             }
 
-            if (component.isDisposed)
-            {
+            if (component.isDisposed) {
                 continue;
             }
 

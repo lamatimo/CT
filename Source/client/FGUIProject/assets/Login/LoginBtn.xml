@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="100,50" pivot="0.5,0.5" extention="Button">
+  <controller name="button" pages="0,up,1,down,2,over,3,selectedOver" selected="0"/>
+  <displayList>
+    <graph id="n5_bv2j" name="n5" xy="0,0" size="100,50" type="rect" corner="15"/>
+    <text id="n3_bv2j" name="title" xy="0,0" size="100,50" fontSize="28" align="center" vAlign="middle" autoSize="none" singleLine="true" text="登录">
+      <relation target="" sidePair="width-width,height-height"/>
+    </text>
+  </displayList>
+  <Button downEffect="scale" downEffectValue=".8"/>
+</component>

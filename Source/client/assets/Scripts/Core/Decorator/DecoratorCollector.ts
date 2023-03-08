@@ -3,6 +3,7 @@ export enum DecoratorType {
     Message,
     MessageResponse,
     MessageHandler,
+    ConsoleHandler,
 }
 
 export class DecoratorCollector {

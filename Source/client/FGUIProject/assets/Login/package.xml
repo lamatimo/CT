@@ -2,6 +2,7 @@
 <packageDescription id="t9puaifr">
   <resources>
     <component id="t5v13" name="LoginWin.xml" path="/" exported="true"/>
+    <component id="bv2j5" name="LoginBtn.xml" path="/"/>
   </resources>
-  <publish name="" path="E:\Project\creator\CT\Client\assets\Bundles\UI\Login" packageCount="2" genCode="true"/>
+  <publish name="" path="E:\Project\creator\CT\Source\Client\assets\Bundles\UI\Login" packageCount="2" genCode="true"/>
 </packageDescription>

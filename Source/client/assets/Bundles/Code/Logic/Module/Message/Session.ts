@@ -21,12 +21,12 @@ export class RpcInfo {
 }
 
 export class Session extends Entity {
-    static RpcId: number
+    static RpcId: number = 0
     ServiceId: number
     requestCallbacks: Map<number, RpcInfo> = new Map
     LastRecvTime: number
     LastSendTime: number
-    Error: number
+    Error: number = 0
     RemoteAddress: IPEndPoint
 
     init(serviceId: number) {

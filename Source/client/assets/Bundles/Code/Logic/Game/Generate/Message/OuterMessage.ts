@@ -14,6 +14,8 @@ export class OuterMessage {
 	public static readonly Message_TestOuter7 = 10008
 	public static readonly Message_TestOuter8 = 10009
 	public static readonly Message_TestOuter9 = 10010
+	public static readonly R2C_Login = 10011
+	public static readonly C2R_Login = 10012
 }
 
 
@@ -25,6 +27,7 @@ export class Message_TestOuter1 extends pb.Message<Message_TestOuter1> {
 	public messageType: MessageType
 	@pb.Field.d(1, "uint32", "required")
 	public readonly opcode = OuterMessage.Message_TestOuter1
+
 }
 
 /**
@@ -41,6 +44,7 @@ export class Message_TestOuter2 extends pb.Message<Message_TestOuter2> {
 	public Error: number
 	@pb.Field.d(4, "string", "optional")
 	public Message: string
+
 }
 
 /**
@@ -55,6 +59,7 @@ export class Message_TestOuter3 extends pb.Message<Message_TestOuter3> {
 	public readonly opcode = OuterMessage.Message_TestOuter3
 	@pb.Field.d(2, "int32", "required")
 	public RpcId: number
+
 }
 
 /**
@@ -65,6 +70,7 @@ export class Message_TestOuter4 extends pb.Message<Message_TestOuter4> {
 	public messageType: MessageType
 	@pb.Field.d(1, "uint32", "required")
 	public readonly opcode = OuterMessage.Message_TestOuter4
+
 }
 
 /**
@@ -82,6 +88,7 @@ export class Message_TestOuter5 extends pb.Message<Message_TestOuter5> {
 	public Error: number
 	@pb.Field.d(4, "string", "optional")
 	public Message: string
+
 }
 
 /**
@@ -96,6 +103,7 @@ export class Message_TestOuter6 extends pb.Message<Message_TestOuter6> {
 	public readonly opcode = OuterMessage.Message_TestOuter6
 	@pb.Field.d(2, "int32", "required")
 	public RpcId: number
+
 }
 
 /**
@@ -106,6 +114,7 @@ export class Message_TestOuter7 extends pb.Message<Message_TestOuter7> {
 	public messageType: MessageType
 	@pb.Field.d(1, "uint32", "required")
 	public readonly opcode = OuterMessage.Message_TestOuter7
+
 }
 
 /**
@@ -122,6 +131,7 @@ export class Message_TestOuter8 extends pb.Message<Message_TestOuter8> {
 	public Error: number
 	@pb.Field.d(4, "string", "optional")
 	public Message: string
+
 }
 
 /**
@@ -136,4 +146,47 @@ export class Message_TestOuter9 extends pb.Message<Message_TestOuter9> {
 	public readonly opcode = OuterMessage.Message_TestOuter9
 	@pb.Field.d(2, "int32", "required")
 	public RpcId: number
+
+}
+
+/**
+ * MessageType IResponse
+ */
+@MessageDecorator(OuterMessage.R2C_Login, MessageType.IResponse)
+export class R2C_Login extends pb.Message<R2C_Login> {
+	public messageType: MessageType
+	@pb.Field.d(1, "uint32", "required")
+	public readonly opcode = OuterMessage.R2C_Login
+	@pb.Field.d(2, "int32", "required")
+	public RpcId: number
+	@pb.Field.d(3, "int32", "optional")
+	public Error: number
+	@pb.Field.d(4, "string", "optional")
+	public Message: string
+	@pb.Field.d(5, "string", "optional")
+	public Address: string
+	@pb.Field.d(6, "int64", "optional")
+	public Key: number
+	@pb.Field.d(7, "int64", "optional")
+	public GateId: number
+
+}
+
+/**
+ * MessageType IRequest
+ * ResponseType R2C_Login
+ */
+@MessageDecorator(OuterMessage.C2R_Login, MessageType.IRequest)
+@ResponseTypeDecorator(R2C_Login)
+export class C2R_Login extends pb.Message<C2R_Login> {
+	public messageType: MessageType
+	@pb.Field.d(1, "uint32", "required")
+	public readonly opcode = OuterMessage.C2R_Login
+	@pb.Field.d(2, "int32", "required")
+	public RpcId: number
+	@pb.Field.d(4, "string", "optional")
+	public Account: string
+	@pb.Field.d(5, "string", "optional")
+	public Password: string
+
 }

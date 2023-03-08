@@ -168,4 +168,8 @@ export class MessageTypeComponent extends Entity{
 
         return false
     }
+
+    public getMessageType(opcode: number){
+        return this.messageTypeMap.get(opcode)
+    }
 }

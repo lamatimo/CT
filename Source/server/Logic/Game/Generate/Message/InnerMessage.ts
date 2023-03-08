@@ -23,6 +23,7 @@ export class Message_TestInner666 extends pb.Message<Message_TestInner666> {
 	public messageType: MessageType
 	@pb.Field.d(1, "uint32", "required")
 	public readonly opcode = InnerMessage.Message_TestInner666
+
 }
 
 /**
@@ -34,6 +35,7 @@ export class Message_TestInner1 extends pb.Message<Message_TestInner1> {
 	public messageType: MessageType
 	@pb.Field.d(1, "uint32", "required")
 	public readonly opcode = InnerMessage.Message_TestInner1
+
 }
 
 /**
@@ -51,6 +53,7 @@ export class Message_TestInner2 extends pb.Message<Message_TestInner2> {
 	public Error: number
 	@pb.Field.d(4, "string", "optional")
 	public Message: string
+
 }
 
 /**
@@ -66,6 +69,7 @@ export class Message_TestInner3 extends pb.Message<Message_TestInner3> {
 	public readonly opcode = InnerMessage.Message_TestInner3
 	@pb.Field.d(2, "int32", "required")
 	public RpcId: number
+
 }
 
 /**
@@ -76,6 +80,7 @@ export class Message_TestInner4 extends pb.Message<Message_TestInner4> {
 	public messageType: MessageType
 	@pb.Field.d(1, "uint32", "required")
 	public readonly opcode = InnerMessage.Message_TestInner4
+
 }
 
 /**
@@ -93,6 +98,7 @@ export class Message_TestInner5 extends pb.Message<Message_TestInner5> {
 	public Error: number
 	@pb.Field.d(4, "string", "optional")
 	public Message: string
+
 }
 
 /**
@@ -107,6 +113,7 @@ export class Message_TestInner6 extends pb.Message<Message_TestInner6> {
 	public readonly opcode = InnerMessage.Message_TestInner6
 	@pb.Field.d(2, "int32", "required")
 	public RpcId: number
+
 }
 
 /**
@@ -117,6 +124,7 @@ export class Message_TestInner7 extends pb.Message<Message_TestInner7> {
 	public messageType: MessageType
 	@pb.Field.d(1, "uint32", "required")
 	public readonly opcode = InnerMessage.Message_TestInner7
+
 }
 
 /**
@@ -133,6 +141,7 @@ export class Message_TestInner8 extends pb.Message<Message_TestInner8> {
 	public Error: number
 	@pb.Field.d(4, "string", "optional")
 	public Message: string
+
 }
 
 /**
@@ -147,4 +156,5 @@ export class Message_TestInner9 extends pb.Message<Message_TestInner9> {
 	public readonly opcode = InnerMessage.Message_TestInner9
 	@pb.Field.d(2, "int32", "required")
 	public RpcId: number
+
 }

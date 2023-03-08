@@ -3,23 +3,29 @@
 // import { ServiceType } from "./ServiceType";
 // import { WChannel } from "./WChannel";
 
-import { IncomingMessage } from "http";
-import { WebSocket, WebSocketServer } from "ws";
-import { ctLog } from "../../../../client/assets/Scripts/Core/Log/Logger";
-import { AService } from "../../../../client/assets/Scripts/Core/Network/AService";
-import { IPEndPoint } from "../../../../client/assets/Scripts/Core/Network/IPEndPoint";
-import { NetServices } from "../../../../client/assets/Scripts/Core/Network/NetServices";
-import { ServiceType } from "../../../../client/assets/Scripts/Core/Network/ServiceType";
+import { CtorCollector } from "../Ctor/CtorCollector";
+import { ctError, ctLog } from "../Log/Logger";
+import { AService } from "./AService";
+import { ErrorCore } from "./ErrorCore";
+import { IPEndPoint } from "./IPEndPoint";
+import { IWebSocketServer, IWebSocket } from "./IWebSocket";
+import { NetServices } from "./NetServices";
+import { ServiceType } from "./ServiceType";
 import { WChannel } from "./WChannel";
 
 export class WService extends AService {
-    acceptor: WebSocketServer
+    acceptor: IWebSocketServer
     private readonly idChannels: Map<number, WChannel> = new Map;
+
+
+    initSender(serviceType: ServiceType) {
+        this.ServiceType = serviceType
+    }
 
     initAcceptor(address: IPEndPoint, serviceType: ServiceType) {
         this.ServiceType = serviceType
 
-        this.acceptor = new WebSocketServer({ host: address.host, port: address.port })
+        this.acceptor = new CtorCollector.IWebSocketServerCtor({ host: address.host, port: address.port })
 
         ctLog(`启动新的ws: ${address.host}:${address.port}`)
 
@@ -27,11 +33,37 @@ export class WService extends AService {
     }
 
     public Send(channelId: number, actorId: number, message: any): void {
+        try
+        {
+            let aChannel = this.idChannels.get(channelId)
+            if (aChannel == null)
+            {
+                NetServices.inst.OnError(this.Id, channelId, ErrorCore.ERR_SendMessageNotFoundWChannel);
+                return;
+            }
 
+            aChannel.Send(actorId, message);
+        }
+        catch (e)
+        {
+            ctError(e);
+        }
+    }
+
+    private innerCreate(id: number, address: IPEndPoint) {
+        let channel = new WChannel();
+
+        channel.initByAddress(address, id, this)
+
+        this.idChannels.set(channel.Id, channel);
     }
 
     public Create(id: number, address: IPEndPoint): void {
+        if (this.idChannels.has(id)) {
+            return
+        }
 
+        this.innerCreate(id, address)
     }
 
     public Dispose(): void {
@@ -51,7 +83,7 @@ export class WService extends AService {
         channel.Dispose();
     }
 
-    private onConnection(socket: WebSocket, request: IncomingMessage) {
+    private onConnection(socket: IWebSocket, request: any) {
         let id = NetServices.inst.CreateAcceptChannelId();
         let channel = new WChannel();
 

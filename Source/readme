@@ -1,0 +1,17 @@
+向直接连接的服务器发送
+*客户端向直接连接的服务器发送不需要回应的消息用 IMessage 服务端处理用AMHandler
+*客户端向直接连接的服务器发送需要回应的消息用 IRequest 服务端处理用AMRpcHandler
+
+向unit发送
+*需要绑定unit才行(其实unit就是会移动的actor, 所以要用actorlocation消息)
+*客户端向unit发送不用回应的消息IActorLocationMessage  服务端处理用AMActorLocationHandler
+*客户端向unit发送需要回应的消息IActorLocationRequest  服务端处理用AMActorLocationRpcHandler
+
+服务端之间互相发、或者服务端发给客户端
+*不需要回应IActorMessage 处理AMHandler
+*需要回应IActorRequest 处理AMActorRpcHandler
+
+每个session都可以算actor
+ActorId	就是 Entity.InstanceId 会随着进程变化而改变
+
+Entity.id不会变化

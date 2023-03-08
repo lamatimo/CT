@@ -31,6 +31,6 @@ export class OpcodeHelper {
             return;
         }
 
-        ctLog("zone: {0} {1}", zone, message);
+        ctLog(`zone: ${zone} ${message}`);
     }
 }

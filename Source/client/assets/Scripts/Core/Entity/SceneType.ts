@@ -5,6 +5,7 @@ export enum SceneType{
     Gate = 2,
     Location = 3,
     Map = 4,
+    Robot = 5,
 
     Client = 31,
     Current = 34,

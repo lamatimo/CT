@@ -23,6 +23,7 @@
                 "--AppType=Server",
                 "--process=1",
                 "--develop=true",
+                "--console=true",
                 "--loglevel=2"
             ]
         }

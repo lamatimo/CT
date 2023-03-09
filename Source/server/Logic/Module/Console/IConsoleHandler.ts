@@ -1,3 +1,3 @@
 export interface IConsoleHandler {
-    Run(content: string);
+    Run(args: string[]);
 }

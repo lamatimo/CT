@@ -7,6 +7,7 @@ import { StartSceneConfig, StartSceneConfigCategory, Tables } from "./Types";
 declare module "./Types" {
     interface StartSceneConfigCategory {
         Realms: Array<StartSceneConfig>
+        Robots: Array<StartSceneConfig>
         Gates: MultiMap<number, StartSceneConfig>
         ProcessScenes: MultiMap<number, StartSceneConfig>
         LocationConfig: StartSceneConfig
@@ -36,6 +37,7 @@ StartSceneConfigCategory.prototype.afterEndInit = function () {
     let self: StartSceneConfigCategory = this;
 
     self.Realms = []
+    self.Robots = []
     self.ClientScenesByName = new Map
     self.ProcessScenes = new MultiMap
     self.Gates = new MultiMap
@@ -58,6 +60,9 @@ StartSceneConfigCategory.prototype.afterEndInit = function () {
                 break;
             case SceneType.Location:
                 self.LocationConfig = startSceneConfig;
+                break;
+            case SceneType.Robot:
+                self.Robots.push(startSceneConfig);
                 break;
         }
     }

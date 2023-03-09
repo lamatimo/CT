@@ -20,6 +20,9 @@ Options.prototype.awake = function () {
             case "develop":
                 self.develop = (value == "true")
                 break;
+            case "console":
+                self.console = (value == "true")
+                break;
             case "process":
                 self.process = value
                 break;

@@ -1,4 +1,7 @@
+import { createInterface, Interface as RLInterface } from "readline";
+import { DecoratorCollector, DecoratorType } from "../../../../client/assets/Scripts/Core/Decorator/DecoratorCollector";
 import { Entity } from "../../../../client/assets/Scripts/Core/Entity/Entity";
+import { Task } from "../../../../client/assets/Scripts/Core/Task/Task";
 import { IConsoleHandler } from "./IConsoleHandler";
 
 export class ConsoleMode {
@@ -8,29 +11,58 @@ export class ConsoleMode {
 
 export class ConsoleComponent extends Entity {
     public Handlers: Map<string, IConsoleHandler> = new Map()
+    private rlInterface: RLInterface
 
-    public Load()
-    {
-        // HashSet<Type> types = EventSystem.Instance.GetTypes(typeof (ConsoleHandlerAttribute));
+    awake(): void {
+        this.Load()
 
-        // foreach (Type type in types)
-        // {
-        //     object[] attrs = type.GetCustomAttributes(typeof(ConsoleHandlerAttribute), false);
-        //     if (attrs.Length == 0)
-        //     {
-        //         continue;
-        //     }
+        this.rlInterface = createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
 
-        //     ConsoleHandlerAttribute consoleHandlerAttribute = (ConsoleHandlerAttribute)attrs[0];
+        this.question()
+    }
 
-        //     object obj = Activator.CreateInstance(type);
+    destroy(): void {
+        this.rlInterface.close()
+    }
 
-        //     IConsoleHandler iConsoleHandler = obj as IConsoleHandler;
-        //     if (iConsoleHandler == null)
-        //     {
-        //         throw new Exception($"ConsoleHandler handler not inherit IConsoleHandler class: {obj.GetType().FullName}");
-        //     }
-        //     this.Handlers.Add(consoleHandlerAttribute.Mode, iConsoleHandler);
-        // }
+    private Load() {
+        let list = DecoratorCollector.inst.get(DecoratorType.ConsoleHandler)
+
+        for (const args of list) {
+            let handlerCtor = args[0]
+            let mode = args[1]
+            let handler: IConsoleHandler = new handlerCtor()
+
+            this.Handlers.set(mode, handler)
+        }
+    }
+
+    private async question() {
+        let task = Task.create(String)
+
+        this.rlInterface.question(`cmd>>`, (content) => {
+            task.setResult(content)
+        });
+
+        let cmd = await task
+        let args = cmd.split(' ')
+        let mode = args[0]
+
+        switch (mode) {
+            case 'exit':
+                return
+            default:
+                let handler = this.Handlers.get(mode)
+
+                if(handler){
+                    handler.Run(args)
+                }
+                break
+        }
+
+        this.question()
     }
 }

@@ -6,6 +6,7 @@ import { SceneType } from "../Entity/SceneType";
 import { Singleton } from "../Singleton/Singleton";
 import { AEvent } from "./AEvent";
 import { EventType } from "./EventType";
+import { AInvokeHandler } from "./IInvoke";
 import { InstanceQueueIndex } from "./InstanceQueueIndex";
 
 export interface IEventSystem {
@@ -30,7 +31,8 @@ export class EventSystem extends Singleton {
         return this._inst as EventSystem
     }
 
-    private allEvent: Map<new () => EventType, Array<EventInfo>> = new Map
+    private allEvents: Map<new () => EventType, Array<EventInfo>> = new Map
+    private allInvokes: Map<any, Map<number, any>> = new Map
     private readonly queues: Array<Array<number>> = new Array(InstanceQueueIndex.Max);
 
     awake(): void {
@@ -39,6 +41,7 @@ export class EventSystem extends Singleton {
         }
 
         this.initEvent()
+        this.initInvoke()
 
         Entity.eventSystem = this
     }
@@ -51,25 +54,35 @@ export class EventSystem extends Singleton {
             let handlerCtor = args[1]
             let sceneType = args[2]
 
-            let list = this.allEvent.get(eventTypeCtor)
+            let list = this.allEvents.get(eventTypeCtor)
 
             if (!list) {
                 list = new Array
-                this.allEvent.set(eventTypeCtor, list)
+                this.allEvents.set(eventTypeCtor, list)
             }
 
             list.push(new EventInfo(new handlerCtor(), sceneType))
         }
+    }
 
-        // for (let [k, handlers] of DecoratorCollector.allEvent) {
-        //     let list = []
+    private initInvoke() {
+        let argsList = DecoratorCollector.inst.get(DecoratorType.Invoke)
 
-        //     this.allEvent.set(k, list)
+        for (const args of argsList) {
+            let handlerCtor = args[0]
+            let invokeType = args[1]
+            let invokeArgsCtor = args[2]
+            let invokeHandler = new handlerCtor()
 
-        //     for (let i = 0; i < handlers.length; i++) {
-        //         list.push(new handlers[i]())
-        //     }
-        // }
+            let map = this.allInvokes.get(invokeArgsCtor)
+
+            if (!map) {
+                map = new Map
+                this.allInvokes.set(invokeArgsCtor, map)
+            }
+
+            map.set(invokeType, invokeHandler)
+        }
     }
 
     public registerSystem(component: Entity): void {
@@ -84,7 +97,7 @@ export class EventSystem extends Singleton {
 
 
     public async publishAsync<T extends EventType>(scene: Scene, eventType: T) {
-        let list = this.allEvent.get(eventType.constructor as new () => EventType)
+        let list = this.allEvents.get(eventType.constructor as new () => EventType)
 
         if (!list) {
             return
@@ -105,6 +118,54 @@ export class EventSystem extends Singleton {
         await Promise.all(tasks)
 
         eventType.dispose()
+    }
+
+    public Invoke<A>(args: A): void;
+    public Invoke<A, T>(retValCtor: new () => T, args: A): T;
+    public Invoke<A>(type: number, args: A): void;
+    public Invoke<A, T>(retValCtor: new () => T, type: number, args: A): T;
+    public Invoke(...args): any{
+        let invokeArgs: any;
+        let type: any;
+
+        if(args.length == 3){
+            invokeArgs = args[2]
+            type = args[1]
+        }else if(args.length == 2){
+            if(typeof args[0] == "number"){
+                type = args[0]
+            }else{
+                type = 0
+            }
+
+            invokeArgs = args[1]
+        }else if(args.length == 1){
+            type = 0
+            invokeArgs = args[0]
+        }
+
+        return this.innerInvoke(type, invokeArgs)
+    }
+
+    public innerInvoke<A, T>(type: number, args: A): T {
+        let invokeHandlers = this.allInvokes.get(args.constructor)
+
+        if (!invokeHandlers) {
+            throw new Error(`Invoke error: ${args.constructor.name}`);
+        }
+
+        let invokeHandler = invokeHandlers.get(type)
+
+        if (!invokeHandler) {
+            throw new Error(`Invoke error: ${args.constructor.name} ${type}`);
+        }
+
+        var aInvokeHandler = invokeHandler as AInvokeHandler<A, T>;
+        if (aInvokeHandler == null) {
+            throw new Error(`Invoke error, not AInvokeHandler: ${args.constructor.name} ${type}`);
+        }
+
+        return aInvokeHandler.Handle(args);
     }
 
     public awakeComEvent(component: Entity) {

@@ -1,5 +1,6 @@
 export enum DecoratorType {
     Event,
+    Invoke,
     Message,
     MessageResponse,
     MessageHandler,

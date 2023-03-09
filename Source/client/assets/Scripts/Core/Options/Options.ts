@@ -16,5 +16,9 @@ export class Options extends Singleton {
     process: number = 1
     logLevel: number = 2
     develop: boolean = true
+    /**
+     * 控制台命令行输入
+     */
+    console: boolean = false
     appType: AppType
 }

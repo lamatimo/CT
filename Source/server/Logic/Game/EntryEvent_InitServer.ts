@@ -15,6 +15,8 @@ import { NetInnerComponent } from "../Module/Message/NetInnerComponent";
 import { SceneType } from "../../../client/assets/Scripts/Core/Entity/SceneType";
 import { LoginHelper } from "../../../client/assets/Bundles/Code/Logic/Game/Login/LoginHelper";
 import { createInterface } from 'readline'
+import { ConsoleComponent } from "../Module/Console/ConsoleComponent";
+import { RobotCaseComponent } from "../Module/RobotCase/RobotCaseComponent";
 
 
 @EventDecorator(EntryEvent, SceneType.Process)
@@ -30,29 +32,6 @@ class EntryEvent_InitServer extends AEvent<EntryEvent>{
                 ctLog(`存活心跳=${AppType[Options.inst.appType]}`)
             }, 1000 * 60)
         }
-
-        setTimeout(() => {
-            ctLog("显示命令行")
-            const rl = createInterface({
-                input: process.stdin,
-                output: process.stdout
-            });
-
-            // ask user for the anme input
-            rl.question(`What's your name? `, (name) => {
-
-                // ask for nationality
-                rl.question(`What are you from? `, (country) => {
-
-                    // log user details
-                    console.log(`${name} is from ${country}`);
-
-                    // close the stream
-                    rl.close();
-                });
-
-            });
-        }, 3000);
 
         let processConfig = Tables.StartProcessConfigCategory.get(Options.inst.process);
 
@@ -81,5 +60,9 @@ class EntryEvent_InitServer extends AEvent<EntryEvent>{
         }
 
 
+        if (Options.inst.console) {
+            Root.inst.scene.addComponent(RobotCaseComponent)
+            Root.inst.scene.addComponent(ConsoleComponent)
+        }
     }
 }

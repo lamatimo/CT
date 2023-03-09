@@ -1,8 +1,7 @@
 import { DecoratorCollector, DecoratorType } from "../Decorator/DecoratorCollector"
-import { EventType } from "./EventType"
 
-export function InvokeDecorator(eventType: new () => EventType) {
+export function InvokeDecorator(invokeArgsCtor: new (...args) => any, type: number = 0) {
     return function (target: Function) {
-        DecoratorCollector.inst.add(DecoratorType.Event, eventType, target)
+        DecoratorCollector.inst.add(DecoratorType.Invoke, target, type, invokeArgsCtor)
     }
 }

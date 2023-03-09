@@ -76,6 +76,7 @@ export class WChannel extends AChannel {
 
             WChannel.reader.pos = 0
             WChannel.reader.buf = data
+            WChannel.reader.len = data.length
 
             switch (this.Service.ServiceType) {
                 case ServiceType.Outer:
@@ -138,7 +139,6 @@ export class WChannel extends AChannel {
         let opcode = NetServices.inst.GetOpcode(msgCtor)
 
         WChannel.writer.reset()
-
         WChannel.writer.uint32(opcode);
 
         switch (this.Service.ServiceType) {

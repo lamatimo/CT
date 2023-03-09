@@ -19,6 +19,9 @@ export class NetServerComponentOnRead extends EventType {
     public Message: pb.Message;
 }
 
+/**
+ * Gate Realm挂这个组件 处理外网来的消息
+ */
 export class NetServerComponent extends Entity {
     ServiceId: number
 

@@ -25,8 +25,8 @@ export class NetClientComponent extends Entity {
         service.initSender(ServiceType.Outer)
 
         this.ServiceId = NetServices.inst.AddService(service);
-        NetServices.inst.RegisterReadCallback(this.ServiceId, this.OnRead);
-        NetServices.inst.RegisterErrorCallback(this.ServiceId, this.OnError);
+        NetServices.inst.RegisterReadCallback(this.ServiceId, this.OnRead.bind(this));
+        NetServices.inst.RegisterErrorCallback(this.ServiceId, this.OnError.bind(this));
     }
 
     destroy(): void {

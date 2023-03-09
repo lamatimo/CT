@@ -9,19 +9,18 @@ import { Root } from "../../../client/assets/Scripts/Core/Entity/Root";
 import { ServerSceneManagerComponent } from "../Module/Scene/ServerSceneManagerComponent";
 import { WatcherComponent } from "./Watcher/WatcherComponent";
 import { ctLog } from "../../../client/assets/Scripts/Core/Log/Logger";
-import { DoubleMap } from "../../../client/assets/Scripts/Core/DoubleMap";
-import { MultiMap } from "../../../client/assets/Scripts/Core/MultiMap";
 import { NetInnerComponent } from "../Module/Message/NetInnerComponent";
 import { SceneType } from "../../../client/assets/Scripts/Core/Entity/SceneType";
-import { LoginHelper } from "../../../client/assets/Bundles/Code/Logic/Game/Login/LoginHelper";
-import { createInterface } from 'readline'
 import { ConsoleComponent } from "../Module/Console/ConsoleComponent";
 import { RobotCaseComponent } from "../Module/RobotCase/RobotCaseComponent";
-
+import { MessageTypeComponent } from "../../../client/assets/Scripts/Core/Network/MessageTypeComponent";
+import { MessageDispatcherComponent } from "../../../client/assets/Bundles/Code/Logic/Module/Message/MessageDispatcherComponent";
 
 @EventDecorator(EntryEvent, SceneType.Process)
 class EntryEvent_InitServer extends AEvent<EntryEvent>{
     protected async run(scene: Scene, args: EntryEvent) {
+        Root.inst.scene.addComponent(MessageTypeComponent);
+        Root.inst.scene.addComponent(MessageDispatcherComponent);
         Root.inst.scene.addComponent(ServerSceneManagerComponent);
 
         ctLog(`启动进程=${Options.inst.process}`)

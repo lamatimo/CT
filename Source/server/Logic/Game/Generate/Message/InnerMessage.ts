@@ -20,9 +20,12 @@ export class InnerMessage {
 
 @MessageDecorator(InnerMessage.Message_TestInner666, MessageType.IMessage)
 export class Message_TestInner666 extends pb.Message<Message_TestInner666> {
-	public messageType: MessageType
-	@pb.Field.d(1, "uint32", "required")
-	public readonly opcode = InnerMessage.Message_TestInner666
+
+	constructor(args?: pb.Properties<Message_TestInner666>){
+		super();
+		if(args){
+		}
+	}
 
 }
 
@@ -32,9 +35,12 @@ export class Message_TestInner666 extends pb.Message<Message_TestInner666> {
  */
 @MessageDecorator(InnerMessage.Message_TestInner1, MessageType.IMessage)
 export class Message_TestInner1 extends pb.Message<Message_TestInner1> {
-	public messageType: MessageType
-	@pb.Field.d(1, "uint32", "required")
-	public readonly opcode = InnerMessage.Message_TestInner1
+
+	constructor(args?: pb.Properties<Message_TestInner1>){
+		super();
+		if(args){
+		}
+	}
 
 }
 
@@ -44,15 +50,21 @@ export class Message_TestInner1 extends pb.Message<Message_TestInner1> {
  */
 @MessageDecorator(InnerMessage.Message_TestInner2, MessageType.IResponse)
 export class Message_TestInner2 extends pb.Message<Message_TestInner2> {
-	public messageType: MessageType
-	@pb.Field.d(1, "uint32", "required")
-	public readonly opcode = InnerMessage.Message_TestInner2
-	@pb.Field.d(2, "int32", "required")
+
+	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
-	@pb.Field.d(3, "int32", "optional")
+	@pb.Field.d(2, "int32", "optional")
 	public Error: number
-	@pb.Field.d(4, "string", "optional")
+	@pb.Field.d(3, "string", "optional")
 	public Message: string
+	constructor(args?: pb.Properties<Message_TestInner2>){
+		super();
+		if(args){
+			this.RpcId = args.RpcId
+			this.Error = args.Error
+			this.Message = args.Message
+		}
+	}
 
 }
 
@@ -64,11 +76,15 @@ export class Message_TestInner2 extends pb.Message<Message_TestInner2> {
 @MessageDecorator(InnerMessage.Message_TestInner3, MessageType.IRequest)
 @ResponseTypeDecorator(Message_TestInner2)
 export class Message_TestInner3 extends pb.Message<Message_TestInner3> {
-	public messageType: MessageType
-	@pb.Field.d(1, "uint32", "required")
-	public readonly opcode = InnerMessage.Message_TestInner3
-	@pb.Field.d(2, "int32", "required")
+
+	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
+	constructor(args?: pb.Properties<Message_TestInner3>){
+		super();
+		if(args){
+			this.RpcId = args.RpcId
+		}
+	}
 
 }
 
@@ -77,9 +93,12 @@ export class Message_TestInner3 extends pb.Message<Message_TestInner3> {
  */
 @MessageDecorator(InnerMessage.Message_TestInner4, MessageType.IActorMessage)
 export class Message_TestInner4 extends pb.Message<Message_TestInner4> {
-	public messageType: MessageType
-	@pb.Field.d(1, "uint32", "required")
-	public readonly opcode = InnerMessage.Message_TestInner4
+
+	constructor(args?: pb.Properties<Message_TestInner4>){
+		super();
+		if(args){
+		}
+	}
 
 }
 
@@ -89,15 +108,21 @@ export class Message_TestInner4 extends pb.Message<Message_TestInner4> {
  */
 @MessageDecorator(InnerMessage.Message_TestInner5, MessageType.IActorResponse)
 export class Message_TestInner5 extends pb.Message<Message_TestInner5> {
-	public messageType: MessageType
-	@pb.Field.d(1, "uint32", "required")
-	public readonly opcode = InnerMessage.Message_TestInner5
-	@pb.Field.d(2, "int32", "required")
+
+	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
-	@pb.Field.d(3, "int32", "optional")
+	@pb.Field.d(2, "int32", "optional")
 	public Error: number
-	@pb.Field.d(4, "string", "optional")
+	@pb.Field.d(3, "string", "optional")
 	public Message: string
+	constructor(args?: pb.Properties<Message_TestInner5>){
+		super();
+		if(args){
+			this.RpcId = args.RpcId
+			this.Error = args.Error
+			this.Message = args.Message
+		}
+	}
 
 }
 
@@ -108,11 +133,15 @@ export class Message_TestInner5 extends pb.Message<Message_TestInner5> {
 @MessageDecorator(InnerMessage.Message_TestInner6, MessageType.IActorRequest)
 @ResponseTypeDecorator(Message_TestInner5)
 export class Message_TestInner6 extends pb.Message<Message_TestInner6> {
-	public messageType: MessageType
-	@pb.Field.d(1, "uint32", "required")
-	public readonly opcode = InnerMessage.Message_TestInner6
-	@pb.Field.d(2, "int32", "required")
+
+	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
+	constructor(args?: pb.Properties<Message_TestInner6>){
+		super();
+		if(args){
+			this.RpcId = args.RpcId
+		}
+	}
 
 }
 
@@ -121,9 +150,12 @@ export class Message_TestInner6 extends pb.Message<Message_TestInner6> {
  */
 @MessageDecorator(InnerMessage.Message_TestInner7, MessageType.IActorLocationMessage)
 export class Message_TestInner7 extends pb.Message<Message_TestInner7> {
-	public messageType: MessageType
-	@pb.Field.d(1, "uint32", "required")
-	public readonly opcode = InnerMessage.Message_TestInner7
+
+	constructor(args?: pb.Properties<Message_TestInner7>){
+		super();
+		if(args){
+		}
+	}
 
 }
 
@@ -132,15 +164,21 @@ export class Message_TestInner7 extends pb.Message<Message_TestInner7> {
  */
 @MessageDecorator(InnerMessage.Message_TestInner8, MessageType.IActorLocationResponse)
 export class Message_TestInner8 extends pb.Message<Message_TestInner8> {
-	public messageType: MessageType
-	@pb.Field.d(1, "uint32", "required")
-	public readonly opcode = InnerMessage.Message_TestInner8
-	@pb.Field.d(2, "int32", "required")
+
+	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
-	@pb.Field.d(3, "int32", "optional")
+	@pb.Field.d(2, "int32", "optional")
 	public Error: number
-	@pb.Field.d(4, "string", "optional")
+	@pb.Field.d(3, "string", "optional")
 	public Message: string
+	constructor(args?: pb.Properties<Message_TestInner8>){
+		super();
+		if(args){
+			this.RpcId = args.RpcId
+			this.Error = args.Error
+			this.Message = args.Message
+		}
+	}
 
 }
 
@@ -151,10 +189,14 @@ export class Message_TestInner8 extends pb.Message<Message_TestInner8> {
 @MessageDecorator(InnerMessage.Message_TestInner9, MessageType.IActorLocationRequest)
 @ResponseTypeDecorator(Message_TestInner8)
 export class Message_TestInner9 extends pb.Message<Message_TestInner9> {
-	public messageType: MessageType
-	@pb.Field.d(1, "uint32", "required")
-	public readonly opcode = InnerMessage.Message_TestInner9
-	@pb.Field.d(2, "int32", "required")
+
+	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
+	constructor(args?: pb.Properties<Message_TestInner9>){
+		super();
+		if(args){
+			this.RpcId = args.RpcId
+		}
+	}
 
 }

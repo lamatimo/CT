@@ -64,6 +64,6 @@ message R2C_Login
 //ResponseType R2C_Login
 message C2R_Login
 {
-	string  Account = 2;  // 帐号
-	string  Password = 3;  // 密码
+	string  Account = 1;  // 帐号
+	string  Password = 2;  // 密码
 }

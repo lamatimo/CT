@@ -44,6 +44,7 @@ export class ConsoleComponent extends Entity {
         let task = Task.create(String)
 
         this.rlInterface.question(`cmd>>`, (content) => {
+            content = `RobotCase Run 1`
             task.setResult(content)
         });
 

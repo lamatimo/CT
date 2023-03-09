@@ -82,18 +82,25 @@ import { MessageType } from '../../../../../client/assets/Scripts/Core/Network/M
 
         let messageTypeFields = ""
         let offset = 0
+        let constructorText = `\tconstructor(args?: pb.Properties<${obj.name}>){\n`
+        constructorText += `\t\tsuper();\n`
+        constructorText += `\t\tif(args){\n`
 
         if (messageType == "IRequest" || messageType == "IActorRequest" || messageType == "IActorLocationRequest") {
-            messageTypeFields += `\n\t@pb.Field.d(2, "int32", "required")`
+            messageTypeFields += `\n\t@pb.Field.d(1, "int32", "required")`
             messageTypeFields += `\n\tpublic RpcId: number`
+            constructorText += `\t\t\tthis.RpcId = args.RpcId\n`
             offset = 1
         } else if (messageType == "IResponse" || messageType == "IActorResponse" || messageType == "IActorLocationResponse") {
-            messageTypeFields += `\n\t@pb.Field.d(2, "int32", "required")`
+            messageTypeFields += `\n\t@pb.Field.d(1, "int32", "required")`
             messageTypeFields += `\n\tpublic RpcId: number`
-            messageTypeFields += `\n\t@pb.Field.d(3, "int32", "optional")`
+            constructorText += `\t\t\tthis.RpcId = args.RpcId\n`
+            messageTypeFields += `\n\t@pb.Field.d(2, "int32", "optional")`
             messageTypeFields += `\n\tpublic Error: number`
-            messageTypeFields += `\n\t@pb.Field.d(4, "string", "optional")`
+            constructorText += `\t\t\tthis.Error = args.Error\n`
+            messageTypeFields += `\n\t@pb.Field.d(3, "string", "optional")`
             messageTypeFields += `\n\tpublic Message: string`
+            constructorText += `\t\t\tthis.Message = args.Message\n`
             offset = 3
         }
 
@@ -106,9 +113,9 @@ import { MessageType } from '../../../../../client/assets/Scripts/Core/Network/M
         content += `export class ${obj.name} extends pb.Message<${obj.name}> {\n`
 
         // 生成操作码
-        content += `\tpublic messageType: MessageType`
-        content += `\n\t@pb.Field.d(1, "uint32", "required")`
-        content += `\n\tpublic readonly opcode = ${fileName}.${obj.name}`
+        // content += `\tpublic messageType: MessageType`
+        // content += `\n\t@pb.Field.d(1, "uint32", "required")`
+        // content += `\n\tpublic readonly opcode = ${fileName}.${obj.name}`
         content += `${messageTypeFields}\n`
 
         let fields = obj.fields
@@ -118,15 +125,19 @@ import { MessageType } from '../../../../../client/assets/Scripts/Core/Network/M
 
             content += `\t${this.getFieldStr(element, offset)}\n`
             content += `\tpublic ${element.name}: ${this.getFieldTypeStr(element)}\n`
+            constructorText += `\t\t\tthis.${element.name} = args.${element.name}\n`
         }
 
+        constructorText += `\t\t}\n`
+        constructorText += `\t}\n`
+        content += constructorText
         content += `\n}`
 
         return content
     }
 
     private static getFieldStr(obj: any, offset: number): string {
-        let content = `@pb.Field.d(${obj.id + 1 + offset}`
+        let content = `@pb.Field.d(${obj.id + offset}`
         let typeStr: string
 
         switch (obj.type.value) {

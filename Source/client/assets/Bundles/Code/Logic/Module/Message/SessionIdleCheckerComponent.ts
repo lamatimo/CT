@@ -24,7 +24,7 @@ export class SessionIdleCheckerComponent extends Entity {
             return;
         }
 
-        ctLog(`session timeout: ${session.id} ${timeNow} ${session.LastRecvTime} ${session.LastSendTime} ${timeNow - session.LastRecvTime} ${timeNow - session.LastSendTime}`);
+        ctLog(`长时间不发消息 销毁session: ${session.id} ${timeNow} ${session.LastRecvTime} ${session.LastSendTime} ${timeNow - session.LastRecvTime} ${timeNow - session.LastSendTime}`);
         session.Error = ErrorCore.ERR_SessionSendOrRecvTimeout;
 
         session.dispose();

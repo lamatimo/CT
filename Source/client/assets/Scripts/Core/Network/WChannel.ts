@@ -71,30 +71,39 @@ export class WChannel extends AChannel {
     private onMessage(data: Uint8Array, isBinary: boolean) {
         try {
             let channelId = this.Id;
-            let message: any = null;
             let actorId: number = 0;
 
             WChannel.reader.pos = 0
             WChannel.reader.buf = data
             WChannel.reader.len = data.length
 
-            switch (this.Service.ServiceType) {
-                case ServiceType.Outer:
-                    {
-                        let opcode = WChannel.reader.uint32()
-                        let ctor = NetServices.inst.GetType(opcode)
+            let opcode = WChannel.reader.uint32()
+            let ctor = NetServices.inst.GetType(opcode)
+            let message = ctor.decode(WChannel.reader.bytes());
 
-                        message = ctor.decode(WChannel.reader);
-                        break;
-                    }
-                case ServiceType.Inner:
-                    {
-                        let opcode = WChannel.reader.uint32()
-                        actorId = (WChannel.reader.int64() as Long).toNumber()
-                        let ctor = NetServices.inst.GetType(opcode)
-                        message = ctor.decode(WChannel.reader);
-                        break;
-                    }
+            switch (this.Service.ServiceType) {
+                case ServiceType.Outer: {
+                    break;
+                }
+                case ServiceType.Inner: {
+                    actorId = (WChannel.reader.uint64() as Long).toNumber()
+                    break;
+                }
+            }
+
+            let keys = Object.keys(message)
+
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i];
+                const value = message[key];
+
+                if (!value) {
+                    continue;
+                }
+
+                if (value.constructor.name == 'Long') {
+                    message[key] = value.toNumber()
+                }
             }
 
             NetServices.inst.OnRead(this.Service.Id, channelId, actorId, message);
@@ -137,26 +146,23 @@ export class WChannel extends AChannel {
         let msgCtor = message.constructor
         let result: Uint8Array
         let opcode = NetServices.inst.GetOpcode(msgCtor)
+        let encodeMsg = (msgCtor as unknown as typeof pb.Message).encode(message).finish()
 
         WChannel.writer.reset()
         WChannel.writer.uint32(opcode);
+        WChannel.writer.bytes(encodeMsg)
 
         switch (this.Service.ServiceType) {
-            case ServiceType.Inner:
-                {
-                    WChannel.writer.uint64(actorId);
-                    (msgCtor as unknown as typeof pb.Message).encode(message, WChannel.writer);
-                    result = WChannel.writer.finish()
-
-                    break;
-                }
-            case ServiceType.Outer:
-                {
-                    (msgCtor as unknown as typeof pb.Message).encode(message, WChannel.writer);
-                    result = WChannel.writer.finish()
-                    break;
-                }
+            case ServiceType.Inner: {
+                WChannel.writer.uint64(actorId);
+                break;
+            }
+            case ServiceType.Outer: {
+                break;
+            }
         }
+
+        result = WChannel.writer.finish()
 
         if (this.isConnected) {
             this.sender.send(result)

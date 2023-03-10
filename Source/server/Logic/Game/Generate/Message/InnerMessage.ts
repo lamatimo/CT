@@ -15,6 +15,8 @@ export class InnerMessage {
 	public static readonly Message_TestInner7 = 20009
 	public static readonly Message_TestInner8 = 20010
 	public static readonly Message_TestInner9 = 20011
+	public static readonly G2R_GetLoginKey = 20012
+	public static readonly R2G_GetLoginKey = 20013
 }
 
 
@@ -53,7 +55,7 @@ export class Message_TestInner2 extends pb.Message<Message_TestInner2> {
 
 	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
-	@pb.Field.d(2, "int32", "optional")
+	@pb.Field.d(2, "int32", "required")
 	public Error: number
 	@pb.Field.d(3, "string", "optional")
 	public Message: string
@@ -111,7 +113,7 @@ export class Message_TestInner5 extends pb.Message<Message_TestInner5> {
 
 	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
-	@pb.Field.d(2, "int32", "optional")
+	@pb.Field.d(2, "int32", "required")
 	public Error: number
 	@pb.Field.d(3, "string", "optional")
 	public Message: string
@@ -167,7 +169,7 @@ export class Message_TestInner8 extends pb.Message<Message_TestInner8> {
 
 	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
-	@pb.Field.d(2, "int32", "optional")
+	@pb.Field.d(2, "int32", "required")
 	public Error: number
 	@pb.Field.d(3, "string", "optional")
 	public Message: string
@@ -196,6 +198,57 @@ export class Message_TestInner9 extends pb.Message<Message_TestInner9> {
 		super();
 		if(args){
 			this.RpcId = args.RpcId
+		}
+	}
+
+}
+
+/**
+ * MessageType IActorResponse
+ */
+@MessageDecorator(InnerMessage.G2R_GetLoginKey, MessageType.IActorResponse)
+export class G2R_GetLoginKey extends pb.Message<G2R_GetLoginKey> {
+
+	@pb.Field.d(1, "int32", "required")
+	public RpcId: number
+	@pb.Field.d(2, "int32", "required")
+	public Error: number
+	@pb.Field.d(3, "string", "optional")
+	public Message: string
+	@pb.Field.d(4, "int64", "optional")
+	public Key: number
+	@pb.Field.d(5, "int64", "optional")
+	public GateId: number
+	constructor(args?: pb.Properties<G2R_GetLoginKey>){
+		super();
+		if(args){
+			this.RpcId = args.RpcId
+			this.Error = args.Error
+			this.Message = args.Message
+			this.Key = args.Key
+			this.GateId = args.GateId
+		}
+	}
+
+}
+
+/**
+ * MessageType IActorRequest
+ * ResponseType G2R_GetLoginKey
+ */
+@MessageDecorator(InnerMessage.R2G_GetLoginKey, MessageType.IActorRequest)
+@ResponseTypeDecorator(G2R_GetLoginKey)
+export class R2G_GetLoginKey extends pb.Message<R2G_GetLoginKey> {
+
+	@pb.Field.d(1, "int32", "required")
+	public RpcId: number
+	@pb.Field.d(3, "string", "optional")
+	public Account: string
+	constructor(args?: pb.Properties<R2G_GetLoginKey>){
+		super();
+		if(args){
+			this.RpcId = args.RpcId
+			this.Account = args.Account
 		}
 	}
 

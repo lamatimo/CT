@@ -95,7 +95,7 @@ import { MessageType } from '../../../../../client/assets/Scripts/Core/Network/M
             messageTypeFields += `\n\t@pb.Field.d(1, "int32", "required")`
             messageTypeFields += `\n\tpublic RpcId: number`
             constructorText += `\t\t\tthis.RpcId = args.RpcId\n`
-            messageTypeFields += `\n\t@pb.Field.d(2, "int32", "optional")`
+            messageTypeFields += `\n\t@pb.Field.d(2, "int32", "required")`
             messageTypeFields += `\n\tpublic Error: number`
             constructorText += `\t\t\tthis.Error = args.Error\n`
             messageTypeFields += `\n\t@pb.Field.d(3, "string", "optional")`

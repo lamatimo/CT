@@ -16,6 +16,8 @@ export class OuterMessage {
 	public static readonly Message_TestOuter9 = 10010
 	public static readonly R2C_Login = 10011
 	public static readonly C2R_Login = 10012
+	public static readonly G2C_LoginGate = 10013
+	public static readonly C2G_LoginGate = 10014
 }
 
 
@@ -41,7 +43,7 @@ export class Message_TestOuter2 extends pb.Message<Message_TestOuter2> {
 
 	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
-	@pb.Field.d(2, "int32", "optional")
+	@pb.Field.d(2, "int32", "required")
 	public Error: number
 	@pb.Field.d(3, "string", "optional")
 	public Message: string
@@ -98,7 +100,7 @@ export class Message_TestOuter5 extends pb.Message<Message_TestOuter5> {
 
 	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
-	@pb.Field.d(2, "int32", "optional")
+	@pb.Field.d(2, "int32", "required")
 	public Error: number
 	@pb.Field.d(3, "string", "optional")
 	public Message: string
@@ -154,7 +156,7 @@ export class Message_TestOuter8 extends pb.Message<Message_TestOuter8> {
 
 	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
-	@pb.Field.d(2, "int32", "optional")
+	@pb.Field.d(2, "int32", "required")
 	public Error: number
 	@pb.Field.d(3, "string", "optional")
 	public Message: string
@@ -196,7 +198,7 @@ export class R2C_Login extends pb.Message<R2C_Login> {
 
 	@pb.Field.d(1, "int32", "required")
 	public RpcId: number
-	@pb.Field.d(2, "int32", "optional")
+	@pb.Field.d(2, "int32", "required")
 	public Error: number
 	@pb.Field.d(3, "string", "optional")
 	public Message: string
@@ -242,4 +244,56 @@ export class C2R_Login extends pb.Message<C2R_Login> {
 			this.Password = args.Password
 		}
 	}
+
+}
+
+/**
+ * MessageType IResponse
+ */
+@MessageDecorator(OuterMessage.G2C_LoginGate, MessageType.IResponse)
+export class G2C_LoginGate extends pb.Message<G2C_LoginGate> {
+
+	@pb.Field.d(1, "int32", "required")
+	public RpcId: number
+	@pb.Field.d(2, "int32", "required")
+	public Error: number
+	@pb.Field.d(3, "string", "optional")
+	public Message: string
+	@pb.Field.d(4, "int64", "optional")
+	public PlayerId: number
+	constructor(args?: pb.Properties<G2C_LoginGate>){
+		super();
+		if(args){
+			this.RpcId = args.RpcId
+			this.Error = args.Error
+			this.Message = args.Message
+			this.PlayerId = args.PlayerId
+		}
+	}
+
+}
+
+/**
+ * MessageType IRequest
+ * ResponseType G2C_LoginGate
+ */
+@MessageDecorator(OuterMessage.C2G_LoginGate, MessageType.IRequest)
+@ResponseTypeDecorator(G2C_LoginGate)
+export class C2G_LoginGate extends pb.Message<C2G_LoginGate> {
+
+	@pb.Field.d(1, "int32", "required")
+	public RpcId: number
+	@pb.Field.d(2, "int64", "optional")
+	public Key: number
+	@pb.Field.d(3, "int64", "optional")
+	public GateId: number
+	constructor(args?: pb.Properties<C2G_LoginGate>){
+		super();
+		if(args){
+			this.RpcId = args.RpcId
+			this.Key = args.Key
+			this.GateId = args.GateId
+		}
+	}
+
 }

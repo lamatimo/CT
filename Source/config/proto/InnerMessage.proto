@@ -58,3 +58,17 @@ message Message_TestInner8
 message Message_TestInner9
 {
 }
+
+//MessageType IActorResponse
+message G2R_GetLoginKey
+{
+	int64 Key = 1;
+	int64 GateId = 2;
+}
+
+//MessageType IActorRequest
+//ResponseType G2R_GetLoginKey
+message R2G_GetLoginKey
+{
+	string Account = 2;
+}

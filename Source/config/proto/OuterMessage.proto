@@ -67,3 +67,18 @@ message C2R_Login
 	string  Account = 1;  // 帐号
 	string  Password = 2;  // 密码
 }
+
+//MessageType IResponse
+message G2C_LoginGate
+{
+	int64 PlayerId = 1;
+}
+
+//MessageType IRequest
+//ResponseType G2C_LoginGate
+message C2G_LoginGate
+{
+	int64 Key = 1;  // 帐号
+	int64 GateId = 2;
+}
+

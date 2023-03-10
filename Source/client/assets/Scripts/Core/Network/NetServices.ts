@@ -19,7 +19,7 @@ export class NetServices extends Singleton {
         return this._inst as NetServices
     }
 
-    private acceptIdGenerator = Number.MAX_VALUE;
+    private acceptIdGenerator = Number.MAX_SAFE_INTEGER - 1;
     private readonly typeOpcode: DoubleMap<Ctor, number> = new DoubleMap();
     private services: Map<number, AService> = new Map
     private readonly queue: Array<number> = new Array;

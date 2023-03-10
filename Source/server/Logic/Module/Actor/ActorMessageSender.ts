@@ -17,7 +17,7 @@ export class ActorMessageSender {
 
     public Tcs: Task<IActorResponse>
 
-    public ActorMessageSender(actorId: number, iActorRequest: IActorRequest, tcs: Task<IActorResponse>, needException: boolean) {
+    constructor(actorId: number, iActorRequest: IActorRequest, tcs: Task<IActorResponse>, needException: boolean) {
         this.ActorId = actorId;
         this.Request = iActorRequest;
         this.CreateTime = TimeHelper.serverNow();
@@ -31,7 +31,7 @@ export class ActorMessageSender {
             return;
         }
 
-        if (this.NeedException) {
+        if (this.NeedException && ErrorCore.IsRpcNeedThrowException(response.Error)) {
             ctError(`Rpc error: actorId: {self.ActorId} request: ${this.Request}, response: ${response}`);
             return;
         }

@@ -15,13 +15,18 @@ import { ConsoleComponent } from "../Module/Console/ConsoleComponent";
 import { RobotCaseComponent } from "../Module/RobotCase/RobotCaseComponent";
 import { MessageTypeComponent } from "../../../client/assets/Scripts/Core/Network/MessageTypeComponent";
 import { MessageDispatcherComponent } from "../../../client/assets/Bundles/Code/Logic/Module/Message/MessageDispatcherComponent";
+import { ActorMessageSenderComponent } from "../Module/Actor/ActorMessageSenderComponent";
+import { ActorMessageDispatcherComponent } from "../Module/Actor/ActorMessageDispatcherComponent";
 
 @EventDecorator(EntryEvent, SceneType.Process)
 class EntryEvent_InitServer extends AEvent<EntryEvent>{
     protected async run(scene: Scene, args: EntryEvent) {
+        // 发送普通actor消息
+        Root.inst.scene.addComponent(ActorMessageSenderComponent);
         Root.inst.scene.addComponent(MessageTypeComponent);
         Root.inst.scene.addComponent(MessageDispatcherComponent);
         Root.inst.scene.addComponent(ServerSceneManagerComponent);
+        Root.inst.scene.addComponent(ActorMessageDispatcherComponent);
 
         ctLog(`启动进程=${Options.inst.process}`)
 

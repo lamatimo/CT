@@ -1,4 +1,7 @@
 import { Singleton } from "../Singleton/Singleton";
+import { CancellationToken } from "../Task/CancellationToken";
+import { Task } from "../Task/Task";
+import { TimeHelper } from "../Time/TimeHelper";
 
 enum TimerType {
     Once,
@@ -63,5 +66,34 @@ export class TimerComponent extends Singleton {
         this.timerMap.delete(id)
 
         return true
+    }
+
+    private GetNow(): number {
+        return TimeHelper.clientFrameTime();
+    }
+
+    public async WaitAsync(time: number, cancellationToken: CancellationToken = null) {
+        if (time == 0) {
+            return;
+        }
+
+        let tcs = Task.create();
+        let timerId = this.NewOnceTimer(time, () => {
+            tcs.setResult()
+        });
+
+        let CancelAction = () => {
+            if (this.Remove(timerId)) {
+                tcs.setResult();
+            }
+        }
+
+        try {
+            cancellationToken?.Add(CancelAction);
+            await tcs;
+        }
+        finally {
+            cancellationToken?.Remove(CancelAction);
+        }
     }
 }

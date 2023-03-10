@@ -4,6 +4,7 @@ export enum DecoratorType {
     Message,
     MessageResponse,
     MessageHandler,
+    ActorMessageHandler,
     ConsoleHandler,
 }
 

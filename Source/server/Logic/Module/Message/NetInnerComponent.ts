@@ -3,12 +3,27 @@ import { Entity } from "../../../../client/assets/Scripts/Core/Entity/Entity";
 import { Root } from "../../../../client/assets/Scripts/Core/Entity/Root";
 import { EventSystem } from "../../../../client/assets/Scripts/Core/EventSystem/EventSystem";
 import { EventType } from "../../../../client/assets/Scripts/Core/EventSystem/EventType";
+import { InstanceIdStruct } from "../../../../client/assets/Scripts/Core/IdGenerater/IdGenerater";
 import { IPEndPoint } from "../../../../client/assets/Scripts/Core/Network/IPEndPoint";
 import { NetServices, NetworkProtocol } from "../../../../client/assets/Scripts/Core/Network/NetServices";
 import { ServiceType } from "../../../../client/assets/Scripts/Core/Network/ServiceType";
 import { WService } from "../../../../client/assets/Scripts/Core/Network/WService";
+import { Options } from "../../../../client/assets/Scripts/Core/Options/Options";
 import { TimeHelper } from "../../../../client/assets/Scripts/Core/Time/TimeHelper";
 import { Tables } from "../../Game/Generate/Config/Types";
+
+export class ProcessActorId {
+    public Process: number;
+    public ActorId: number;
+
+    constructor(actorId: number) {
+        let instanceIdStruct = new InstanceIdStruct();
+        instanceIdStruct.initArgs1(actorId)
+        this.Process = instanceIdStruct.Process;
+        instanceIdStruct.Process = Options.inst.process;
+        this.ActorId = instanceIdStruct.ToLong();
+    }
+}
 
 export class NetInnerComponentOnRead extends EventType {
     public ActorId: number;

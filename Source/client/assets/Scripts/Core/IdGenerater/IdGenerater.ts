@@ -5,9 +5,9 @@ import { Singleton } from "../Singleton/Singleton";
 import { TimeInfo } from "../Time/TimeInfo";
 
 export class IdStruct {
-    public Time: number;   // 当年开始的tick 33bit
-    public Process: number; // 10bit 最大进程数量
-    public Value: number;  // 21bit 每秒可以生成id数量
+    public Time: number;   // 当年开始的tick 29bit 16年
+    public Process: number; // 8bit 最大进程数量 255个进程
+    public Value: number;  // 16bit 每秒可以生成id数量 65535个id
     private result: Long;
 
     public ToLong(): number {
@@ -19,9 +19,9 @@ export class IdStruct {
     public initArgs1(id: number) {
         this.result = Long.fromNumber(id, true)
 
-        this.Time = this.result.and(8589934591).toNumber()
-        this.Process = this.result.shiftRight(33).and(1023).toNumber()
-        this.Value = this.result.shiftRight(43).and(2097151).toNumber()
+        this.Time = this.result.and(536870911).toNumber()
+        this.Process = this.result.shiftRight(29).and(255).toNumber()
+        this.Value = this.result.shiftRight(37).and(65535).toNumber()
     }
 
     public initArgs3(time: number, process: number, value: number) {
@@ -33,14 +33,14 @@ export class IdStruct {
     }
 
     private updateResult() {
-        this.result = Long.fromInt(0, true).or(this.Value).shiftLeft(10).or(this.Process).shiftLeft(33).or(this.Time)
+        this.result = Long.fromInt(0, true).or(this.Value).shiftLeft(8).or(this.Process).shiftLeft(29).or(this.Time)
     }
 }
 
 export class InstanceIdStruct {
-    public Time: number;   // 当年开始的tick 32bit
-    public Process: number; // 11bit 最大进程数量
-    public Value: number;  // 21bit 每秒可以生成id数量
+    public Time: number;   // 当年开始的tick 28bit
+    public Process: number; // 8bit 最大进程数量
+    public Value: number;  // 17bit 每秒可以生成id数量
     private result: Long;
 
     public ToLong(): number {
@@ -52,9 +52,9 @@ export class InstanceIdStruct {
     public initArgs1(id: number) {
         this.result = Long.fromNumber(id, true)
 
-        this.Time = this.result.and(4294967295).toNumber()
-        this.Process = this.result.shiftRight(32).and(2047).toNumber()
-        this.Value = this.result.shiftRight(43).and(2097151).toNumber()
+        this.Time = this.result.and(268435455).toNumber()
+        this.Process = this.result.shiftRight(28).and(255).toNumber()
+        this.Value = this.result.shiftRight(36).and(131071).toNumber()
     }
 
     // 给SceneId使用
@@ -75,7 +75,7 @@ export class InstanceIdStruct {
     }
 
     private updateResult() {
-        this.result = Long.fromInt(0, true).or(this.Value).shiftLeft(11).or(this.Process).shiftLeft(32).or(this.Time)
+        this.result = Long.fromInt(0, true).or(this.Value).shiftLeft(8).or(this.Process).shiftLeft(28).or(this.Time)
     }
 }
 
@@ -84,16 +84,16 @@ export class IdGenerater extends Singleton {
         return this._inst as IdGenerater
     }
 
-    epoch2020: number;
+    epoch2022: number;
     private value: number = 0;
     private lastIdTime: number;
-    
+
     epochThisYear: number;
     private instanceIdValue: number = 0;
     private lastInstanceIdTime: number;
 
     awake(): void {
-        this.epoch2020 = new Date(2020, 0, 1).getTime()
+        this.epoch2022 = new Date(2022, 0, 1).getTime()
         this.epochThisYear = new Date(new Date().getFullYear(), 0, 1).getTime()
 
         this.lastInstanceIdTime = this.TimeSinceThisYear();
@@ -102,7 +102,7 @@ export class IdGenerater extends Singleton {
             this.lastInstanceIdTime = 1;
         }
 
-        this.lastIdTime = this.TimeSince2020();
+        this.lastIdTime = this.TimeSince2022();
         if (this.lastIdTime <= 0) {
             ctWarn(`lastIdTime less than 0: ${this.lastIdTime}`);
             this.lastIdTime = 1;
@@ -110,8 +110,8 @@ export class IdGenerater extends Singleton {
     }
 
 
-    private TimeSince2020(): number {
-        let a = (TimeInfo.inst.frameTime - this.epoch2020) / 1000;
+    private TimeSince2022(): number {
+        let a = (TimeInfo.inst.frameTime - this.epoch2022) / 1000;
         return Math.floor(a);
     }
 
@@ -120,20 +120,17 @@ export class IdGenerater extends Singleton {
         return Math.floor(a);
     }
 
-    public generateInstanceId(): number
-    {
+    public generateInstanceId(): number {
         let time = this.TimeSinceThisYear();
 
-        if (time > this.lastInstanceIdTime)
-        {
+        if (time > this.lastInstanceIdTime) {
             this.lastInstanceIdTime = time;
             this.instanceIdValue = 0;
         }
-        else
-        {
+        else {
             ++this.instanceIdValue;
-            
-            if (this.instanceIdValue > 2097151) // 18bit
+
+            if (this.instanceIdValue > 131071)
             {
                 ++this.lastInstanceIdTime; // 借用下一秒
                 this.instanceIdValue = 0;
@@ -144,31 +141,27 @@ export class IdGenerater extends Singleton {
 
         let instanceIdStruct = new InstanceIdStruct();
         instanceIdStruct.initArgs3(this.lastInstanceIdTime, Options.inst.process, this.instanceIdValue)
-        
+
         return instanceIdStruct.ToLong();
     }
 
-    public generateId(): number
-    {
-        let time = this.TimeSince2020();
+    public generateId(): number {
+        let time = this.TimeSince2022();
 
-        if (time > this.lastIdTime)
-        {
+        if (time > this.lastIdTime) {
             this.lastIdTime = time;
             this.value = 0;
         }
-        else
-        {
+        else {
             ++this.value;
-            
-            if (this.value > 2097151)
-            {
+
+            if (this.value > 65535) {
                 this.value = 0;
                 ++this.lastIdTime; // 借用下一秒
                 ctError(`id count per sec overflow: ${time} ${this.lastIdTime}`);
             }
         }
-        
+
         let idStruct = new IdStruct();
         idStruct.initArgs3(this.lastIdTime, Options.inst.process, this.value)
         return idStruct.ToLong();

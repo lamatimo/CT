@@ -1,4 +1,5 @@
 import { Entity } from "../../../../../Scripts/Core/Entity/Entity";
+import { ctLog } from "../../../../../Scripts/Core/Log/Logger";
 import { TimerComponent } from "../../../../../Scripts/Core/Timer/TimerComponent";
 
 export class SessionAcceptTimeoutComponent extends Entity {
@@ -9,6 +10,10 @@ export class SessionAcceptTimeoutComponent extends Entity {
     }
 
     private timerCallback() {
+        let parendId = this.parent.id
+
+        ctLog(`channel=${parendId}验证超时，进行销毁`)
+
         this.parent.dispose()
     }
 

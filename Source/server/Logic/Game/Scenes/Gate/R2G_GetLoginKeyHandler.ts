@@ -10,7 +10,6 @@ import { GateSessionKeyComponent } from "./GateSessionKeyComponent"
 @ActorMessageHandlerDecorator(R2G_GetLoginKey, SceneType.Gate, G2R_GetLoginKey)
 export class R2G_GetLoginKeyHandler extends AMActorRpcHandler<Scene, R2G_GetLoginKey, G2R_GetLoginKey>{
     protected async Run(scene: Scene, request: R2G_GetLoginKey, response: G2R_GetLoginKey) {
-        ctLog(`收到了realm的消息`)
         let key = RandomGenerator.RandomInt(1, 9999999999);
         scene.getComponent(GateSessionKeyComponent).Add(key, request.Account);
         response.Key = key;

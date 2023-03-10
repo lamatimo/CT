@@ -3,54 +3,6 @@ package CT;
 
 // MessageType: IMessage IRequest IResponse IActorMessage IActorRequest IActorResponse IActorLocationMessage IActorLocationRequest IActorLocationResponse
 
-//MessageType IMessage
-message Message_TestOuter1
-{
-}
-
-//MessageType IResponse
-message Message_TestOuter2
-{
-}
-
-//MessageType IRequest
-//ResponseType Message_TestOuter2
-message Message_TestOuter3
-{
-}
-
-//MessageType IActorMessage
-message Message_TestOuter4
-{
-}
-
-//这个消息的注释
-//MessageType IActorResponse
-message Message_TestOuter5
-{
-}
-
-//MessageType IActorRequest
-//ResponseType Message_TestOuter5
-message Message_TestOuter6
-{
-}
-
-//MessageType IActorLocationMessage
-message Message_TestOuter7
-{
-}
-
-//MessageType IActorLocationResponse
-message Message_TestOuter8
-{
-}
-
-//MessageType IActorLocationRequest
-//ResponseType Message_TestOuter8
-message Message_TestOuter9
-{
-}
 
 //MessageType IResponse
 message R2C_Login
@@ -82,3 +34,14 @@ message C2G_LoginGate
 	int64 GateId = 2;
 }
 
+//MessageType IResponse
+message G2C_Ping
+{
+	int64 Time = 1;
+}
+
+//MessageType IRequest
+//ResponseType G2C_Ping
+message C2G_Ping
+{
+}

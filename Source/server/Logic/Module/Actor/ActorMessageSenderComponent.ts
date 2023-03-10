@@ -75,11 +75,12 @@ export class ActorMessageSenderComponent extends Entity {
         let processActorId = new ProcessActorId(actorId);
 
         // 这里做了优化，如果发向同一个进程，则直接处理，不需要通过网络层
-        // if (processActorId.Process == Options.inst.process) {
-        //     ctLog(`同一进程消息，不通过网络层`)
-        //     NetInnerComponent.inst.HandleMessage(actorId, message);
-        //     return;
-        // }
+        // 为了测试 全走网络层
+        if (processActorId.Process == Options.inst.process + 999) {
+            ctLog(`同一进程消息，不通过网络层`)
+            NetInnerComponent.inst.HandleMessage(actorId, message);
+            return;
+        }
 
         let session = NetInnerComponent.inst.Get(processActorId.Process);
         session.SendWithId(processActorId.ActorId, message);

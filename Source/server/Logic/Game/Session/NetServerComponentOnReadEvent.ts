@@ -14,7 +14,6 @@ import { ctLog } from "../../../../client/assets/Scripts/Core/Log/Logger";
 @EventDecorator(NetServerComponentOnRead, SceneType.Process)
 class NetServerComponentOnReadEvent extends AEvent<NetServerComponentOnRead>{
     protected async run(scene: Scene, args: NetServerComponentOnRead) {
-        ctLog("处理消息分发")
         let session = args.Session;
         let message = args.Message;
         let opcode = NetServices.inst.GetOpcode(message.constructor)

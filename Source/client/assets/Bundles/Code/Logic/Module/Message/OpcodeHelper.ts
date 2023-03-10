@@ -5,7 +5,8 @@ import { OuterMessage } from "../../Game/Generate/Message/OuterMessage";
 
 export class OpcodeHelper {
     private static readonly ignoreDebugLogMessageSet: Set<number> = new Set([
-
+        OuterMessage.C2G_Ping,
+        OuterMessage.G2C_Ping
     ])
 
     private static IsNeedLogMessage(opcode: number): boolean {
@@ -31,6 +32,6 @@ export class OpcodeHelper {
             return;
         }
 
-        ctLog(`zone: ${zone} ${message}`);
+        ctLog(`[OpcodeHelper] zone: ${zone} ${JSON.stringify(message)}`);
     }
 }

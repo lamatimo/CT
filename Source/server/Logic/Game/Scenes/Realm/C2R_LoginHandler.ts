@@ -12,8 +12,6 @@ import { RealmGateAddressHelper } from "./RealmGateAddressHelper";
 export class C2R_LoginHandler extends AMRpcHandler<C2R_Login, R2C_Login>{
     protected async Run(session: Session, request: C2R_Login, response: R2C_Login) {
         let config = RealmGateAddressHelper.GetGate(session.domainZone());
-        ctLog('拿到gate配置')
-        ctLog(config)
         ctLog(`[realm]请求账号: ${request.Account}, ${request.Password}, ${request.RpcId}`)
 
         // 向gate请求一个key,客户端可以拿着这个key连接gate

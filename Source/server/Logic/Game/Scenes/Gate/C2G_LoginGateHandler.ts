@@ -6,8 +6,13 @@ import { SceneType } from "../../../../../client/assets/Scripts/Core/Entity/Scen
 import { ctLog } from "../../../../../client/assets/Scripts/Core/Log/Logger";
 import { ErrorCore } from "../../../../../client/assets/Scripts/Core/Network/ErrorCore";
 import { ActorMessageSenderComponent } from "../../../Module/Actor/ActorMessageSenderComponent";
+import { MailBoxComponent } from "../../../Module/Actor/MailBoxComponent";
+import { MailboxType } from "../../../Module/Actor/MailboxType";
 import { AMRpcHandler } from "../../../Module/Message/AMRpcHandler";
 import { GateSessionKeyComponent } from "./GateSessionKeyComponent";
+import { Player } from "./Player";
+import { PlayerComponent } from "./PlayerComponent";
+import { SessionPlayerComponent } from "./SessionPlayerComponent";
 
 @MessageHandlerDecorator(C2G_LoginGate, SceneType.Gate, G2C_LoginGate)
 export class C2G_LoginGateHandler extends AMRpcHandler<C2G_LoginGate, G2C_LoginGate>
@@ -16,23 +21,24 @@ export class C2G_LoginGateHandler extends AMRpcHandler<C2G_LoginGate, G2C_LoginG
         let scene = session.domainScene();
         let account = scene.getComponent(GateSessionKeyComponent).Get(request.Key);
 
-        if (account == null){
+        if (account == null) {
             response.Error = ErrorCore.ERR_ConnectGateKeyError;
             response.Message = "Gate key验证失败!";
             return;
         }
 
         ctLog(`${account} 连接gate成功`)
-        
+
         session.removeComponent(SessionAcceptTimeoutComponent);
 
-        // PlayerComponent playerComponent = scene.GetComponent<PlayerComponent>();
-        // Player player = playerComponent.AddChild<Player, string>(account);
-        // playerComponent.Add(player);
-        // session.AddComponent<SessionPlayerComponent>().PlayerId = player.Id;
-        // session.AddComponent<MailBoxComponent, MailboxType>(MailboxType.GateSession);
+        let playerComponent = scene.getComponent(PlayerComponent);
+        let player = playerComponent.addChild(Player)
+        player.init(account)
+        playerComponent.Add(player);
+        session.addComponent(SessionPlayerComponent).PlayerId = player.id;
+        session.addComponent(MailBoxComponent).init(MailboxType.GateSession);
 
-        response.PlayerId = 999;
+        response.PlayerId = player.id;
     }
 
 }

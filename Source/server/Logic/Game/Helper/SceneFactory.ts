@@ -7,6 +7,7 @@ import { MailboxType } from "../../Module/Actor/MailboxType";
 import { NetServerComponent } from "../../Module/Message/NetServerComponent";
 import { StartSceneConfig } from "../Generate/Config/Types";
 import { GateSessionKeyComponent } from "../Scenes/Gate/GateSessionKeyComponent";
+import { PlayerComponent } from "../Scenes/Gate/PlayerComponent";
 
 export class SceneFactory {
     public static async CreateServerScene(parent: Entity, id: number, instanceId: number, zone: number, name: string, sceneType: SceneType, startSceneConfig: StartSceneConfig = null): Promise<Scene> {
@@ -20,7 +21,7 @@ export class SceneFactory {
                 break;
             case SceneType.Gate:
                 scene.addComponent(NetServerComponent).init(startSceneConfig.getOuterIPPort());
-                // scene.AddComponent<PlayerComponent>();
+                scene.addComponent(PlayerComponent);
                 scene.addComponent(GateSessionKeyComponent);
                 break;
             case SceneType.Map:

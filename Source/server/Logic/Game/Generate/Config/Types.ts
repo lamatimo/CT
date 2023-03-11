@@ -579,10 +579,10 @@ export class StartZoneConfig {
     constructor(_json_: any) {
         if (_json_.Id === undefined) { throw new Error() }
         this.Id = _json_.Id
-        if (_json_.MachineId === undefined) { throw new Error() }
-        this.MachineId = _json_.MachineId
-        if (_json_.InnerPort === undefined) { throw new Error() }
-        this.InnerPort = _json_.InnerPort
+        if (_json_.DBConnection === undefined) { throw new Error() }
+        this.DBConnection = _json_.DBConnection
+        if (_json_.DBName === undefined) { throw new Error() }
+        this.DBName = _json_.DBName
     }
 
     /**
@@ -592,11 +592,11 @@ export class StartZoneConfig {
     /**
      * 数据库地址
      */
-    readonly MachineId: string
+    readonly DBConnection: string
     /**
      * 数据库名
      */
-    readonly InnerPort: string
+    readonly DBName: string
 
     resolve(_tables: Map<string, any>) {
 

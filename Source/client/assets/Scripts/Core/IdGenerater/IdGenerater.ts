@@ -84,11 +84,13 @@ export class IdGenerater extends Singleton {
         return this._inst as IdGenerater
     }
 
-    epoch2022: number;
+    public static readonly MaxZone = 256;
+
+    private epoch2022: number;
     private value: number = 0;
     private lastIdTime: number;
 
-    epochThisYear: number;
+    private epochThisYear: number;
     private instanceIdValue: number = 0;
     private lastInstanceIdTime: number;
 

@@ -1,7 +1,12 @@
 [
   {
     "Id": 1,
-    "MachineId": "mongodb://127.0.0.1",
-    "InnerPort": "CT1"
+    "DBConnection": "mongodb://CT1:sdjklasn4654asd@124.221.124.21:27017/CT1",
+    "DBName": "CT1"
+  },
+  {
+    "Id": 2,
+    "DBConnection": "mongodb://CT1:sdjklasn4654asd@124.221.124.21:27017/CT1",
+    "DBName": "CT1"
   }
 ]

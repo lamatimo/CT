@@ -17,6 +17,7 @@ import { MessageTypeComponent } from "../../../client/assets/Scripts/Core/Networ
 import { MessageDispatcherComponent } from "../../../client/assets/Bundles/Code/Logic/Module/Message/MessageDispatcherComponent";
 import { ActorMessageSenderComponent } from "../Module/Actor/ActorMessageSenderComponent";
 import { ActorMessageDispatcherComponent } from "../Module/Actor/ActorMessageDispatcherComponent";
+import { DBManagerComponent } from "../Module/DB/DBManagerComponent";
 
 @EventDecorator(EntryEvent, SceneType.Process)
 class EntryEvent_InitServer extends AEvent<EntryEvent>{
@@ -27,6 +28,7 @@ class EntryEvent_InitServer extends AEvent<EntryEvent>{
         Root.inst.scene.addComponent(MessageDispatcherComponent);
         Root.inst.scene.addComponent(ServerSceneManagerComponent);
         Root.inst.scene.addComponent(ActorMessageDispatcherComponent);
+        Root.inst.scene.addComponent(DBManagerComponent);
 
         ctLog(`启动进程=${Options.inst.process}`)
 

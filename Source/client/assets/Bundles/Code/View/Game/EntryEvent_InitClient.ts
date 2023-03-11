@@ -1,4 +1,5 @@
 
+import { Vec3 } from "cc";
 import { Root } from "../../../../Scripts/Core/Entity/Root";
 import { Scene } from "../../../../Scripts/Core/Entity/Scene";
 import { SceneType } from "../../../../Scripts/Core/Entity/SceneType";
@@ -21,7 +22,6 @@ export class EntryEvent_InitGame extends AEvent<EntryEvent>{
         let clientScene = await SceneFactory.createClientScene(1, "Game");
 
         WindowBase.clientScene = clientScene;
-
 
         await EventSystem.inst.publishAsync(clientScene, AppStartInitFinish.create())
     }

@@ -31,7 +31,7 @@ class EntryEvent_InitServer extends AEvent<EntryEvent>{
         Root.inst.scene.addComponent(DBManagerComponent);
 
         ctLog(`启动进程=${Options.inst.process}`)
-
+        
         // 测试服务端是否会挂进程
         if (Options.inst.process == 2) {
             setInterval(() => {

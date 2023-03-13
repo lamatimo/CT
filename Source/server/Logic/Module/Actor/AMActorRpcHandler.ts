@@ -1,6 +1,4 @@
 import { IRequest, IResponse } from "../../../../client/assets/Bundles/Code/Logic/Module/Message/IMessage";
-import { Session } from "../../../../client/assets/Bundles/Code/Logic/Module/Message/Session";
-import pb from 'protobufjs'
 import { ErrorCore } from "../../../../client/assets/Scripts/Core/Network/ErrorCore";
 import { ctError } from "../../../../client/assets/Scripts/Core/Log/Logger";
 import { Entity } from "../../../../client/assets/Scripts/Core/Entity/Entity";

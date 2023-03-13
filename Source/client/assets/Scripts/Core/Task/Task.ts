@@ -16,12 +16,15 @@ export class Task<T>{
     }
 
     public constructor() {
+        this.reset()
     }
 
     private reset(){
-        this.taskPromise = new Promise((resolve, reject) => {
-            this.resolveSelf = resolve
-        })
+        if(!this.taskPromise){
+            this.taskPromise = new Promise((resolve, reject) => {
+                this.resolveSelf = resolve
+            })
+        }
     }
 
     private then<TResult1 = T, TResult2 = never>(
@@ -43,6 +46,7 @@ export class Task<T>{
     public setResult(val: T = null) { 
         this.resolveSelf(val)
 
+        this.taskPromise = null
         ObjectPool.inst.recycle(this)
     }
 }

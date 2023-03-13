@@ -1,0 +1,14 @@
+import pb from 'protobufjs'
+import Long from 'long';
+import { Message } from "../../../../../../Scripts/Core/Message/Message"
+import { MessageDecorator } from "../../../../../../Scripts/Core/Network/MessageDecorator"
+import { MessageType } from "../../../../../../Scripts/Core/Network/MessageType"
+import { ResponseTypeDecorator } from "../../../Module/Message/ResponseTypeDecorator"
+import { MessageParseHelper } from '../../../Module/Message/MessageParseHelper';
+import { Vec3 } from '../../../Module/Math/vec3';
+
+const r = new pb.Reader(new Uint8Array())
+const w = new pb.Writer()
+
+//**opcode**
+//**class**

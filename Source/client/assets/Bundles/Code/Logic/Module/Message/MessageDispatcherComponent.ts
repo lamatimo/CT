@@ -5,8 +5,8 @@ import { ctError } from "../../../../../Scripts/Core/Log/Logger";
 import { NetServices } from "../../../../../Scripts/Core/Network/NetServices";
 import { IMHandler } from "./IMHandler";
 import { Session } from "./Session";
-import pb from 'protobufjs'
 import { IResponse } from "./IMessage";
+import { Message } from "../../../../../Scripts/Core/Message/Message";
 
 export class MessageDispatcherInfo {
     public SceneType: SceneType
@@ -58,7 +58,7 @@ export class MessageDispatcherComponent extends Entity {
         }
     }
 
-    public Handle(session: Session, message: pb.Message): void {
+    public Handle(session: Session, message: Message): void {
         let actions = this.Handlers.get(message.constructor)
 
         if (!actions) {

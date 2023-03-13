@@ -1,3 +1,5 @@
+import { EnterMapHelper } from "../../../../../../client/assets/Bundles/Code/Logic/Game/Login/EnterMapHelper";
+import { MapListComponent } from "../../../../../../client/assets/Bundles/Code/Logic/Game/Map/MapListComponent";
 import { Scene } from "../../../../../../client/assets/Scripts/Core/Entity/Scene";
 import { InvokeDecorator } from "../../../../../../client/assets/Scripts/Core/EventSystem/InvokeDecorator";
 import { ctLog } from "../../../../../../client/assets/Scripts/Core/Log/Logger";
@@ -13,5 +15,10 @@ class RobotCase_FirstCase extends ARobotCase {
 
         // 创建了两个机器人，生命周期是RobotCase，RobotCase_FirstCase.Run执行结束，机器人就会删除
         await robotCase.CreateRobotWithNum(1, robots);
+
+        for (const scene of robots) {
+            let list = scene.getComponent(MapListComponent).list
+            await EnterMapHelper.EnterMapAsync(scene, list[0])
+        }
     }
 }

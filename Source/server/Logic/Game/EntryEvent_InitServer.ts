@@ -18,6 +18,10 @@ import { MessageDispatcherComponent } from "../../../client/assets/Bundles/Code/
 import { ActorMessageSenderComponent } from "../Module/Actor/ActorMessageSenderComponent";
 import { ActorMessageDispatcherComponent } from "../Module/Actor/ActorMessageDispatcherComponent";
 import { DBManagerComponent } from "../Module/DB/DBManagerComponent";
+import { TransferComponent } from "../Module/Transfer/TransferComponent";
+import { SerializeComponent } from "../Module/DB/SerializeComponent";
+import { LocationProxyComponent } from "../Module/ActorLocation/LocationProxyComponent";
+import { OpcodeTypeComponent } from "../../../client/assets/Bundles/Code/Logic/Module/Message/OpcodeTypeComponent";
 
 @EventDecorator(EntryEvent, SceneType.Process)
 class EntryEvent_InitServer extends AEvent<EntryEvent>{
@@ -29,9 +33,13 @@ class EntryEvent_InitServer extends AEvent<EntryEvent>{
         Root.inst.scene.addComponent(ServerSceneManagerComponent);
         Root.inst.scene.addComponent(ActorMessageDispatcherComponent);
         Root.inst.scene.addComponent(DBManagerComponent);
+        Root.inst.scene.addComponent(TransferComponent);
+        Root.inst.scene.addComponent(SerializeComponent);
+        Root.inst.scene.addComponent(LocationProxyComponent);
+        Root.inst.scene.addComponent(OpcodeTypeComponent);
 
         ctLog(`启动进程=${Options.inst.process}`)
-        
+
         // 测试服务端是否会挂进程
         if (Options.inst.process == 2) {
             setInterval(() => {

@@ -1,4 +1,3 @@
-import pb from 'protobufjs'
 import { IResponse } from '../../../../client/assets/Bundles/Code/Logic/Module/Message/IMessage';
 import { DecoratorCollector, DecoratorType } from '../../../../client/assets/Scripts/Core/Decorator/DecoratorCollector';
 import { Entity } from '../../../../client/assets/Scripts/Core/Entity/Entity';

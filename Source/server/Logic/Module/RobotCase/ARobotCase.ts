@@ -18,5 +18,7 @@ export abstract class ARobotCase extends AInvokeHandler<RobotInvokeArgs, Promise
             ctError(`${robotCase.domainZone()} ${e}`);
             ctLog(`RobotCase Error ${this.constructor.name}:\n\t${e}`);
         }
+
+        robotCase.dispose()
     }
 }

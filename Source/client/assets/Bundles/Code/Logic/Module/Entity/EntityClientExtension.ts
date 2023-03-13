@@ -7,6 +7,7 @@ declare module "../../../../../Scripts/Core/Entity/Entity" {
         clientScene(): Scene;
     }
 }
+
 Entity.prototype.clientScene = function () {
     let self: Entity = this;
 

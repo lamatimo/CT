@@ -1,6 +1,3 @@
-import pb from 'protobufjs';
-import Long from 'long';
-// import { RawData, WebSocket, WebSocketServer } from "ws";
 import { ctError, ctLog } from "../Log/Logger";
 import { AChannel } from "./AChannel";
 import { NetServices } from "./NetServices";
@@ -10,10 +7,9 @@ import { IPEndPoint } from './IPEndPoint';
 import { ErrorCore } from './ErrorCore';
 import { IWebSocket } from './IWebSocket';
 import { CtorCollector } from '../Ctor/CtorCollector';
+import { Message } from '../Message/Message';
 
 export class WChannel extends AChannel {
-    private static reader: pb.Reader
-    private static writer: pb.Writer
     public sender: IWebSocket
     private Service: WService;
     private isConnected: boolean = false;
@@ -21,14 +17,6 @@ export class WChannel extends AChannel {
 
     constructor() {
         super()
-
-        if (!WChannel.reader) {
-            WChannel.reader = new pb.Reader(new Uint8Array)
-        }
-
-        if (!WChannel.writer) {
-            WChannel.writer = new pb.Writer()
-        }
     }
 
     initSender(socket: IWebSocket, request: any, id: number, service: WService) {
@@ -73,36 +61,19 @@ export class WChannel extends AChannel {
             let channelId = this.Id;
             let actorId: number = 0;
 
-            WChannel.reader.pos = 0
-            WChannel.reader.buf = data
-            WChannel.reader.len = data.length
-
-            let opcode = WChannel.reader.uint32()
+            let opcode = Message.getOpcode(data)
             let ctor = NetServices.inst.GetType(opcode)
-            let message = ctor.decode(WChannel.reader.bytes());
+            let message = new ctor()
+
+            message.decode(data)
 
             switch (this.Service.ServiceType) {
                 case ServiceType.Outer: {
                     break;
                 }
                 case ServiceType.Inner: {
-                    actorId = (WChannel.reader.uint64() as Long).toNumber()
+                    actorId = Message.getActorId(data)
                     break;
-                }
-            }
-
-            let keys = Object.keys(message)
-
-            for (let i = 0; i < keys.length; i++) {
-                const key = keys[i];
-                const value = message[key];
-
-                if (!value) {
-                    continue;
-                }
-
-                if (value.constructor.name == 'Long') {
-                    message[key] = value.toNumber()
                 }
             }
 
@@ -138,31 +109,23 @@ export class WChannel extends AChannel {
         NetServices.inst.OnError(this.Service.Id, channelId, error);
     }
 
-    public Send(actorId: number, message: pb.Message) {
+    public Send(actorId: number, message: Message) {
         if (this.IsDisposed) {
             throw new Error("WChannel已经被Dispose, 不能发送消息");
         }
 
-        let msgCtor = message.constructor
         let result: Uint8Array
-        let opcode = NetServices.inst.GetOpcode(msgCtor)
-        let encodeMsg = (msgCtor as unknown as typeof pb.Message).encode(message).finish()
-
-        WChannel.writer.reset()
-        WChannel.writer.uint32(opcode);
-        WChannel.writer.bytes(encodeMsg)
 
         switch (this.Service.ServiceType) {
             case ServiceType.Inner: {
-                WChannel.writer.uint64(actorId);
+                result = message.encode(actorId)
                 break;
             }
             case ServiceType.Outer: {
+                result = message.encode()
                 break;
             }
         }
-
-        result = WChannel.writer.finish()
 
         if (this.isConnected) {
             this.sender.send(result)

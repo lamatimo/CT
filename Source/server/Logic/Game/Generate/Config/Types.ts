@@ -74,55 +74,45 @@ export class Vector4 {
 
 
 
-export enum ETestQuality {
+export enum UnitType {
     /**
-     * 最高品质
+     * 玩家
      */
-    A = 1,
+    Player = 1,
     /**
-     * 黑色的
+     * 怪物
      */
-    B = 2,
-    /**
-     * 蓝色的
-     */
-    C = 3,
-    /**
-     * 最差品质
-     */
-    D = 4,
+    Monster = 2,
+    NPC = 3,
 }
 
 
 
-export enum AccessFlag {
-    WRITE = 1,
-    READ = 2,
-    TRUNCATE = 4,
-    NEW = 8,
-    READ_WRITE = WRITE|READ,
+export enum NumericType {
+    Speed = 1000,
+    AOI = 1002,
 }
 
 
 
-export class LevelInfoConfigCategory{
-    private _dataMap: Map<number, LevelInfoConfig>
-    private _dataList: LevelInfoConfig[]
+export class UnitConfigCategory{
+    private _dataMap: Map<number, UnitConfig>
+    private _dataList: UnitConfig[]
     constructor(_json_: any) {
-        this._dataMap = new Map<number, LevelInfoConfig>()
+        this._dataMap = new Map<number, UnitConfig>()
         this._dataList = []
         for(var _json2_ of _json_) {
-            let _v: LevelInfoConfig
-            _v = new LevelInfoConfig(_json2_)
+            let _v: UnitConfig
+            _v = new UnitConfig(_json2_)
             this._dataList.push(_v)
             this._dataMap.set(_v.Id, _v)
         }
     }
 
-    getDataMap(): Map<number, LevelInfoConfig> { return this._dataMap; }
-    getDataList(): LevelInfoConfig[] { return this._dataList; }
+    getDataMap(): Map<number, UnitConfig> { return this._dataMap; }
+    getDataList(): UnitConfig[] { return this._dataList; }
 
-    get(key: number): LevelInfoConfig | undefined { return this._dataMap.get(key); }
+    get(key: number): UnitConfig | undefined { return this._dataMap.get(key); }
 
     resolve(_tables: Map<string, any>) {
         for(var v of this._dataList) {
@@ -142,17 +132,13 @@ export class LevelInfoConfigCategory{
 
 
 
-export class LevelInfoConfig {
+export class UnitConfig {
 
     constructor(_json_: any) {
         if (_json_.Id === undefined) { throw new Error() }
         this.Id = _json_.Id
         if (_json_.Type === undefined) { throw new Error() }
         this.Type = _json_.Type
-        if (_json_.Name === undefined) { throw new Error() }
-        this.Name = _json_.Name
-        if (_json_.Desc === undefined) { throw new Error() }
-        this.Desc = _json_.Desc
     }
 
     /**
@@ -162,15 +148,7 @@ export class LevelInfoConfig {
     /**
      * 类型
      */
-    readonly Type: string
-    /**
-     * 名字
-     */
-    readonly Name: string
-    /**
-     * 描述
-     */
-    readonly Desc: string
+    readonly Type: UnitType
 
     resolve(_tables: Map<string, any>) {
 
@@ -229,17 +207,11 @@ export class ItemConfig {
         this.id = _json_.id
         if (_json_.name === undefined) { throw new Error() }
         this.name = _json_.name
-        if (_json_.desc === undefined) { throw new Error() }
-        this.desc = _json_.desc
         if (_json_.price === undefined) { throw new Error() }
         this.price = _json_.price
         if (_json_.upgrade_to_item_id === undefined) { throw new Error() }
         this.upgradeToItemId = _json_.upgrade_to_item_id
         if(_json_.expire_time != undefined) { this.expireTime = _json_.expire_time } else { this.expireTime = undefined }
-        if (_json_.batch_useable === undefined) { throw new Error() }
-        this.batchUseable = _json_.batch_useable
-        if (_json_.exchange_stream === undefined) { throw new Error() }
-        this.exchangeStream = _json_.exchange_stream
         if (_json_.exchange_list === undefined) { throw new Error() }
         this.exchangeList = _json_.exchange_list
     }
@@ -253,10 +225,6 @@ export class ItemConfig {
      */
     readonly name: string
     /**
-     * 描述
-     */
-    readonly desc: string
-    /**
      * 价格
      */
     readonly price: number
@@ -268,14 +236,6 @@ export class ItemConfig {
      * 过期时间
      */
     readonly expireTime: number|undefined
-    /**
-     * 能否批量使用
-     */
-    readonly batchUseable: boolean
-    /**
-     * 道具兑换配置
-     */
-    readonly exchangeStream: string
     readonly exchangeList: string
 
     resolve(_tables: Map<string, any>) {
@@ -614,8 +574,8 @@ export class StartZoneConfig {
 type JsonLoader = (file: Array<string>) => any
 
 export class Tables {
-    private static _LevelInfoConfigCategory: LevelInfoConfigCategory
-    static get LevelInfoConfigCategory(): LevelInfoConfigCategory  { return this._LevelInfoConfigCategory;}
+    private static _UnitConfigCategory: UnitConfigCategory
+    static get UnitConfigCategory(): UnitConfigCategory  { return this._UnitConfigCategory;}
     private static _ItemConfigCategory: ItemConfigCategory
     static get ItemConfigCategory(): ItemConfigCategory  { return this._ItemConfigCategory;}
     private static _StartMachineConfigCategory: StartMachineConfigCategory
@@ -631,7 +591,7 @@ export class Tables {
         let tables = new Map<string, any>()
         let loadList: Array<string> = new Array
 
-        loadList.push('levelinfoconfigcategory')
+        loadList.push('unitconfigcategory')
         loadList.push('itemconfigcategory')
         loadList.push('startmachineconfigcategory')
         loadList.push('startprocessconfigcategory')
@@ -640,8 +600,8 @@ export class Tables {
 
         let dataMap: Map<string, any> = await loader(loadList)
 
-        this._LevelInfoConfigCategory = new LevelInfoConfigCategory(dataMap.get('levelinfoconfigcategory'))
-        tables.set('LevelInfoConfigCategory', this._LevelInfoConfigCategory)
+        this._UnitConfigCategory = new UnitConfigCategory(dataMap.get('unitconfigcategory'))
+        tables.set('UnitConfigCategory', this._UnitConfigCategory)
         this._ItemConfigCategory = new ItemConfigCategory(dataMap.get('itemconfigcategory'))
         tables.set('ItemConfigCategory', this._ItemConfigCategory)
         this._StartMachineConfigCategory = new StartMachineConfigCategory(dataMap.get('startmachineconfigcategory'))
@@ -653,7 +613,7 @@ export class Tables {
         this._StartZoneConfigCategory = new StartZoneConfigCategory(dataMap.get('startzoneconfigcategory'))
         tables.set('StartZoneConfigCategory', this._StartZoneConfigCategory)
 
-        this._LevelInfoConfigCategory.resolve(tables)
+        this._UnitConfigCategory.resolve(tables)
         this._ItemConfigCategory.resolve(tables)
         this._StartMachineConfigCategory.resolve(tables)
         this._StartProcessConfigCategory.resolve(tables)

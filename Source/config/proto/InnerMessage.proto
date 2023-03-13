@@ -72,3 +72,34 @@ message R2G_GetLoginKey
 {
 	string Account = 2;
 }
+
+//MessageType IActorResponse
+message M2M_UnitTransferResponse
+{
+
+}
+
+//MessageType IActorRequest
+//ResponseType M2M_UnitTransferResponse
+message M2M_UnitTransferRequest
+{
+	int64 OldInstanceId = 2;
+	bytes Unit = 3;
+	repeated bytes Entitys = 4;
+}
+
+//MessageType IActorResponse
+message ObjectLockResponse
+{
+
+}
+
+
+//MessageType IActorRequest
+//ResponseType ObjectLockResponse
+message ObjectLockRequest
+{
+	int64 Key = 1;
+	int64 InstanceId = 2;
+	int32 Time = 3;
+}

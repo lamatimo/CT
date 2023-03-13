@@ -9,7 +9,9 @@ import { ErrorCore } from "../../../../../client/assets/Scripts/Core/Network/Err
 import { ActorMessageSenderComponent } from "../../../Module/Actor/ActorMessageSenderComponent";
 import { MailBoxComponent } from "../../../Module/Actor/MailBoxComponent";
 import { MailboxType } from "../../../Module/Actor/MailboxType";
+import { DBManagerComponent } from "../../../Module/DB/DBManagerComponent";
 import { AMRpcHandler } from "../../../Module/Message/AMRpcHandler";
+import { Tables } from "../../Generate/Config/Types";
 import { GateSessionKeyComponent } from "./GateSessionKeyComponent";
 import { Player } from "./Player";
 import { PlayerComponent } from "./PlayerComponent";
@@ -40,13 +42,30 @@ export class C2G_LoginGateHandler extends AMRpcHandler<C2G_LoginGate, G2C_LoginG
         }
 
         session.addComponent(SessionLoginLockComponent)
+        let dbComponent = await DBManagerComponent.inst.GetZoneDB(session.domainZone())
 
+        let player = await dbComponent.Query(Player, {Account: account})
         let playerComponent = scene.getComponent(PlayerComponent);
-        let player = playerComponent.addChild(Player)
-        player.init(account)
+
+        if(!player){
+            player = playerComponent.addChild(Player).init(account)
+            await dbComponent.Save(player)
+        }else{
+            console.log(player)
+            playerComponent.addChild(player)
+        }
+
         playerComponent.Add(player);
         session.addComponent(SessionPlayerComponent).PlayerId = player.id;
         session.addComponent(MailBoxComponent).init(MailboxType.GateSession);
+
+        let startSceneConfigs = Tables.StartSceneConfigCategory.Maps.get(session.domainZone())
+
+        response.Maps = []
+
+        for (const startSceneConfig of startSceneConfigs) {
+            response.Maps.push(startSceneConfig.Name)
+        }
 
         response.PlayerId = player.id;
     }

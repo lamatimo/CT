@@ -15,7 +15,7 @@ export class DBManagerComponent extends Entity {
         DBManagerComponent.inst = null
     }
 
-    public GetZoneDB(zone: number): DBComponent {
+    public async GetZoneDB(zone: number): Promise<DBComponent> {
         let dbComponent = this.DBComponents[zone];
 
         if (dbComponent != null) {
@@ -27,8 +27,7 @@ export class DBManagerComponent extends Entity {
             throw new Error(`zone: ${zone} not found mongo connect string`);
         }
 
-        dbComponent = this.addChild(DBComponent)
-        dbComponent.init(startZoneConfig.DBConnection, startZoneConfig.DBName)
+        dbComponent = await this.addChild(DBComponent).init(startZoneConfig.DBConnection, startZoneConfig.DBName)
         this.DBComponents[zone] = dbComponent;
         return dbComponent;
     }

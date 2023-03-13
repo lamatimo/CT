@@ -1,3 +1,4 @@
+import { BsonIgnore } from "../Decorator/BsonIgnore";
 import { IEventSystem } from "../EventSystem/EventSystem";
 import { IdGenerater } from "../IdGenerater/IdGenerater";
 import { ObjectPool } from "../ObjectPool/ObjectPool";
@@ -18,6 +19,7 @@ export abstract class Entity {
     public static eventSystem: IEventSystem
     public static root: IRoot
 
+    @BsonIgnore
     public get parent() {
         return this._parent
     }
@@ -89,27 +91,36 @@ export abstract class Entity {
         }
     }
 
+    @BsonIgnore
     public instanceId: number
     public id: number
 
+    @BsonIgnore
     public get isDisposed() {
         return this.instanceId == 0;
     }
 
+    @BsonIgnore
     public get children(): Map<number, Entity> {
         return this._children ??= ObjectPool.inst.fetch(Map) as Map<number, Entity>;
     }
 
+    @BsonIgnore
     public get components(): Map<EntityCtor, Entity> {
         return this._components ??= ObjectPool.inst.fetch(Map) as Map<EntityCtor, Entity>;
     }
 
+    @BsonIgnore
     protected _domain: Entity
+    @BsonIgnore
     private _children: Map<number, Entity>
+    @BsonIgnore
     private _components: Map<EntityCtor, Entity>
+    @BsonIgnore
     protected _parent: Entity
     private status: EntityStatus = EntityStatus.None
 
+    @BsonIgnore
     private get isFromPool() {
         return (this.status & EntityStatus.IsFromPool) == EntityStatus.IsFromPool
     }
@@ -122,6 +133,7 @@ export abstract class Entity {
         }
     }
 
+    @BsonIgnore
     private get isComponent() {
         return (this.status & EntityStatus.IsComponent) == EntityStatus.IsComponent
     }
@@ -134,6 +146,7 @@ export abstract class Entity {
         }
     }
 
+    @BsonIgnore
     protected get isCreated() {
         return (this.status & EntityStatus.IsCreated) == EntityStatus.IsCreated
     }
@@ -146,6 +159,7 @@ export abstract class Entity {
         }
     }
 
+    @BsonIgnore
     protected get isNew() {
         return (this.status & EntityStatus.IsNew) == EntityStatus.IsNew
     }
@@ -158,6 +172,7 @@ export abstract class Entity {
         }
     }
 
+    @BsonIgnore
     protected get isRegister() {
         return (this.status & EntityStatus.IsRegister) == EntityStatus.IsRegister
     }
@@ -182,6 +197,7 @@ export abstract class Entity {
         }
     }
 
+    @BsonIgnore
     private set componentParent(value: Entity) {
         if (value == null) {
             throw new Error(`cant set parent null: ${this.constructor.name}`);

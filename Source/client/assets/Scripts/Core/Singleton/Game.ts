@@ -7,7 +7,7 @@ export class Game {
     private static readonly destroys: Array<Singleton> = new Array
     private static readonly updates: Array<Singleton> = new Array
     private static readonly lateUpdates: Array<Singleton> = new Array
-    private static frameFinishTaskQueue: Task<void>[] = new Array
+    private static frameFinishTaskQueue: Task<any>[] = new Array
 
     public static addSingleton<K extends Singleton>(singletonCtor: new () => K): K {
         if (Game.singletonMap.has(singletonCtor)) {
@@ -39,7 +39,7 @@ export class Game {
     }
 
     public static async waitFrameFinish(): Promise<void> {
-        let task = new Task<void>
+        let task = Task.create()
 
         Game.frameFinishTaskQueue.push(task);
 

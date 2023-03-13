@@ -3,6 +3,7 @@ import { ctError, ctLog } from "../../../../../Scripts/Core/Log/Logger";
 import { IPEndPoint } from "../../../../../Scripts/Core/Network/IPEndPoint";
 import { NetClientComponent } from "../../Module/Message/NetClientComponent";
 import { C2G_LoginGate, C2R_Login, G2C_LoginGate, R2C_Login } from "../Generate/Message/OuterMessage";
+import { MapListComponent } from "../Map/MapListComponent";
 import { PingComponent } from "../Ping/PingComponent";
 import { SessionComponent } from "../Session/SessionComponent";
 
@@ -25,6 +26,7 @@ export class LoginHelper {
                 sessionComponent = clientScene.addComponent(SessionComponent)
             }
 
+            clientScene.addComponent(MapListComponent).list = g2cLoginGate.Maps
             gateSession.addComponent(PingComponent)
             sessionComponent.Session = gateSession;
         }

@@ -1,18 +1,18 @@
 import { IRequest, IResponse } from "../../../../client/assets/Bundles/Code/Logic/Module/Message/IMessage";
 import { IMHandler } from "../../../../client/assets/Bundles/Code/Logic/Module/Message/IMHandler";
 import { Session } from "../../../../client/assets/Bundles/Code/Logic/Module/Message/Session";
-import pb from 'protobufjs'
 import { ErrorCore } from "../../../../client/assets/Scripts/Core/Network/ErrorCore";
 import { ctError } from "../../../../client/assets/Scripts/Core/Log/Logger";
+import { Message } from "../../../../client/assets/Scripts/Core/Message/Message";
 
 export abstract class AMRpcHandler<TRequest extends IRequest, TResponse extends IResponse> implements IMHandler {
     protected abstract Run(session: Session, request: TRequest, response: TResponse);
 
-    public Handle(session: Session, message: pb.Message, responseCtor) {
+    public Handle(session: Session, message: Message, responseCtor) {
         this.HandleAsync(session, message, responseCtor)
     }
 
-    private async HandleAsync(session: Session, message: pb.Message, responseCtor) {
+    private async HandleAsync(session: Session, message: Message, responseCtor) {
         try {
             let request = message as unknown as TRequest;
             let rpcId = request.RpcId;

@@ -6,6 +6,8 @@ export enum DecoratorType {
     MessageHandler,
     ActorMessageHandler,
     ConsoleHandler,
+    Transfer,
+    DB,
 }
 
 export class DecoratorCollector {

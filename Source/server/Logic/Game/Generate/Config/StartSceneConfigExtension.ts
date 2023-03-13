@@ -9,6 +9,8 @@ declare module "./Types" {
         Realms: Array<StartSceneConfig>
         Robots: Array<StartSceneConfig>
         Gates: MultiMap<number, StartSceneConfig>
+        Maps: MultiMap<number, StartSceneConfig>
+        Locations: Map<number, StartSceneConfig>
         ProcessScenes: MultiMap<number, StartSceneConfig>
         LocationConfig: StartSceneConfig
         ClientScenesByName: Map<number, Map<string, StartSceneConfig>>
@@ -41,6 +43,8 @@ StartSceneConfigCategory.prototype.afterEndInit = function () {
     self.ClientScenesByName = new Map
     self.ProcessScenes = new MultiMap
     self.Gates = new MultiMap
+    self.Maps = new MultiMap
+    self.Locations = new Map
 
     for (let startSceneConfig of self.getDataList()) {
         self.ProcessScenes.Add(startSceneConfig.Process, startSceneConfig);
@@ -59,10 +63,14 @@ StartSceneConfigCategory.prototype.afterEndInit = function () {
                 self.Gates.Add(startSceneConfig.Zone, startSceneConfig);
                 break;
             case SceneType.Location:
+                self.Locations.set(startSceneConfig.Zone, startSceneConfig)
                 self.LocationConfig = startSceneConfig;
                 break;
             case SceneType.Robot:
                 self.Robots.push(startSceneConfig);
+                break;
+            case SceneType.Map:
+                self.Maps.Add(startSceneConfig.Zone, startSceneConfig);
                 break;
         }
     }

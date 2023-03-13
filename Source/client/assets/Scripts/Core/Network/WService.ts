@@ -114,5 +114,3 @@ export class WService extends AService {
 
     //     }
 }
-
-export { }

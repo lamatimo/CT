@@ -1,9 +1,11 @@
+import { UnitComponent } from "../../../../client/assets/Bundles/Code/Logic/Module/Unit/UnitComponent";
 import { Entity } from "../../../../client/assets/Scripts/Core/Entity/Entity";
 import { EntitySceneFactory } from "../../../../client/assets/Scripts/Core/Entity/EntitySceneFactory";
 import { Scene } from "../../../../client/assets/Scripts/Core/Entity/Scene";
 import { SceneType } from "../../../../client/assets/Scripts/Core/Entity/SceneType";
 import { MailBoxComponent } from "../../Module/Actor/MailBoxComponent";
 import { MailboxType } from "../../Module/Actor/MailboxType";
+import { LocationComponent } from "../../Module/ActorLocation/LocationComponent";
 import { NetServerComponent } from "../../Module/Message/NetServerComponent";
 import { StartSceneConfig } from "../Generate/Config/Types";
 import { GateSessionKeyComponent } from "../Scenes/Gate/GateSessionKeyComponent";
@@ -25,11 +27,11 @@ export class SceneFactory {
                 scene.addComponent(GateSessionKeyComponent);
                 break;
             case SceneType.Map:
-                // scene.AddComponent<UnitComponent>();
+                scene.addComponent(UnitComponent);
                 // scene.AddComponent<AOIManagerComponent>();
                 break;
             case SceneType.Location:
-                // scene.AddComponent<LocationComponent>();
+                scene.addComponent(LocationComponent);
                 break;
         }
 

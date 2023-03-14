@@ -6,6 +6,7 @@ import { MessageType } from "../../../../../../Scripts/Core/Network/MessageType"
 import { ResponseTypeDecorator } from "../../../Module/Message/ResponseTypeDecorator"
 import { MessageParseHelper } from '../../../Module/Message/MessageParseHelper';
 import { Vec3 } from '../../../Module/Math/vec3';
+import { Quat } from '../../../Module/Math/quat';
 
 const r = new pb.Reader(new Uint8Array())
 const w = new pb.Writer()

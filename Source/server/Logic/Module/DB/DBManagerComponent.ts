@@ -1,5 +1,6 @@
 import { Entity } from "../../../../client/assets/Scripts/Core/Entity/Entity";
 import { IdGenerater } from "../../../../client/assets/Scripts/Core/IdGenerater/IdGenerater";
+import { Options } from "../../../../client/assets/Scripts/Core/Options/Options";
 import { Tables } from "../../Game/Generate/Config/Types";
 import { DBComponent } from "./DBComponent";
 
@@ -15,7 +16,8 @@ export class DBManagerComponent extends Entity {
         DBManagerComponent.inst = null
     }
 
-    public async GetZoneDB(zone: number): Promise<DBComponent> {
+    public async GetZoneDB(): Promise<DBComponent> {
+        let zone = Options.inst.zone
         let dbComponent = this.DBComponents[zone];
 
         if (dbComponent != null) {

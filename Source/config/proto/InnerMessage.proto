@@ -103,3 +103,29 @@ message ObjectLockRequest
 	int64 InstanceId = 2;
 	int32 Time = 3;
 }
+
+//MessageType IActorRequest
+//ResponseType ObjectGetResponse
+message ObjectGetRequest
+{
+	int64 Key = 1;
+}
+//MessageType IActorResponse
+message ObjectGetResponse
+{
+	int64 InstanceId = 1;
+}
+
+//MessageType IActorRequest
+//ResponseType ObjectUnLockResponse
+message ObjectUnLockRequest
+{
+	int64 Key = 1;
+	int64 OldInstanceId = 2;
+	int64 InstanceId = 3;
+}
+//MessageType IActorResponse
+message ObjectUnLockResponse
+{
+
+}

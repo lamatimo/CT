@@ -12,8 +12,8 @@ import { GateSessionKeyComponent } from "../Scenes/Gate/GateSessionKeyComponent"
 import { PlayerComponent } from "../Scenes/Gate/PlayerComponent";
 
 export class SceneFactory {
-    public static async CreateServerScene(parent: Entity, id: number, instanceId: number, zone: number, name: string, sceneType: SceneType, startSceneConfig: StartSceneConfig = null): Promise<Scene> {
-        let scene = EntitySceneFactory.createSceneWithId(id, instanceId, zone, sceneType, name, parent);
+    public static async CreateServerScene(parent: Entity, id: number, instanceId: number, name: string, sceneType: SceneType, startSceneConfig: StartSceneConfig = null): Promise<Scene> {
+        let scene = EntitySceneFactory.createSceneWithId(id, instanceId, sceneType, name, parent);
 
         scene.addComponent(MailBoxComponent).init(MailboxType.UnOrderMessageDispatcher);
 

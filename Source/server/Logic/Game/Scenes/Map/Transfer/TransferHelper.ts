@@ -16,8 +16,6 @@ export class TransferHelper {
         // location加锁
         let unitId = unit.id;
         let unitInstanceId = unit.instanceId;
-        let zone = unit.domainZone()
-
         let request = new M2M_UnitTransferRequest({ Entitys: [] });
 
         request.OldInstanceId = unitInstanceId;
@@ -32,7 +30,7 @@ export class TransferHelper {
 
         unit.dispose();
 
-        await LocationProxyComponent.inst.Lock(unitId, zone, unitInstanceId);
+        await LocationProxyComponent.inst.Lock(unitId, unitInstanceId);
         await ActorMessageSenderComponent.inst.Call(sceneInstanceId, request);
     }
 }

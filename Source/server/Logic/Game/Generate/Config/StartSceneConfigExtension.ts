@@ -2,22 +2,22 @@ import { SceneType } from "../../../../../client/assets/Scripts/Core/Entity/Scen
 import { InstanceIdStruct } from "../../../../../client/assets/Scripts/Core/IdGenerater/IdGenerater";
 import { MultiMap } from "../../../../../client/assets/Scripts/Core/MultiMap";
 import { IPEndPoint } from "../../../../../client/assets/Scripts/Core/Network/IPEndPoint";
+import { Options } from "../../../../../client/assets/Scripts/Core/Options/Options";
 import { StartSceneConfig, StartSceneConfigCategory, Tables } from "./Types";
 
 declare module "./Types" {
     interface StartSceneConfigCategory {
-        Realms: Array<StartSceneConfig>
-        Robots: Array<StartSceneConfig>
-        Gates: MultiMap<number, StartSceneConfig>
-        Maps: MultiMap<number, StartSceneConfig>
-        Locations: Map<number, StartSceneConfig>
+        Realms: StartSceneConfig[]
+        Robots: StartSceneConfig[]
+        Gates: StartSceneConfig[]
+        Maps: StartSceneConfig[]
         ProcessScenes: MultiMap<number, StartSceneConfig>
         LocationConfig: StartSceneConfig
-        ClientScenesByName: Map<number, Map<string, StartSceneConfig>>
+        ClientScenesByName: Map<string, StartSceneConfig>
 
         afterEndInit(): void
         GetByProcess(process: number): Array<StartSceneConfig>
-        GetBySceneName(zone: number, name: string): StartSceneConfig
+        GetBySceneName(name: string): StartSceneConfig
     }
 
     interface StartSceneConfig {
@@ -29,7 +29,6 @@ declare module "./Types" {
 
         afterEndInit(): void
         getStartProcessConfig(): StartProcessConfig
-        getStartZoneConfig(): StartZoneConfig
         getInnerIPOutPort(): IPEndPoint
         getOuterIPPort(): IPEndPoint
     }
@@ -40,37 +39,36 @@ StartSceneConfigCategory.prototype.afterEndInit = function () {
 
     self.Realms = []
     self.Robots = []
+    self.Gates = []
+    self.Maps = []
     self.ClientScenesByName = new Map
     self.ProcessScenes = new MultiMap
-    self.Gates = new MultiMap
-    self.Maps = new MultiMap
-    self.Locations = new Map
+
+    let zone = Options.inst.zone
 
     for (let startSceneConfig of self.getDataList()) {
-        self.ProcessScenes.Add(startSceneConfig.Process, startSceneConfig);
-
-        if (!self.ClientScenesByName.has(startSceneConfig.Zone)) {
-            self.ClientScenesByName.set(startSceneConfig.Zone, new Map());
+        if(startSceneConfig.Zone != zone){
+            continue
         }
 
-        self.ClientScenesByName.get(startSceneConfig.Zone).set(startSceneConfig.Name, startSceneConfig);
+        self.ProcessScenes.Add(startSceneConfig.Process, startSceneConfig);
+        self.ClientScenesByName.set(startSceneConfig.Name, startSceneConfig);
 
         switch (startSceneConfig.Type) {
             case SceneType.Realm:
                 self.Realms.push(startSceneConfig);
                 break;
             case SceneType.Gate:
-                self.Gates.Add(startSceneConfig.Zone, startSceneConfig);
+                self.Gates.push(startSceneConfig);
                 break;
             case SceneType.Location:
-                self.Locations.set(startSceneConfig.Zone, startSceneConfig)
                 self.LocationConfig = startSceneConfig;
                 break;
             case SceneType.Robot:
                 self.Robots.push(startSceneConfig);
                 break;
             case SceneType.Map:
-                self.Maps.Add(startSceneConfig.Zone, startSceneConfig);
+                self.Maps.push(startSceneConfig);
                 break;
         }
     }
@@ -82,10 +80,10 @@ StartSceneConfigCategory.prototype.GetByProcess = function (process: number) {
     return self.ProcessScenes.get(process)
 }
 
-StartSceneConfigCategory.prototype.GetBySceneName = function (zone: number, name: string) {
+StartSceneConfigCategory.prototype.GetBySceneName = function (name: string) {
     let self: StartSceneConfigCategory = this;
 
-    return self.ClientScenesByName.get(zone).get(name)
+    return self.ClientScenesByName.get(name)
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -102,13 +100,7 @@ StartSceneConfig.prototype.afterEndInit = function () {
 StartSceneConfig.prototype.getStartProcessConfig = function () {
     let self: StartSceneConfig = this
 
-    return Tables.StartProcessConfigCategory.get(self.Process);
-}
-
-StartSceneConfig.prototype.getStartZoneConfig = function () {
-    let self: StartSceneConfig = this
-
-    return Tables.StartZoneConfigCategory.get(self.Zone);
+    return Tables.StartProcessConfigCategory.getStartProcessConfig(self.Process);
 }
 
 StartSceneConfig.prototype.getInnerIPOutPort = function () {

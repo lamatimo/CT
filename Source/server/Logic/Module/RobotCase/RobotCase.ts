@@ -30,18 +30,18 @@ export class RobotCase extends Entity {
     }
 
     private async NewRobot(): Promise<Scene> {
-        let zone = this.getParent(RobotCaseComponent).GetN();
+        let id = this.getParent(RobotCaseComponent).GetN();
         let clientScene: Scene = null;
 
         try {
-            clientScene = await SceneFactory.createClientScene(zone, `Robot_${zone}`);
-            await LoginHelper.Login(clientScene, zone.toString(), zone.toString());
-            ctLog(`create robot ok: ${zone}`);
+            clientScene = await SceneFactory.createClientScene(id, `Robot_${id}`);
+            await LoginHelper.Login(clientScene, id.toString(), id.toString());
+            ctLog(`create robot ok: ${id}`);
             return clientScene;
         }
         catch (e) {
             clientScene?.dispose();
-            throw new Error(`RobotCase create robot fail, zone: ${zone}, ${e}`);
+            throw new Error(`RobotCase create robot fail, zone: ${id}, ${e}`);
         }
     }
 }

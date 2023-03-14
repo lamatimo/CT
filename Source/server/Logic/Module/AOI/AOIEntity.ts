@@ -50,4 +50,9 @@ export class AOIEntity extends Entity {
         this.SubLeaveCells.clear();
         this.Cell = null;
     }
+
+    public GetBeSeePlayers(): Map<number, AOIEntity>
+    {
+        return this.BeSeePlayers;
+    }
 }

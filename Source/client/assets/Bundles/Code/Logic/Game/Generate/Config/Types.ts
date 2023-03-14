@@ -175,135 +175,23 @@ export class UnitConfig {
 
 
 
-export class ItemConfigCategory{
-    private _dataMap: Map<number, ItemConfig>
-    private _dataList: ItemConfig[]
-    constructor(_json_: any) {
-        this._dataMap = new Map<number, ItemConfig>()
-        this._dataList = []
-        for(var _json2_ of _json_) {
-            let _v: ItemConfig
-            _v = new ItemConfig(_json2_)
-            this._dataList.push(_v)
-            this._dataMap.set(_v.id, _v)
-        }
-    }
-
-    getDataMap(): Map<number, ItemConfig> { return this._dataMap; }
-    getDataList(): ItemConfig[] { return this._dataList; }
-
-    get(key: number): ItemConfig | undefined { return this._dataMap.get(key); }
-
-    resolve(_tables: Map<string, any>) {
-        for(var v of this._dataList) {
-            v.resolve(_tables)
-        }
-
-        //@ts-ignore
-        if (this.afterEndInit) {
-            //@ts-ignore
-            this.afterEndInit()
-        }
-    }
-
-}
-
-
-
-
-
-export class ItemConfig {
-
-    constructor(_json_: any) {
-        if (_json_.id === undefined) { throw new Error() }
-        this.id = _json_.id
-        if (_json_.name === undefined) { throw new Error() }
-        this.name = _json_.name
-        if (_json_.desc === undefined) { throw new Error() }
-        this.desc = _json_.desc
-        if (_json_.price === undefined) { throw new Error() }
-        this.price = _json_.price
-        if (_json_.upgrade_to_item_id === undefined) { throw new Error() }
-        this.upgradeToItemId = _json_.upgrade_to_item_id
-        if(_json_.expire_time != undefined) { this.expireTime = _json_.expire_time } else { this.expireTime = undefined }
-        if (_json_.batch_useable === undefined) { throw new Error() }
-        this.batchUseable = _json_.batch_useable
-        if (_json_.exchange_stream === undefined) { throw new Error() }
-        this.exchangeStream = _json_.exchange_stream
-        if (_json_.exchange_list === undefined) { throw new Error() }
-        this.exchangeList = _json_.exchange_list
-    }
-
-    /**
-     * 这是id
-     */
-    readonly id: number
-    /**
-     * 名字
-     */
-    readonly name: string
-    /**
-     * 描述
-     */
-    readonly desc: string
-    /**
-     * 价格
-     */
-    readonly price: number
-    /**
-     * 引用当前表
-     */
-    readonly upgradeToItemId: number
-    /**
-     * 过期时间
-     */
-    readonly expireTime: number|undefined
-    /**
-     * 能否批量使用
-     */
-    readonly batchUseable: boolean
-    /**
-     * 道具兑换配置
-     */
-    readonly exchangeStream: string
-    readonly exchangeList: string
-
-    resolve(_tables: Map<string, any>) {
-
-        //@ts-ignore
-        if (this.afterEndInit) {
-            //@ts-ignore
-            this.afterEndInit()
-        }
-    }
-}
-
-
-
-
 type JsonLoader = (file: Array<string>) => any
 
 export class Tables {
     private static _UnitConfigCategory: UnitConfigCategory
     static get UnitConfigCategory(): UnitConfigCategory  { return this._UnitConfigCategory;}
-    private static _ItemConfigCategory: ItemConfigCategory
-    static get ItemConfigCategory(): ItemConfigCategory  { return this._ItemConfigCategory;}
 
     public static async init(loader: JsonLoader) {
         let tables = new Map<string, any>()
         let loadList: Array<string> = new Array
 
         loadList.push('unitconfigcategory')
-        loadList.push('itemconfigcategory')
 
         let dataMap: Map<string, any> = await loader(loadList)
 
         this._UnitConfigCategory = new UnitConfigCategory(dataMap.get('unitconfigcategory'))
         tables.set('UnitConfigCategory', this._UnitConfigCategory)
-        this._ItemConfigCategory = new ItemConfigCategory(dataMap.get('itemconfigcategory'))
-        tables.set('ItemConfigCategory', this._ItemConfigCategory)
 
         this._UnitConfigCategory.resolve(tables)
-        this._ItemConfigCategory.resolve(tables)
     }
 }

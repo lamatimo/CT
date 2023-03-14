@@ -70,7 +70,7 @@ message M2C_StartSceneChange
 message MoveInfo
 {
 	repeated Vec3 Points = 1;
-	Vec3 Rotation = 2;
+	Quat Rotation = 2;
 	int32 TurnSpeed = 3;
 }
 
@@ -80,7 +80,24 @@ message UnitInfo
 	int32 ConfigId = 2;
 	int32 Type = 3;
 	Vec3 Position = 4;
-	Vec3 Forward = 5;
-	map<int32, int64> KV = 6;
-	MoveInfo MoveInfo = 7;
+	map<int32, int64> KV = 5;
+	MoveInfo MoveInfo = 6;
+}
+
+//MessageType IActorMessage
+message M2C_CreateUnits
+{
+	repeated UnitInfo Units = 1;
+}
+
+//MessageType IActorMessage
+message M2C_CreateMyUnit
+{
+	UnitInfo Unit = 1;
+}
+
+//MessageType IActorMessage
+message M2C_RemoveUnits
+{
+	repeated int64 Units = 2;
 }

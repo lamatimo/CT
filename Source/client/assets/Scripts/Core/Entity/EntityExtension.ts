@@ -3,7 +3,6 @@ import { Scene } from "./Scene";
 
 declare module "./Entity" {
     interface Entity {
-        domainZone(): number;
         domainScene(): Scene;
 
         /**
@@ -20,12 +19,6 @@ declare module "./Entity" {
          */
         destroy(): void
     }
-}
-
-Entity.prototype.domainZone = function () {
-    let self: Entity = this;
-
-    return (self.domain as Scene)?.zone ?? 0;
 }
 
 Entity.prototype.domainScene = function () {

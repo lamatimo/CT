@@ -163,94 +163,6 @@ export class UnitConfig {
 
 
 
-export class ItemConfigCategory{
-    private _dataMap: Map<number, ItemConfig>
-    private _dataList: ItemConfig[]
-    constructor(_json_: any) {
-        this._dataMap = new Map<number, ItemConfig>()
-        this._dataList = []
-        for(var _json2_ of _json_) {
-            let _v: ItemConfig
-            _v = new ItemConfig(_json2_)
-            this._dataList.push(_v)
-            this._dataMap.set(_v.id, _v)
-        }
-    }
-
-    getDataMap(): Map<number, ItemConfig> { return this._dataMap; }
-    getDataList(): ItemConfig[] { return this._dataList; }
-
-    get(key: number): ItemConfig | undefined { return this._dataMap.get(key); }
-
-    resolve(_tables: Map<string, any>) {
-        for(var v of this._dataList) {
-            v.resolve(_tables)
-        }
-
-        //@ts-ignore
-        if (this.afterEndInit) {
-            //@ts-ignore
-            this.afterEndInit()
-        }
-    }
-
-}
-
-
-
-
-
-export class ItemConfig {
-
-    constructor(_json_: any) {
-        if (_json_.id === undefined) { throw new Error() }
-        this.id = _json_.id
-        if (_json_.name === undefined) { throw new Error() }
-        this.name = _json_.name
-        if (_json_.price === undefined) { throw new Error() }
-        this.price = _json_.price
-        if (_json_.upgrade_to_item_id === undefined) { throw new Error() }
-        this.upgradeToItemId = _json_.upgrade_to_item_id
-        if(_json_.expire_time != undefined) { this.expireTime = _json_.expire_time } else { this.expireTime = undefined }
-        if (_json_.exchange_list === undefined) { throw new Error() }
-        this.exchangeList = _json_.exchange_list
-    }
-
-    /**
-     * 这是id
-     */
-    readonly id: number
-    /**
-     * 名字
-     */
-    readonly name: string
-    /**
-     * 价格
-     */
-    readonly price: number
-    /**
-     * 引用当前表
-     */
-    readonly upgradeToItemId: number
-    /**
-     * 过期时间
-     */
-    readonly expireTime: number|undefined
-    readonly exchangeList: string
-
-    resolve(_tables: Map<string, any>) {
-
-        //@ts-ignore
-        if (this.afterEndInit) {
-            //@ts-ignore
-            this.afterEndInit()
-        }
-    }
-}
-
-
-
-
 export class StartMachineConfigCategory{
     private _dataMap: Map<number, StartMachineConfig>
     private _dataList: StartMachineConfig[]
@@ -317,172 +229,6 @@ export class StartMachineConfig {
      * 守护进程端口
      */
     readonly WatcherPort: string
-
-    resolve(_tables: Map<string, any>) {
-
-        //@ts-ignore
-        if (this.afterEndInit) {
-            //@ts-ignore
-            this.afterEndInit()
-        }
-    }
-}
-
-
-
-
-export class StartProcessConfigCategory{
-    private _dataMap: Map<number, StartProcessConfig>
-    private _dataList: StartProcessConfig[]
-    constructor(_json_: any) {
-        this._dataMap = new Map<number, StartProcessConfig>()
-        this._dataList = []
-        for(var _json2_ of _json_) {
-            let _v: StartProcessConfig
-            _v = new StartProcessConfig(_json2_)
-            this._dataList.push(_v)
-            this._dataMap.set(_v.Id, _v)
-        }
-    }
-
-    getDataMap(): Map<number, StartProcessConfig> { return this._dataMap; }
-    getDataList(): StartProcessConfig[] { return this._dataList; }
-
-    get(key: number): StartProcessConfig | undefined { return this._dataMap.get(key); }
-
-    resolve(_tables: Map<string, any>) {
-        for(var v of this._dataList) {
-            v.resolve(_tables)
-        }
-
-        //@ts-ignore
-        if (this.afterEndInit) {
-            //@ts-ignore
-            this.afterEndInit()
-        }
-    }
-
-}
-
-
-
-
-
-export class StartProcessConfig {
-
-    constructor(_json_: any) {
-        if (_json_.Id === undefined) { throw new Error() }
-        this.Id = _json_.Id
-        if (_json_.MachineId === undefined) { throw new Error() }
-        this.MachineId = _json_.MachineId
-        if (_json_.InnerPort === undefined) { throw new Error() }
-        this.InnerPort = _json_.InnerPort
-    }
-
-    /**
-     * id
-     */
-    readonly Id: number
-    /**
-     * 所属机器
-     */
-    readonly MachineId: number
-    /**
-     * 内网端口
-     */
-    readonly InnerPort: number
-
-    resolve(_tables: Map<string, any>) {
-
-        //@ts-ignore
-        if (this.afterEndInit) {
-            //@ts-ignore
-            this.afterEndInit()
-        }
-    }
-}
-
-
-
-
-export class StartSceneConfigCategory{
-    private _dataMap: Map<number, StartSceneConfig>
-    private _dataList: StartSceneConfig[]
-    constructor(_json_: any) {
-        this._dataMap = new Map<number, StartSceneConfig>()
-        this._dataList = []
-        for(var _json2_ of _json_) {
-            let _v: StartSceneConfig
-            _v = new StartSceneConfig(_json2_)
-            this._dataList.push(_v)
-            this._dataMap.set(_v.Id, _v)
-        }
-    }
-
-    getDataMap(): Map<number, StartSceneConfig> { return this._dataMap; }
-    getDataList(): StartSceneConfig[] { return this._dataList; }
-
-    get(key: number): StartSceneConfig | undefined { return this._dataMap.get(key); }
-
-    resolve(_tables: Map<string, any>) {
-        for(var v of this._dataList) {
-            v.resolve(_tables)
-        }
-
-        //@ts-ignore
-        if (this.afterEndInit) {
-            //@ts-ignore
-            this.afterEndInit()
-        }
-    }
-
-}
-
-
-
-
-
-export class StartSceneConfig {
-
-    constructor(_json_: any) {
-        if (_json_.Id === undefined) { throw new Error() }
-        this.Id = _json_.Id
-        if (_json_.Process === undefined) { throw new Error() }
-        this.Process = _json_.Process
-        if (_json_.Zone === undefined) { throw new Error() }
-        this.Zone = _json_.Zone
-        if (_json_.SceneType === undefined) { throw new Error() }
-        this.SceneType = _json_.SceneType
-        if (_json_.Name === undefined) { throw new Error() }
-        this.Name = _json_.Name
-        if (_json_.OuterPort === undefined) { throw new Error() }
-        this.OuterPort = _json_.OuterPort
-    }
-
-    /**
-     * id
-     */
-    readonly Id: number
-    /**
-     * 所属进程
-     */
-    readonly Process: number
-    /**
-     * 所属区
-     */
-    readonly Zone: number
-    /**
-     * 类型
-     */
-    readonly SceneType: string
-    /**
-     * 名字
-     */
-    readonly Name: string
-    /**
-     * 外网端口
-     */
-    readonly OuterPort: number
 
     resolve(_tables: Map<string, any>) {
 
@@ -571,53 +317,225 @@ export class StartZoneConfig {
 
 
 
+export class StartSceneConfigCategory{
+    private _dataMap: Map<number, StartSceneConfig>
+    private _dataList: StartSceneConfig[]
+    constructor(_json_: any) {
+        this._dataMap = new Map<number, StartSceneConfig>()
+        this._dataList = []
+        for(var _json2_ of _json_) {
+            let _v: StartSceneConfig
+            _v = new StartSceneConfig(_json2_)
+            this._dataList.push(_v)
+            this._dataMap.set(_v.Id, _v)
+        }
+    }
+
+    getDataMap(): Map<number, StartSceneConfig> { return this._dataMap; }
+    getDataList(): StartSceneConfig[] { return this._dataList; }
+
+    get(key: number): StartSceneConfig | undefined { return this._dataMap.get(key); }
+
+    resolve(_tables: Map<string, any>) {
+        for(var v of this._dataList) {
+            v.resolve(_tables)
+        }
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
+    }
+
+}
+
+
+
+
+
+export class StartSceneConfig {
+
+    constructor(_json_: any) {
+        if (_json_.Id === undefined) { throw new Error() }
+        this.Id = _json_.Id
+        if (_json_.Zone === undefined) { throw new Error() }
+        this.Zone = _json_.Zone
+        if (_json_.Process === undefined) { throw new Error() }
+        this.Process = _json_.Process
+        if (_json_.SceneType === undefined) { throw new Error() }
+        this.SceneType = _json_.SceneType
+        if (_json_.Name === undefined) { throw new Error() }
+        this.Name = _json_.Name
+        if (_json_.OuterPort === undefined) { throw new Error() }
+        this.OuterPort = _json_.OuterPort
+    }
+
+    /**
+     * id
+     */
+    readonly Id: number
+    /**
+     * 所属区
+     */
+    readonly Zone: number
+    /**
+     * 所属进程序号
+     */
+    readonly Process: number
+    /**
+     * 类型
+     */
+    readonly SceneType: string
+    /**
+     * 名字
+     */
+    readonly Name: string
+    /**
+     * 外网端口
+     */
+    readonly OuterPort: number
+
+    resolve(_tables: Map<string, any>) {
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
+    }
+}
+
+
+
+
+export class StartProcessConfigCategory{
+    private _dataMap: Map<number, StartProcessConfig>
+    private _dataList: StartProcessConfig[]
+    constructor(_json_: any) {
+        this._dataMap = new Map<number, StartProcessConfig>()
+        this._dataList = []
+        for(var _json2_ of _json_) {
+            let _v: StartProcessConfig
+            _v = new StartProcessConfig(_json2_)
+            this._dataList.push(_v)
+            this._dataMap.set(_v.Id, _v)
+        }
+    }
+
+    getDataMap(): Map<number, StartProcessConfig> { return this._dataMap; }
+    getDataList(): StartProcessConfig[] { return this._dataList; }
+
+    get(key: number): StartProcessConfig | undefined { return this._dataMap.get(key); }
+
+    resolve(_tables: Map<string, any>) {
+        for(var v of this._dataList) {
+            v.resolve(_tables)
+        }
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
+    }
+
+}
+
+
+
+
+
+export class StartProcessConfig {
+
+    constructor(_json_: any) {
+        if (_json_.Id === undefined) { throw new Error() }
+        this.Id = _json_.Id
+        if (_json_.MachineId === undefined) { throw new Error() }
+        this.MachineId = _json_.MachineId
+        if (_json_.Zone === undefined) { throw new Error() }
+        this.Zone = _json_.Zone
+        if (_json_.Process === undefined) { throw new Error() }
+        this.Process = _json_.Process
+        if (_json_.InnerPort === undefined) { throw new Error() }
+        this.InnerPort = _json_.InnerPort
+    }
+
+    /**
+     * 这个id没任何意义
+     */
+    readonly Id: number
+    /**
+     * 所属机器
+     */
+    readonly MachineId: number
+    /**
+     * 属于哪个区
+     */
+    readonly Zone: number
+    /**
+     * 区进程序号，同一个区的进程序号不要冲突
+     */
+    readonly Process: number
+    /**
+     * 内网端口
+     */
+    readonly InnerPort: number
+
+    resolve(_tables: Map<string, any>) {
+
+        //@ts-ignore
+        if (this.afterEndInit) {
+            //@ts-ignore
+            this.afterEndInit()
+        }
+    }
+}
+
+
+
+
 type JsonLoader = (file: Array<string>) => any
 
 export class Tables {
     private static _UnitConfigCategory: UnitConfigCategory
     static get UnitConfigCategory(): UnitConfigCategory  { return this._UnitConfigCategory;}
-    private static _ItemConfigCategory: ItemConfigCategory
-    static get ItemConfigCategory(): ItemConfigCategory  { return this._ItemConfigCategory;}
     private static _StartMachineConfigCategory: StartMachineConfigCategory
     static get StartMachineConfigCategory(): StartMachineConfigCategory  { return this._StartMachineConfigCategory;}
-    private static _StartProcessConfigCategory: StartProcessConfigCategory
-    static get StartProcessConfigCategory(): StartProcessConfigCategory  { return this._StartProcessConfigCategory;}
-    private static _StartSceneConfigCategory: StartSceneConfigCategory
-    static get StartSceneConfigCategory(): StartSceneConfigCategory  { return this._StartSceneConfigCategory;}
     private static _StartZoneConfigCategory: StartZoneConfigCategory
     static get StartZoneConfigCategory(): StartZoneConfigCategory  { return this._StartZoneConfigCategory;}
+    private static _StartSceneConfigCategory: StartSceneConfigCategory
+    static get StartSceneConfigCategory(): StartSceneConfigCategory  { return this._StartSceneConfigCategory;}
+    private static _StartProcessConfigCategory: StartProcessConfigCategory
+    static get StartProcessConfigCategory(): StartProcessConfigCategory  { return this._StartProcessConfigCategory;}
 
     public static async init(loader: JsonLoader) {
         let tables = new Map<string, any>()
         let loadList: Array<string> = new Array
 
         loadList.push('unitconfigcategory')
-        loadList.push('itemconfigcategory')
         loadList.push('startmachineconfigcategory')
-        loadList.push('startprocessconfigcategory')
-        loadList.push('startsceneconfigcategory')
         loadList.push('startzoneconfigcategory')
+        loadList.push('startsceneconfigcategory')
+        loadList.push('startprocessconfigcategory')
 
         let dataMap: Map<string, any> = await loader(loadList)
 
         this._UnitConfigCategory = new UnitConfigCategory(dataMap.get('unitconfigcategory'))
         tables.set('UnitConfigCategory', this._UnitConfigCategory)
-        this._ItemConfigCategory = new ItemConfigCategory(dataMap.get('itemconfigcategory'))
-        tables.set('ItemConfigCategory', this._ItemConfigCategory)
         this._StartMachineConfigCategory = new StartMachineConfigCategory(dataMap.get('startmachineconfigcategory'))
         tables.set('StartMachineConfigCategory', this._StartMachineConfigCategory)
-        this._StartProcessConfigCategory = new StartProcessConfigCategory(dataMap.get('startprocessconfigcategory'))
-        tables.set('StartProcessConfigCategory', this._StartProcessConfigCategory)
-        this._StartSceneConfigCategory = new StartSceneConfigCategory(dataMap.get('startsceneconfigcategory'))
-        tables.set('StartSceneConfigCategory', this._StartSceneConfigCategory)
         this._StartZoneConfigCategory = new StartZoneConfigCategory(dataMap.get('startzoneconfigcategory'))
         tables.set('StartZoneConfigCategory', this._StartZoneConfigCategory)
+        this._StartSceneConfigCategory = new StartSceneConfigCategory(dataMap.get('startsceneconfigcategory'))
+        tables.set('StartSceneConfigCategory', this._StartSceneConfigCategory)
+        this._StartProcessConfigCategory = new StartProcessConfigCategory(dataMap.get('startprocessconfigcategory'))
+        tables.set('StartProcessConfigCategory', this._StartProcessConfigCategory)
 
         this._UnitConfigCategory.resolve(tables)
-        this._ItemConfigCategory.resolve(tables)
         this._StartMachineConfigCategory.resolve(tables)
-        this._StartProcessConfigCategory.resolve(tables)
-        this._StartSceneConfigCategory.resolve(tables)
         this._StartZoneConfigCategory.resolve(tables)
+        this._StartSceneConfigCategory.resolve(tables)
+        this._StartProcessConfigCategory.resolve(tables)
     }
 }

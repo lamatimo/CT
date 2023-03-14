@@ -21,6 +21,7 @@
             "args": [
                 "${workspaceFolder}/server/App/Program.ts",
                 "--AppType=Server",
+                "--zone=1",
                 "--process=1",
                 "--develop=true",
                 "--console=true",

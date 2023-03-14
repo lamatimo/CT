@@ -42,7 +42,7 @@ export class C2G_LoginGateHandler extends AMRpcHandler<C2G_LoginGate, G2C_LoginG
         }
 
         session.addComponent(SessionLoginLockComponent)
-        let dbComponent = await DBManagerComponent.inst.GetZoneDB(session.domainZone())
+        let dbComponent = await DBManagerComponent.inst.GetZoneDB()
 
         let player = await dbComponent.Query(Player, {Account: account})
         let playerComponent = scene.getComponent(PlayerComponent);
@@ -59,7 +59,7 @@ export class C2G_LoginGateHandler extends AMRpcHandler<C2G_LoginGate, G2C_LoginG
         session.addComponent(SessionPlayerComponent).PlayerId = player.id;
         session.addComponent(MailBoxComponent).init(MailboxType.GateSession);
 
-        let startSceneConfigs = Tables.StartSceneConfigCategory.Maps.get(session.domainZone())
+        let startSceneConfigs = Tables.StartSceneConfigCategory.Maps
 
         response.Maps = []
 

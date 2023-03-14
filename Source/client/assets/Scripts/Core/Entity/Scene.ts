@@ -4,7 +4,6 @@ import { SceneType } from './SceneType';
 
 export class Scene extends Entity {
     public name: string
-    public zone: number
     public sceneType: SceneType
 
     public set domain(value: Entity) {
@@ -24,10 +23,9 @@ export class Scene extends Entity {
         this._parent.children.set(this.id, this);
     }
 
-    public init(id: number, instanceId: number, zone: number, sceneType: SceneType, name: string, parent: Entity) {
+    public init(id: number, instanceId: number, sceneType: SceneType, name: string, parent: Entity) {
         this.id = id;
         this.instanceId = instanceId;
-        this.zone = zone;
         this.sceneType = sceneType;
         this.name = name;
         this.parent = parent;
@@ -37,7 +35,7 @@ export class Scene extends Entity {
         this.domain = this;
         this.isRegister = true;
 
-        ctLog(`scene create: ${this.sceneType} ${this.name} ${this.id} ${this.instanceId} ${this.zone}`);
+        ctLog(`scene create: ${this.sceneType} ${this.name} ${this.id} ${this.instanceId}`);
     }
 }
 

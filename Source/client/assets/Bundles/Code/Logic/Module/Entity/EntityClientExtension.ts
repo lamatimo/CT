@@ -11,5 +11,5 @@ declare module "../../../../../Scripts/Core/Entity/Entity" {
 Entity.prototype.clientScene = function () {
     let self: Entity = this;
 
-    return ClientSceneManagerComponent.inst.get(self.domainZone());
+    return ClientSceneManagerComponent.inst.get(self.domain.id);
 }

@@ -47,17 +47,16 @@ class EntryEvent_InitServer extends AEvent<EntryEvent>{
             }, 1000 * 60)
         }
 
-        let processConfig = Tables.StartProcessConfigCategory.get(Options.inst.process);
-
         switch (Options.inst.appType) {
             case AppType.Server:
                 {
+                    let processConfig = Tables.StartProcessConfigCategory.getStartProcessConfig(Options.inst.process);
                     Root.inst.scene.addComponent(NetInnerComponent).init(processConfig.getInnerIPPort());
 
                     var processScenes = Tables.StartSceneConfigCategory.GetByProcess(Options.inst.process);
 
                     for (let startConfig of processScenes) {
-                        await SceneFactory.CreateServerScene(ServerSceneManagerComponent.inst, startConfig.Id, startConfig.InstanceId, startConfig.Zone, startConfig.Name,
+                        await SceneFactory.CreateServerScene(ServerSceneManagerComponent.inst, startConfig.Id, startConfig.InstanceId, startConfig.Name,
                             startConfig.Type, startConfig);
                     }
 

@@ -11,8 +11,8 @@ import { AfterCreateClientScene, AfterCreateCurrentScene } from "../EventType/Ev
 import { PlayerComponent } from "../Unit/PlayerComponent";
 
 export class SceneFactory {
-    public static async createClientScene(zone: number, name: string): Promise<Scene> {
-        let clientScene = EntitySceneFactory.createScene(zone, SceneType.Client, name, ClientSceneManagerComponent.inst);
+    public static async createClientScene(id: number, name: string): Promise<Scene> {
+        let clientScene = EntitySceneFactory.createScene(id, SceneType.Client, name, ClientSceneManagerComponent.inst);
         clientScene.addComponent(CurrentScenesComponent);
         clientScene.addComponent(ObjectWait);
         clientScene.addComponent(PlayerComponent);
@@ -21,8 +21,8 @@ export class SceneFactory {
         return clientScene;
     }
 
-    public static createCurrentScene(id: number, zone: number, name: string, currentScenesComponent: CurrentScenesComponent): Scene {
-        let currentScene = EntitySceneFactory.createSceneWithId(id, IdGenerater.inst.generateInstanceId(), zone, SceneType.Current, name, currentScenesComponent);
+    public static createCurrentScene(id: number, name: string, currentScenesComponent: CurrentScenesComponent): Scene {
+        let currentScene = EntitySceneFactory.createSceneWithId(id, IdGenerater.inst.generateInstanceId(), SceneType.Current, name, currentScenesComponent);
         currentScenesComponent.scene = currentScene;
 
         EventSystem.inst.publishAsync(currentScene, AfterCreateCurrentScene.create());

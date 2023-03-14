@@ -102,7 +102,10 @@ export class Init {
 
     private static handlePath(filePath: string){
         filePath = path.relative('.', filePath)
-        filePath = filePath.replaceAll(`\\`, '/')
+
+        while(filePath.indexOf(`\\`) > 0){
+            filePath = filePath.replace(`\\`, '/')
+        }
 
         if(filePath.startsWith('client/assets')){
             filePath = filePath.replace('client/assets', '../../client/assets')

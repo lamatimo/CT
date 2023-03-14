@@ -6,6 +6,7 @@ import { MessageType } from "../../../../../../Scripts/Core/Network/MessageType"
 import { ResponseTypeDecorator } from "../../../Module/Message/ResponseTypeDecorator"
 import { MessageParseHelper } from '../../../Module/Message/MessageParseHelper';
 import { Vec3 } from '../../../Module/Math/vec3';
+import { Quat } from '../../../Module/Math/quat';
 
 const r = new pb.Reader(new Uint8Array())
 const w = new pb.Writer()
@@ -23,6 +24,9 @@ export class OuterMessage {
 	public static readonly MoveInfo = 10011
 	public static readonly UnitInfo_KVKV = 10012
 	public static readonly UnitInfo = 10013
+	public static readonly M2C_CreateUnits = 10014
+	public static readonly M2C_CreateMyUnit = 10015
+	public static readonly M2C_RemoveUnits = 10016
 }
 
 /**
@@ -711,7 +715,7 @@ export class M2C_StartSceneChange extends Message {
 export class MoveInfo extends Message {
 	public opcode = OuterMessage.MoveInfo
 	public Points: Vec3[]
-	public Rotation: Vec3
+	public Rotation: Quat
 	public TurnSpeed: number
 	constructor(args?: pb.Properties<MoveInfo>) {
 		super()
@@ -747,7 +751,7 @@ export class MoveInfo extends Message {
 		}
 		if(this.Rotation){
 			w.uint32(34).fork()
-			MessageParseHelper.encodeVec3(w, this.Rotation)
+			MessageParseHelper.encodeQuat(w, this.Rotation)
 			w.ldelim()
 		}
 		if(this.TurnSpeed){
@@ -770,7 +774,7 @@ export class MoveInfo extends Message {
 					this.Points.push(MessageParseHelper.docodeVec3(r, r.uint32()))
 					break
 				case 4:
-					this.Rotation = MessageParseHelper.docodeVec3(r, r.uint32())
+					this.Rotation = MessageParseHelper.docodeQuat(r, r.uint32())
 					break
 				case 5:
 					this.TurnSpeed = r.int32()
@@ -843,7 +847,6 @@ export class UnitInfo extends Message {
 	public ConfigId: number
 	public Type: number
 	public Position: Vec3
-	public Forward: Vec3
 	public KV: Map<number, number> = new Map
 	public MoveInfo: MoveInfo
 	constructor(args?: pb.Properties<UnitInfo>) {
@@ -862,9 +865,6 @@ export class UnitInfo extends Message {
 		}
 		if(args.Position){
 			this.Position = args.Position
-		}
-		if(args.Forward){
-			this.Forward = args.Forward
 		}
 		if(args.KV){
 			this.KV = args.KV
@@ -897,19 +897,14 @@ export class UnitInfo extends Message {
 			MessageParseHelper.encodeVec3(w, this.Position)
 			w.ldelim()
 		}
-		if(this.Forward){
-			w.uint32(58).fork()
-			MessageParseHelper.encodeVec3(w, this.Forward)
-			w.ldelim()
-		}
 		for (const [k,v] of this.KV) {
 			let obj = new UnitInfo_KVKV({key: k, value: v})
-			w.uint32(66).fork()
+			w.uint32(58).fork()
 			obj.innerEncode()
 			w.ldelim()
 		}
 		if(this.MoveInfo){
-			w.uint32(74).fork()
+			w.uint32(66).fork()
 			this.MoveInfo.innerEncode()
 			w.ldelim()
 		}
@@ -939,17 +934,181 @@ export class UnitInfo extends Message {
 					this.Position = MessageParseHelper.docodeVec3(r, r.uint32())
 					break
 				case 7:
-					this.Forward = MessageParseHelper.docodeVec3(r, r.uint32())
-					break
-				case 8:
 					let msg_UnitInfo_KVKV = new UnitInfo_KVKV()
 					msg_UnitInfo_KVKV.decode(bytes, r.uint32())
 					this.KV.set(msg_UnitInfo_KVKV.key, msg_UnitInfo_KVKV.value)
 					break
-				case 9:
+				case 8:
 					let msg_MoveInfo = new MoveInfo()
 					msg_MoveInfo.decode(bytes, r.uint32())
 					this.MoveInfo = msg_MoveInfo
+					break
+				default:
+					r.skipType(tag & 7)
+					break
+			}
+		}
+	}
+}
+/**
+ * MessageType IActorMessage
+ */
+@MessageDecorator(OuterMessage.M2C_CreateUnits, MessageType.IActorMessage)
+export class M2C_CreateUnits extends Message {
+	public opcode = OuterMessage.M2C_CreateUnits
+	public Units: UnitInfo[]
+	constructor(args?: pb.Properties<M2C_CreateUnits>) {
+		super()
+		if(!args){
+			return
+		}
+		if(args.Units){
+			this.Units = args.Units
+		}
+	}
+	public encode(actorId?: number) {
+		w.reset()
+		w.uint32(8).uint32(this.opcode)
+		if(actorId){
+			w.uint32(16).uint64(actorId)
+		}
+		this.innerEncode()
+		return w.finish()
+	}
+	public innerEncode() {
+		if(this.Units && this.Units.length > 0){
+			for (const v of this.Units) {
+				w.uint32(26).fork()
+				v.innerEncode()
+				w.ldelim()
+			}
+		}
+	}
+
+	public decode(bytes: Uint8Array, length?: number) {
+		if(!length){
+			r.pos = 0
+			r.buf = bytes
+			r.len = bytes.length
+		}
+		let end = length === undefined ? r.len : r.pos + length;
+		this.Units = []
+		while (r.pos < end) {
+			const tag = r.uint32()
+			switch (tag >>> 3) {
+				case 3:
+					let msg_UnitInfo = new UnitInfo()
+					msg_UnitInfo.decode(bytes, r.uint32())
+					this.Units.push(msg_UnitInfo)
+					break
+				default:
+					r.skipType(tag & 7)
+					break
+			}
+		}
+	}
+}
+/**
+ * MessageType IActorMessage
+ */
+@MessageDecorator(OuterMessage.M2C_CreateMyUnit, MessageType.IActorMessage)
+export class M2C_CreateMyUnit extends Message {
+	public opcode = OuterMessage.M2C_CreateMyUnit
+	public Unit: UnitInfo
+	constructor(args?: pb.Properties<M2C_CreateMyUnit>) {
+		super()
+		if(!args){
+			return
+		}
+		if(args.Unit){
+			this.Unit = args.Unit
+		}
+	}
+	public encode(actorId?: number) {
+		w.reset()
+		w.uint32(8).uint32(this.opcode)
+		if(actorId){
+			w.uint32(16).uint64(actorId)
+		}
+		this.innerEncode()
+		return w.finish()
+	}
+	public innerEncode() {
+		if(this.Unit){
+			w.uint32(26).fork()
+			this.Unit.innerEncode()
+			w.ldelim()
+		}
+	}
+
+	public decode(bytes: Uint8Array, length?: number) {
+		if(!length){
+			r.pos = 0
+			r.buf = bytes
+			r.len = bytes.length
+		}
+		let end = length === undefined ? r.len : r.pos + length;
+		while (r.pos < end) {
+			const tag = r.uint32()
+			switch (tag >>> 3) {
+				case 3:
+					let msg_UnitInfo = new UnitInfo()
+					msg_UnitInfo.decode(bytes, r.uint32())
+					this.Unit = msg_UnitInfo
+					break
+				default:
+					r.skipType(tag & 7)
+					break
+			}
+		}
+	}
+}
+/**
+ * MessageType IActorMessage
+ */
+@MessageDecorator(OuterMessage.M2C_RemoveUnits, MessageType.IActorMessage)
+export class M2C_RemoveUnits extends Message {
+	public opcode = OuterMessage.M2C_RemoveUnits
+	public Units: number[]
+	constructor(args?: pb.Properties<M2C_RemoveUnits>) {
+		super()
+		if(!args){
+			return
+		}
+		if(args.Units){
+			this.Units = args.Units
+		}
+	}
+	public encode(actorId?: number) {
+		w.reset()
+		w.uint32(8).uint32(this.opcode)
+		if(actorId){
+			w.uint32(16).uint64(actorId)
+		}
+		this.innerEncode()
+		return w.finish()
+	}
+	public innerEncode() {
+		if(this.Units && this.Units.length > 0){
+			for (const v of this.Units) {
+				w.uint32(26).int64(v)
+			}
+		}
+	}
+
+	public decode(bytes: Uint8Array, length?: number) {
+		if(!length){
+			r.pos = 0
+			r.buf = bytes
+			r.len = bytes.length
+		}
+		let end = length === undefined ? r.len : r.pos + length;
+		this.Units = []
+		while (r.pos < end) {
+			const tag = r.uint32()
+			switch (tag >>> 3) {
+				case 3:
+					this.Units.push((r.int64() as Long).toNumber())
 					break
 				default:
 					r.skipType(tag & 7)

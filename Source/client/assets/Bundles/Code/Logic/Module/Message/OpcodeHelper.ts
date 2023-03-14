@@ -25,13 +25,13 @@ export class OpcodeHelper {
         return opcode >= OpcodeRangeDefine.InnerMinOpcode;
     }
 
-    public static LogMsg(zone: number, message: any): void {
+    public static LogMsg(message: any): void {
         let opcode = NetServices.inst.GetOpcode(message.constructor);
 
         if (!this.IsNeedLogMessage(opcode)) {
             return;
         }
 
-        ctLog(`[OpcodeHelper] zone: ${zone} ${JSON.stringify(message)}`);
+        ctLog(`[OpcodeHelper] ${JSON.stringify(message)}`);
     }
 }

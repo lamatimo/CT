@@ -1,3 +1,6 @@
+/**
+ * 一个key对应一个列表
+ */
 export class MultiMap<T, K> {
     private map: Map<T, K[]>;
     private readonly Empty: K[] = [];

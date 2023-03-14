@@ -25,6 +25,10 @@ export class InnerMessage {
 	public static readonly M2M_UnitTransferRequest = 20015
 	public static readonly ObjectLockResponse = 20016
 	public static readonly ObjectLockRequest = 20017
+	public static readonly ObjectGetRequest = 20018
+	public static readonly ObjectGetResponse = 20019
+	public static readonly ObjectUnLockRequest = 20020
+	public static readonly ObjectUnLockResponse = 20021
 }
 
 /**
@@ -1020,6 +1024,304 @@ export class ObjectLockRequest extends Message {
 					break
 				case 5:
 					this.Time = r.int32()
+					break
+				case 6:
+					this.RpcId = r.uint32()
+					break
+				default:
+					r.skipType(tag & 7)
+					break
+			}
+		}
+	}
+}
+/**
+ * MessageType IActorResponse
+ */
+@MessageDecorator(InnerMessage.ObjectGetResponse, MessageType.IActorResponse)
+export class ObjectGetResponse extends Message {
+	public opcode = InnerMessage.ObjectGetResponse
+	public InstanceId: number
+	public RpcId: number
+	public Error: number = 0
+	public Message: string
+	constructor(args?: pb.Properties<ObjectGetResponse>) {
+		super()
+		if(!args){
+			return
+		}
+		if(args.InstanceId){
+			this.InstanceId = args.InstanceId
+		}
+		if(args.RpcId){
+			this.RpcId = args.RpcId
+		}
+		if(args.Error){
+			this.Error = args.Error
+		}
+		if(args.Message){
+			this.Message = args.Message
+		}
+	}
+	public encode(actorId?: number) {
+		w.reset()
+		w.uint32(8).uint32(this.opcode)
+		if(actorId){
+			w.uint32(16).uint64(actorId)
+		}
+		this.innerEncode()
+		return w.finish()
+	}
+	public innerEncode() {
+		if(this.InstanceId){
+			w.uint32(24).int64(this.InstanceId)
+		}
+		if(this.RpcId){
+			w.uint32(32).uint32(this.RpcId)
+		}
+		if(this.Error){
+			w.uint32(40).uint32(this.Error)
+		}
+		if(this.Message){
+			w.uint32(50).string(this.Message)
+		}
+	}
+
+	public decode(bytes: Uint8Array, length?: number) {
+		if(!length){
+			r.pos = 0
+			r.buf = bytes
+			r.len = bytes.length
+		}
+		let end = length === undefined ? r.len : r.pos + length;
+		while (r.pos < end) {
+			const tag = r.uint32()
+			switch (tag >>> 3) {
+				case 3:
+					this.InstanceId = (r.int64() as Long).toNumber()
+					break
+				case 4:
+					this.RpcId = r.uint32()
+					break
+				case 5:
+					this.Error = r.uint32()
+					break
+				case 6:
+					this.Message = r.string()
+					break
+				default:
+					r.skipType(tag & 7)
+					break
+			}
+		}
+	}
+}
+/**
+ * MessageType IActorRequest
+ * ResponseType ObjectGetResponse
+ */
+@ResponseTypeDecorator(ObjectGetResponse)
+@MessageDecorator(InnerMessage.ObjectGetRequest, MessageType.IActorRequest)
+export class ObjectGetRequest extends Message {
+	public opcode = InnerMessage.ObjectGetRequest
+	public Key: number
+	public RpcId: number
+	constructor(args?: pb.Properties<ObjectGetRequest>) {
+		super()
+		if(!args){
+			return
+		}
+		if(args.Key){
+			this.Key = args.Key
+		}
+		if(args.RpcId){
+			this.RpcId = args.RpcId
+		}
+	}
+	public encode(actorId?: number) {
+		w.reset()
+		w.uint32(8).uint32(this.opcode)
+		if(actorId){
+			w.uint32(16).uint64(actorId)
+		}
+		this.innerEncode()
+		return w.finish()
+	}
+	public innerEncode() {
+		if(this.Key){
+			w.uint32(24).int64(this.Key)
+		}
+		if(this.RpcId){
+			w.uint32(32).uint32(this.RpcId)
+		}
+	}
+
+	public decode(bytes: Uint8Array, length?: number) {
+		if(!length){
+			r.pos = 0
+			r.buf = bytes
+			r.len = bytes.length
+		}
+		let end = length === undefined ? r.len : r.pos + length;
+		while (r.pos < end) {
+			const tag = r.uint32()
+			switch (tag >>> 3) {
+				case 3:
+					this.Key = (r.int64() as Long).toNumber()
+					break
+				case 4:
+					this.RpcId = r.uint32()
+					break
+				default:
+					r.skipType(tag & 7)
+					break
+			}
+		}
+	}
+}
+/**
+ * MessageType IActorResponse
+ */
+@MessageDecorator(InnerMessage.ObjectUnLockResponse, MessageType.IActorResponse)
+export class ObjectUnLockResponse extends Message {
+	public opcode = InnerMessage.ObjectUnLockResponse
+	public RpcId: number
+	public Error: number = 0
+	public Message: string
+	constructor(args?: pb.Properties<ObjectUnLockResponse>) {
+		super()
+		if(!args){
+			return
+		}
+		if(args.RpcId){
+			this.RpcId = args.RpcId
+		}
+		if(args.Error){
+			this.Error = args.Error
+		}
+		if(args.Message){
+			this.Message = args.Message
+		}
+	}
+	public encode(actorId?: number) {
+		w.reset()
+		w.uint32(8).uint32(this.opcode)
+		if(actorId){
+			w.uint32(16).uint64(actorId)
+		}
+		this.innerEncode()
+		return w.finish()
+	}
+	public innerEncode() {
+		if(this.RpcId){
+			w.uint32(24).uint32(this.RpcId)
+		}
+		if(this.Error){
+			w.uint32(32).uint32(this.Error)
+		}
+		if(this.Message){
+			w.uint32(42).string(this.Message)
+		}
+	}
+
+	public decode(bytes: Uint8Array, length?: number) {
+		if(!length){
+			r.pos = 0
+			r.buf = bytes
+			r.len = bytes.length
+		}
+		let end = length === undefined ? r.len : r.pos + length;
+		while (r.pos < end) {
+			const tag = r.uint32()
+			switch (tag >>> 3) {
+				case 3:
+					this.RpcId = r.uint32()
+					break
+				case 4:
+					this.Error = r.uint32()
+					break
+				case 5:
+					this.Message = r.string()
+					break
+				default:
+					r.skipType(tag & 7)
+					break
+			}
+		}
+	}
+}
+/**
+ * MessageType IActorRequest
+ * ResponseType ObjectUnLockResponse
+ */
+@ResponseTypeDecorator(ObjectUnLockResponse)
+@MessageDecorator(InnerMessage.ObjectUnLockRequest, MessageType.IActorRequest)
+export class ObjectUnLockRequest extends Message {
+	public opcode = InnerMessage.ObjectUnLockRequest
+	public Key: number
+	public OldInstanceId: number
+	public InstanceId: number
+	public RpcId: number
+	constructor(args?: pb.Properties<ObjectUnLockRequest>) {
+		super()
+		if(!args){
+			return
+		}
+		if(args.Key){
+			this.Key = args.Key
+		}
+		if(args.OldInstanceId){
+			this.OldInstanceId = args.OldInstanceId
+		}
+		if(args.InstanceId){
+			this.InstanceId = args.InstanceId
+		}
+		if(args.RpcId){
+			this.RpcId = args.RpcId
+		}
+	}
+	public encode(actorId?: number) {
+		w.reset()
+		w.uint32(8).uint32(this.opcode)
+		if(actorId){
+			w.uint32(16).uint64(actorId)
+		}
+		this.innerEncode()
+		return w.finish()
+	}
+	public innerEncode() {
+		if(this.Key){
+			w.uint32(24).int64(this.Key)
+		}
+		if(this.OldInstanceId){
+			w.uint32(32).int64(this.OldInstanceId)
+		}
+		if(this.InstanceId){
+			w.uint32(40).int64(this.InstanceId)
+		}
+		if(this.RpcId){
+			w.uint32(48).uint32(this.RpcId)
+		}
+	}
+
+	public decode(bytes: Uint8Array, length?: number) {
+		if(!length){
+			r.pos = 0
+			r.buf = bytes
+			r.len = bytes.length
+		}
+		let end = length === undefined ? r.len : r.pos + length;
+		while (r.pos < end) {
+			const tag = r.uint32()
+			switch (tag >>> 3) {
+				case 3:
+					this.Key = (r.int64() as Long).toNumber()
+					break
+				case 4:
+					this.OldInstanceId = (r.int64() as Long).toNumber()
+					break
+				case 5:
+					this.InstanceId = (r.int64() as Long).toNumber()
 					break
 				case 6:
 					this.RpcId = r.uint32()

@@ -26,6 +26,9 @@ Options.prototype.awake = function () {
             case "process":
                 self.process = value
                 break;
+            case "zone":
+                self.zone = value
+                break;
             default:
                 break;
         }

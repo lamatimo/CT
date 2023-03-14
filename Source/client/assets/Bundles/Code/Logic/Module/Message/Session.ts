@@ -37,7 +37,7 @@ export class Session extends Entity {
 
         this.requestCallbacks.clear();
 
-        ctLog(`session create: zone: ${this.domainZone()} id: ${this.id} ${timeNow} `);
+        ctLog(`session create: id: ${this.id} ${timeNow} `);
     }
 
     public OnResponse(response: IResponse) {
@@ -64,7 +64,7 @@ export class Session extends Entity {
 
     public SendWithId(actorId: number, message: IMessage) {
         this.LastSendTime = TimeHelper.clientNow();
-        OpcodeHelper.LogMsg(this.domainZone(), message);
+        OpcodeHelper.LogMsg(message);
         NetServices.inst.SendMessage(this.ServiceId, this.id, actorId, message);
     }
 

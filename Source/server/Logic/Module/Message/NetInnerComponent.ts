@@ -124,7 +124,7 @@ export class NetInnerComponent extends Entity {
             return session;
         }
 
-        let ipEndPoint = Tables.StartProcessConfigCategory.get(channelId).getInnerIPPort();
+        let ipEndPoint = Tables.StartProcessConfigCategory.getStartProcessConfig(channelId).getInnerIPPort();
         session = this.CreateInner(channelId, ipEndPoint);
         return session;
     }

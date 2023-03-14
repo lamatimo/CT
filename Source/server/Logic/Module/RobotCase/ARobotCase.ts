@@ -15,7 +15,7 @@ export abstract class ARobotCase extends AInvokeHandler<RobotInvokeArgs, Promise
             await this.Run(robotCase, args.cmdArgs);
         }
         catch (e) {
-            ctError(`${robotCase.domainZone()} ${e}`);
+            ctError(`${e}`);
             ctLog(`RobotCase Error ${this.constructor.name}:\n\t${e}`);
         }
 

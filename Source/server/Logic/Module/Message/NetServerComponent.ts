@@ -69,7 +69,7 @@ export class NetServerComponent extends Entity {
         }
         session.LastRecvTime = TimeHelper.clientNow();
 
-        OpcodeHelper.LogMsg(this.domainZone(), message);
+        OpcodeHelper.LogMsg(message);
 
         let event: NetServerComponentOnRead = NetServerComponentOnRead.create()
         event.Message = message

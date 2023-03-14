@@ -15,3 +15,10 @@
 ActorId	就是 Entity.InstanceId 会随着进程变化而改变
 
 Entity.id不会变化
+
+一台机器可以有多个zone
+每个zone可以用多个进程
+
+启动配置要传启动哪个zone和哪个进程, 
+
+一个区一个数据库

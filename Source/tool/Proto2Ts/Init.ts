@@ -21,6 +21,7 @@ const protoTypeMap: Map<string, protoTypeInfo> = new Map([
     ['bytes', { isCustomType: false, wireType: 2, tsType: 'Uint8Array' }],
     ['float', { isCustomType: false, wireType: 5, tsType: 'number' }],
     ['Vec3', { isCustomType: true, wireType: 2, tsType: 'Vec3', encode: 'MessageParseHelper.encodeVec3', decode: 'MessageParseHelper.docodeVec3' }],
+    ['Quat', { isCustomType: true, wireType: 2, tsType: 'Quat', encode: 'MessageParseHelper.encodeQuat', decode: 'MessageParseHelper.docodeQuat' }],
 ])
 
 class MessageInfo {
@@ -279,6 +280,9 @@ class FieldInfo {
                     content += `\t\t\t\t\tlet msg_${this.protoType} = new ${this.protoType}()\n`
                     content += `\t\t\t\t\tmsg_${this.protoType}.decode(bytes, r.uint32())\n`
                     content += `\t\t\t\t\tthis.${this.fieldName}.push(msg_${this.protoType})\n`
+                }
+                else if (this.protoType == "int64" || this.protoType == "uint64") {
+                    content += `\t\t\t\t\tthis.${this.fieldName}.push (r.${this.protoType}() as Long).toNumber())\n`
                 } else {
                     content += `\t\t\t\t\tthis.${this.fieldName}.push(r.${this.protoType}())\n`
                 }

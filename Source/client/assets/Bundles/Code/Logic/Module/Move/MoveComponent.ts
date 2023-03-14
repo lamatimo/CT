@@ -56,4 +56,9 @@ export class MoveComponent extends Entity {
     public From: Quat;
 
     public To: Quat;
+
+    public IsArrived()
+    {
+        return this.Targets.length == 0;
+    }
 }    

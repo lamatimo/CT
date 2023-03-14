@@ -1,12 +1,23 @@
 [
   {
-    "Id": 1,
+    "Id": 1001,
     "MachineId": 1,
+    "Zone": 1,
+    "Process": 1,
     "InnerPort": 20101
   },
   {
-    "Id": 2,
+    "Id": 2001,
     "MachineId": 2,
+    "Zone": 2,
+    "Process": 1,
     "InnerPort": 20101
+  },
+  {
+    "Id": 2002,
+    "MachineId": 2,
+    "Zone": 2,
+    "Process": 2,
+    "InnerPort": 20102
   }
 ]

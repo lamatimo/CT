@@ -113,7 +113,7 @@ export class ActorMessageSenderComponent extends Entity {
         return response;
     }
 
-public async Call(actorId: number, request: IActorRequest, needException: boolean = true): Promise<IActorResponse> {
+    public async Call(actorId: number, request: IActorRequest, needException: boolean = true): Promise<IActorResponse> {
         request.RpcId = this.GetRpcId();
 
         if (actorId == 0) {

@@ -1,4 +1,3 @@
-import pb from "protobufjs";
 import { OpcodeHelper } from "../../../../client/assets/Bundles/Code/Logic/Module/Message/OpcodeHelper";
 import { Session } from "../../../../client/assets/Bundles/Code/Logic/Module/Message/Session";
 import { SessionAcceptTimeoutComponent } from "../../../../client/assets/Bundles/Code/Logic/Module/Message/SessionAcceptTimeoutComponent";
@@ -8,6 +7,7 @@ import { Root } from "../../../../client/assets/Scripts/Core/Entity/Root";
 import { SceneType } from "../../../../client/assets/Scripts/Core/Entity/SceneType";
 import { EventSystem } from "../../../../client/assets/Scripts/Core/EventSystem/EventSystem";
 import { EventType } from "../../../../client/assets/Scripts/Core/EventSystem/EventType";
+import { Message } from "../../../../client/assets/Scripts/Core/Message/Message";
 import { IPEndPoint } from "../../../../client/assets/Scripts/Core/Network/IPEndPoint";
 import { NetServices } from "../../../../client/assets/Scripts/Core/Network/NetServices";
 import { ServiceType } from "../../../../client/assets/Scripts/Core/Network/ServiceType";
@@ -16,7 +16,7 @@ import { TimeHelper } from "../../../../client/assets/Scripts/Core/Time/TimeHelp
 
 export class NetServerComponentOnRead extends EventType {
     public Session: Session;
-    public Message: pb.Message;
+    public Message: Message;
 }
 
 /**

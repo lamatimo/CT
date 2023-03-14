@@ -31,7 +31,70 @@ class MessageInfo {
     comment: string[] = []
     parseObj: any
     fieldInfos: FieldInfo[] = []
+    mapFields: MessageInfo[] = []
+    isDepend: boolean = false
+
+    constructor(obj: any) {
+        this.msgName = obj.name
+        this.parseObj = obj
+
+        if (obj.isDepend) {
+            this.isDepend = true
+        }
+
+        this.parseComment(obj)
+
+        // 插入rpcid等信息
+        let messageType = this.msgType
+        if (messageType == "IRequest" || messageType == "IActorRequest" || messageType == "IActorLocationRequest") {
+            obj.fields.RpcId = { name: 'RpcId', type: { value: 'uint32' } }
+        } else if (messageType == "IResponse" || messageType == "IActorResponse" || messageType == "IActorLocationResponse") {
+            obj.fields.RpcId = { name: 'RpcId', type: { value: 'uint32' } }
+            obj.fields.Error = { name: 'Error', type: { value: 'uint32' }, required: true }
+            obj.fields.Message = { name: 'Message', type: { value: 'string' } }
+        }
+
+        // 前面两个留个opcode和actorid
+        let idStart = 3
+
+        for (const key in obj.fields) {
+            let field = obj.fields[key];
+            let fieldInfo = new FieldInfo(field, idStart++)
+
+            this.fieldInfos.push(fieldInfo)
+        }
+    }
+
+    private parseComment(element: any) {
+        if (this.isDepend) {
+            return
+        }
+
+        let comment: string = element.comment
+
+        this.msgType = 'IMessage'
+
+        if (!comment) {
+            return
+        }
+
+        let commentList = comment.split('\n')
+        const responsePrefix = "ResponseType "
+        const typePrefix = "MessageType "
+
+        for (const str of commentList) {
+            if (str.startsWith(responsePrefix)) {
+                this.responseTypeName = str.substring(responsePrefix.length)
+            } else if (str.startsWith(typePrefix)) {
+                this.msgType = str.substring(typePrefix.length)
+            }
+
+            this.comment.push(str)
+        }
+
+    }
 }
+
 
 class FieldInfo {
     isCustomType: boolean
@@ -39,10 +102,14 @@ class FieldInfo {
     tsType: string
     typeStr: string
     isArray: boolean
+    isMap: boolean
     fieldName: string
     id: number
     comment: string
     wireType: number
+    defaultValue: string
+    mapKeytypeStr: string
+    mapValuetypeStr: string
 
     constructor(obj: any, id: number) {
         let info = protoTypeMap.get(obj.type.value)
@@ -54,6 +121,20 @@ class FieldInfo {
 
         if (!info) {
             console.error(`类型${obj.type.value}没有配置`)
+        }
+
+        if (obj.map) {
+            this.isMap = true
+
+            this.mapKeytypeStr = protoTypeMap.get(obj.keyType.value).tsType
+
+            let v2 = protoTypeMap.get(obj.type.value2)
+
+            if (v2) {
+                this.mapValuetypeStr = v2.tsType
+            } else {
+                this.mapValuetypeStr = obj.type.value2
+            }
         }
 
         this.protoType = obj.type.value
@@ -71,6 +152,7 @@ class FieldInfo {
         }
 
         this.typeStr = this.getTypeStr()
+        this.defaultValue = this.getDefaultValue(obj)
     }
 
     private getTypeStr() {
@@ -78,6 +160,33 @@ class FieldInfo {
             return `${this.tsType}[]`
         } else {
             return `${this.tsType}`
+        }
+    }
+
+    private getDefaultValue(field): string {
+        if (!field.required) {
+            return
+        }
+
+        let typeStr = field.type.value
+
+        if (field.repeated) {
+            return `[]`
+        } {
+        }
+
+        switch (typeStr) {
+            case 'int32':
+            case 'uint32':
+            case 'int64':
+            case 'uint64':
+            case 'float':
+            case 'double':
+                return '0'
+            case 'string':
+                return ''
+            default:
+                break;
         }
     }
 
@@ -104,7 +213,15 @@ class FieldInfo {
                 content += `\t\t}\n`
             }
         } else {
-            if (this.isArray) {
+            if (this.isMap) {
+                content += `\t\tfor (const [k,v] of this.${this.fieldName}) {\n`
+                content += `\t\t\tlet obj = new ${this.tsType}({key: k, value: v})\n`
+                content += `\t\t\tw.uint32(${tag}).fork()\n`
+                content += `\t\t\tobj.innerEncode()\n`
+                content += `\t\t\tw.ldelim()\n`
+                content += `\t\t}\n`
+            }
+            else if (this.isArray) {
                 if (messageInfo) {
                     content += `\t\tif(this.${this.fieldName} && this.${this.fieldName}.length > 0){\n`
                     content += `\t\t\tfor (const v of this.${this.fieldName}) {\n`
@@ -152,7 +269,12 @@ class FieldInfo {
                 content += `\t\t\t\t\tthis.${this.fieldName} = ${info.decode}(r, r.uint32())\n`
             }
         } else {
-            if (this.isArray) {
+            if (this.isMap) {
+                content += `\t\t\t\t\tlet msg_${this.tsType} = new ${this.tsType}()\n`
+                content += `\t\t\t\t\tmsg_${this.tsType}.decode(bytes, r.uint32())\n`
+                content += `\t\t\t\t\tthis.${this.fieldName}.set(msg_${this.tsType}.key, msg_${this.tsType}.value)\n`
+            }
+            else if (this.isArray) {
                 if (messageInfo) {
                     content += `\t\t\t\t\tlet msg_${this.protoType} = new ${this.protoType}()\n`
                     content += `\t\t\t\t\tmsg_${this.protoType}.decode(bytes, r.uint32())\n`
@@ -226,15 +348,57 @@ export class Init {
         }
 
         let map = document.root.nested.CT.nested
+        let keys = Object.keys(map)
+
+        // 所有的map类型数据转换成单个对象
+        for (const k of keys) {
+            let v = map[k];
+            v.dependTypes = []
+
+            for (let kk in v.fields) {
+                let vv = v.fields[kk]
+
+                if (vv.map) {
+                    let newTypeKey = `${v.name}_KV${vv.name}`
+                    let newTypeValue = {
+                        name: newTypeKey,
+                        isDepend: true,
+                        fields: {
+                            key: {
+                                name: 'key',
+                                type: {
+                                    value: vv.keyType.value,
+                                }
+                            },
+                            value: {
+                                name: 'value',
+                                type: {
+                                    value: vv.type.value,
+                                }
+                            },
+                        }
+                    }
+
+                    vv.type.value2 = vv.type.value
+                    vv.type.value = newTypeKey
+
+                    v.dependTypes.push(newTypeValue)
+                }
+            }
+        }
 
         for (const key in map) {
             let element = map[key];
-            let msg = new MessageInfo()
 
-            msg.msgName = element.name
-            msg.parseObj = element
+            for (const dependType of element.dependTypes) {
+                let msg2 = new MessageInfo(dependType)
 
-            this.getResponse(element, msg)
+                this.MsgIteratorMap.set(msg2.msgName, msg2)
+                this.MsgMap.set(msg2.msgName, msg2)
+                this.MsgList.push(msg2)
+            }
+
+            let msg = new MessageInfo(element)
 
             this.MsgIteratorMap.set(msg.msgName, msg)
             this.MsgMap.set(msg.msgName, msg)
@@ -260,32 +424,6 @@ export class Init {
         content = content.replace('//**class**', classStr)
 
         fs.writeFileSync(writePath, content)
-    }
-
-    private static getResponse(element: any, msgInfo: MessageInfo) {
-        let comment: string = element.comment
-
-        msgInfo.msgType = 'IMessage'
-
-        if (!comment) {
-            return
-        }
-
-        let commentList = comment.split('\n')
-        const responsePrefix = "ResponseType "
-        const typePrefix = "MessageType "
-
-        for (const str of commentList) {
-            if (str.startsWith(responsePrefix)) {
-                msgInfo.responseTypeName = str.substring(responsePrefix.length)
-            } else if (str.startsWith(typePrefix)) {
-                msgInfo.msgType = str.substring(typePrefix.length)
-            }
-
-            msgInfo.comment.push(str)
-        }
-
-
     }
 
     private static generateOpcode(): string {
@@ -323,15 +461,19 @@ export class Init {
 
         content += ` */\n`
 
-        if (msg.responseType) {
+        if (!msg.isDepend && msg.responseType) {
             content += `@ResponseTypeDecorator(${msg.responseTypeName})\n`
         }
 
-        content += `@MessageDecorator(${this.namespace}.${msg.msgName}, MessageType.${msg.msgType})\n`
+        if (!msg.isDepend) {
+            content += `@MessageDecorator(${this.namespace}.${msg.msgName}, MessageType.${msg.msgType})\n`
+        }
 
         content += `export class ${msg.msgName} extends Message {\n`
-        content += `\tpublic opcode = ${this.namespace}.${msg.msgName}\n`
 
+        if (!msg.isDepend) {
+            content += `\tpublic opcode = ${this.namespace}.${msg.msgName}\n`
+        }
         // 插入rpcid等信息
         let messageType = msg.msgType
         if (messageType == "IRequest" || messageType == "IActorRequest" || messageType == "IActorLocationRequest") {
@@ -342,26 +484,17 @@ export class Init {
             msg.parseObj.fields.Message = { name: 'Message', type: { value: 'string' } }
         }
 
-        // 前面两个留个opcode和actorid
-        let idStart = 3
+        for (let fieldInfo of msg.fieldInfos) {
+            let defaultValue = fieldInfo.defaultValue
 
-        for (const key in msg.parseObj.fields) {
-            let field = msg.parseObj.fields[key];
-            let fieldInfo = new FieldInfo(field, idStart++)
-
-            msg.fieldInfos.push(fieldInfo)
-
-            if (field.required) {
-                let defaultValue = this.getDefaultValue(field)
-                if (!defaultValue) {
-                    content += `\tpublic ${fieldInfo.fieldName}: ${fieldInfo.typeStr}\n`
-                } else {
-                    content += `\tpublic ${fieldInfo.fieldName}: ${fieldInfo.typeStr} = ${defaultValue}\n`
-                }
-            } else {
-                content += `\tpublic ${fieldInfo.fieldName}: ${fieldInfo.typeStr}\n`
+            if (fieldInfo.isMap) {
+                content += `\tpublic ${fieldInfo.fieldName}: Map<${fieldInfo.mapKeytypeStr}, ${fieldInfo.mapValuetypeStr}> = new Map\n`
             }
-
+            else if (!defaultValue) {
+                content += `\tpublic ${fieldInfo.fieldName}: ${fieldInfo.typeStr}\n`
+            } else {
+                content += `\tpublic ${fieldInfo.fieldName}: ${fieldInfo.typeStr} = ${defaultValue}\n`
+            }
         }
 
         content += `\tconstructor(args?: pb.Properties<${msg.msgName}>) {\n`
@@ -377,13 +510,17 @@ export class Init {
         }
 
         content += `\t}\n`
+
         content += `\tpublic encode(actorId?: number) {\n`
-        content += `\t\tw.reset()\n`
-        content += `\t\tw.uint32(8).uint32(this.opcode)\n`
-        content += `\t\tif(actorId){\n`
-        content += `\t\t\tw.uint32(16).uint64(actorId)\n`
-        content += `\t\t}\n`
-        content += `\t\tthis.innerEncode()\n`
+        if (!msg.isDepend) {
+            content += `\t\tw.reset()\n`
+            content += `\t\tw.uint32(8).uint32(this.opcode)\n`
+            content += `\t\tif(actorId){\n`
+            content += `\t\t\tw.uint32(16).uint64(actorId)\n`
+            content += `\t\t}\n`
+            content += `\t\tthis.innerEncode()\n`
+        }
+
         content += `\t\treturn w.finish()\n`
         content += `\t}\n`
 
@@ -407,6 +544,8 @@ export class Init {
         for (let fieldInfo of msg.fieldInfos) {
             if (fieldInfo.isArray) {
                 content += `\t\tthis.${fieldInfo.fieldName} = []\n`
+            } else if (fieldInfo.isMap) {
+                content += `\t\tthis.${fieldInfo.fieldName}.clear()\n`
             }
         }
 
@@ -430,27 +569,5 @@ export class Init {
         content += `}\n`
 
         return content
-    }
-
-    private static getDefaultValue(field): string {
-        let typeStr = field.type.value
-
-        if (field.repeated) {
-            return `[]`
-        }
-
-        switch (typeStr) {
-            case 'int32':
-            case 'uint32':
-            case 'int64':
-            case 'uint64':
-            case 'float':
-            case 'double':
-                return '0'
-            case 'string':
-                return ''
-            default:
-                break;
-        }
     }
 }

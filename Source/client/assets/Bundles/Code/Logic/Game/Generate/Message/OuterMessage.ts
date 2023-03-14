@@ -21,7 +21,8 @@ export class OuterMessage {
 	public static readonly C2G_EnterMap = 10009
 	public static readonly M2C_StartSceneChange = 10010
 	public static readonly MoveInfo = 10011
-	public static readonly UnitInfo = 10012
+	public static readonly UnitInfo_KVKV = 10012
+	public static readonly UnitInfo = 10013
 }
 
 /**
@@ -783,6 +784,58 @@ export class MoveInfo extends Message {
 }
 /**
  */
+export class UnitInfo_KVKV extends Message {
+	public key: number
+	public value: number
+	constructor(args?: pb.Properties<UnitInfo_KVKV>) {
+		super()
+		if(!args){
+			return
+		}
+		if(args.key){
+			this.key = args.key
+		}
+		if(args.value){
+			this.value = args.value
+		}
+	}
+	public encode(actorId?: number) {
+		return w.finish()
+	}
+	public innerEncode() {
+		if(this.key){
+			w.uint32(24).int32(this.key)
+		}
+		if(this.value){
+			w.uint32(32).int64(this.value)
+		}
+	}
+
+	public decode(bytes: Uint8Array, length?: number) {
+		if(!length){
+			r.pos = 0
+			r.buf = bytes
+			r.len = bytes.length
+		}
+		let end = length === undefined ? r.len : r.pos + length;
+		while (r.pos < end) {
+			const tag = r.uint32()
+			switch (tag >>> 3) {
+				case 3:
+					this.key = r.int32()
+					break
+				case 4:
+					this.value = (r.int64() as Long).toNumber()
+					break
+				default:
+					r.skipType(tag & 7)
+					break
+			}
+		}
+	}
+}
+/**
+ */
 @MessageDecorator(OuterMessage.UnitInfo, MessageType.IMessage)
 export class UnitInfo extends Message {
 	public opcode = OuterMessage.UnitInfo
@@ -791,7 +844,7 @@ export class UnitInfo extends Message {
 	public Type: number
 	public Position: Vec3
 	public Forward: Vec3
-	public KV: number
+	public KV: Map<number, number> = new Map
 	public MoveInfo: MoveInfo
 	constructor(args?: pb.Properties<UnitInfo>) {
 		super()
@@ -849,8 +902,11 @@ export class UnitInfo extends Message {
 			MessageParseHelper.encodeVec3(w, this.Forward)
 			w.ldelim()
 		}
-		if(this.KV){
-			w.uint32(64).int64(this.KV)
+		for (const [k,v] of this.KV) {
+			let obj = new UnitInfo_KVKV({key: k, value: v})
+			w.uint32(66).fork()
+			obj.innerEncode()
+			w.ldelim()
 		}
 		if(this.MoveInfo){
 			w.uint32(74).fork()
@@ -866,6 +922,7 @@ export class UnitInfo extends Message {
 			r.len = bytes.length
 		}
 		let end = length === undefined ? r.len : r.pos + length;
+		this.KV.clear()
 		while (r.pos < end) {
 			const tag = r.uint32()
 			switch (tag >>> 3) {
@@ -885,7 +942,9 @@ export class UnitInfo extends Message {
 					this.Forward = MessageParseHelper.docodeVec3(r, r.uint32())
 					break
 				case 8:
-					this.KV = (r.int64() as Long).toNumber()
+					let msg_UnitInfo_KVKV = new UnitInfo_KVKV()
+					msg_UnitInfo_KVKV.decode(bytes, r.uint32())
+					this.KV.set(msg_UnitInfo_KVKV.key, msg_UnitInfo_KVKV.value)
 					break
 				case 9:
 					let msg_MoveInfo = new MoveInfo()
